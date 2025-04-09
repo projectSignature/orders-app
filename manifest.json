@@ -2,7 +2,7 @@
   "name": "Orders君",
   "short_name": "Orders",
   "start_url": "/OrdersApp/index.html",
-  "display": "fullscreen",
+  "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "icons": [
