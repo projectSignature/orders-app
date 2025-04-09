@@ -1,0 +1,26 @@
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-text {
+    display: flex;
+    align-items: baseline;
+}
+
+.orders-text {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ff8c00;
+    margin-right: 5px;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+.kun-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+     font-family: 'Yu Gothic', sans-serif;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+}

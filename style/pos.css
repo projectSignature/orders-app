@@ -1,0 +1,964 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #343a40;
+    color: white;
+    height: 10%
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 20px;
+    margin-right: 15px;
+}
+
+.header-buttons {
+    display: flex;
+}
+
+.header-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 2px 5px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    width:6rem;
+    transition: background-color 0.3s ease;
+}
+.cupon-btn{
+  height: 8%;
+  align-items: center;
+
+}
+
+.header-btn:hover {
+    background-color: #0056b3;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height:88%;
+
+    margin-bottom: 0!important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.left-panel, .center-panel  {
+    padding: 20px;
+    box-sizing: border-box;
+
+    overflow: hidden;
+
+}
+
+.left-panel {
+    width: 20%;
+    background-color: #ffffff;
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
+}
+#delete-order {
+           background-color: #ffcccc; /* 薄い赤色 */
+           border: none; /* ボーダーをなしに */
+           padding: 10px 20px; /* パディング */
+           border-radius: 5px; /* ボタンの角を丸く */
+           cursor: pointer; /* ポインタの形を手のアイコンに */
+       }
+
+       #delete-order:hover {
+           background-color: #ff9999; /* ホバー時に少し濃い赤色 */
+       }
+
+.center-panel {
+    width: 30%;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.right-panel {
+    width: 50%;
+    background-color: #f8f9fa;
+    border-left: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    overflow: hidden;
+}
+
+#orders-list .order-card {
+    background-color: #e9ecef;
+    margin-bottom: 10px;
+    padding: 2px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+#orders-list .order-card:hover {
+    background-color: #ced4da;
+}
+
+#payment-summary p {
+  width: 100%;
+    margin: 10px 0;
+    font-size: 30px;
+    display: flex;
+
+
+}
+#payment-summary{
+
+  display: flex;
+}
+.second-payment-div{
+
+  width:70%;
+}
+.second-payment-div-right{
+  width:30%;
+
+}
+
+button {
+    padding: 10px;
+    margin-top: 1px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px
+}
+
+#confirm-payment {
+    background-color: #28a745;
+    color: white;
+}
+
+#confirm-payment:hover {
+    background-color: #218838;
+}
+
+#confirm-payment:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+#total-amount, #change-amount {
+    font-weight: bold;
+}
+#change-amount,#deposit-amount{
+ width: 50%;
+ border-radius: 3px solid #333
+}
+#change-amount{
+  background-color: #89CFF0
+}
+.payment-summary-mother{
+  display: flex;
+  justify-content: space-around;
+  align-items:flex-end;
+  width: 100%;
+  border-bottom: 0.2px solid #333;
+  padding-top: 5px
+}
+.payment-summary-mother span,.payment-summary-mother input{
+  font-size:20px
+}
+.payment-summary-child{
+  width: 50%
+}
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logo-text {
+    display: flex;
+    align-items: baseline;
+}
+
+.orders-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ff8c00;
+    margin-right: 5px;
+}
+
+.kun-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+#payment-methods {
+   width: 100%;
+   overflow: hidden;
+    justify-content: space-between; /* ボタンの間にスペースを均等に配置 */
+    padding: 5px;
+    gap: 15px; /* ボタンの間にスペースを追加（オプション） */
+}
+
+.payment-method {
+    flex: 1; /* 各ボタンが等しく幅をとるように設定 */
+    min-width: 0; /* 折り返しを防ぐために最小幅を設定 */
+    padding: 10px;
+    text-align: center;
+    box-sizing: border-box; /* ボタンのパディングを含めてサイズを計算 */
+    font-size: 16px;
+}
+#tax-buttons{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+
+}
+#tax-buttons button{
+  width:40%!important
+}
+
+.right-panel .payment-method.selected {
+    background-color: #ff6b6b !important;
+    color: white !important;
+    border-color: #ff6b6b !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.order-card {
+    /* Basic styling for the card */
+    padding: 5px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 5rem
+}
+
+.order-card:hover {
+    background-color: #f0f0f0; /* Optional hover effect */
+}
+
+.selected-card {
+  background-color: #ff6b6b !important;
+  color: white !important;
+  border-color: #ff6b6b !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.selected {
+    background-color: #4CAF50; /* 選択時の背景色 */
+    color: white;             /* 選択時の文字色 */
+    border: 2px solid #4CAF50; /* ボーダーも設定 */
+}
+
+
+
+
+
+.custom-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #d4edda;
+    color: #155724;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+    text-align: center;
+}
+
+.custom-alert .alert-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-alert .checkmark {
+    font-size: 24px;
+    color: #28a745; /* Green color */
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1966px) {
+
+  button {
+      padding: 10px;
+      margin-top: 1px;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 20px
+  }
+}
+
+.active-tax {
+    background-color: #4CAF50 !important; /* 背景色を変更 */
+    color: white !important; /* テキスト色を変更 */
+    border: 2px solid #4CAF50 !important; /* ボーダーも変更 */
+}
+#payment-methods button{
+  width:90%;
+}
+.third-div{
+  width:100%;
+  background-color: #333;
+  height: 50%;
+  display: flex;
+  align-items: center;
+
+}
+.cfm-btns-second{
+  margin-top: 10px;
+  height: 25%
+}
+
+.cfm-btns{
+  font-size: 20px;
+  height: 80%;
+  width:30%;
+  border:0.5px solid #333
+}
+.left-third-div{
+  width:70%;
+  height: 100%;
+
+}
+.right-third-div{
+  width: 28%;
+  height: 100%
+}
+
+.header-btn.active {
+    /* background-color: orange; */
+    color: white; /* 文字色も変更 */
+}
+.menu-actions{
+  display: none;
+}
+
+.placeholder {
+    height: 30px; /* プラホルダーの高さを調整 */
+    background-color: #ffeb3b; /* プラホルダーの背景色を設定 */
+    margin: 5px 0; /* 上下にスペースを作る */
+}
+
+
+.order-card-main-div{
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  overflow: hidden;
+  height: 100%
+}
+.order-leftdiv{
+  width: 80% !important;
+  overflow:hidden;
+  display: flex;
+  align-items: center;
+}
+.order-leftdiv h3{
+  margin: 0px
+}
+.order-rightdiv{
+  width:15%;
+  overflow:hidden;
+  align-items:stretch;
+  padding: 2px;
+}
+.order-rightdiv img{
+  width: 100%;
+  height: auto;
+}
+.register-caixa-btn{
+  display: flex;
+  width: 70%;
+
+}
+.register-caixa-btn input{
+  border-radius: 10px;
+  width:30%;
+  font-size: 12px;
+  border:0.5px solid #333;
+  text-align: center;
+  margin-right: 10px;
+  background-color: #FFC0CB
+}
+#juntar-comandas{
+  background-color: orange
+}
+.register-caixa-btn button{
+  border-radius: 10px;
+  width:30%;
+    font-size: 12px;
+  border:0.5px solid #333;
+  text-align: center;
+  margin-right: 10px;
+  background-color: #FFFF00
+}
+/* モーダル全体 */
+
+  .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5); /* 背景に半透明の黒 */
+      backdrop-filter: blur(5px); /* 背景を少しぼかす */
+  }
+
+  /* モーダルのコンテンツ */
+  .modal-content {
+      background-color: #fff;
+      border-radius: 12px;
+      display: flex;
+      padding: 20px;
+      width: 90%;  /* 幅を少し狭める */
+      max-width: 1200px;  /* 最大幅の調整 */
+      margin: 2% auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      position: relative;
+       z-index: 1000;  /* クローズボタンよりも低い */
+  }
+
+
+/* 左右分割 */
+.modal-left, .modal-right {
+    width: 50%;
+    padding: 10px;  /* パディングを少し減らす */
+}
+
+/* タイトルのスタイル */
+.modal-left h2, .modal-right h2 {
+    font-size: 20px;  /* タイトルサイズを少し小さく */
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* 入力フィールドのスタイルを統一 */
+.modal-left input[type="number"],
+.modal-left input[type="date"],
+.modal-left input[type="text"] {
+    width: 70%;  /* 同じ幅に揃える */
+    padding: 8px;
+    margin-bottom: 10px;  /* 間隔を少し減らす */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;  /* フォントサイズを少し小さく */
+}
+
+/* ラベルと値を横並びにする */
+/* ラベルと値を横並びにする */
+.result-section {
+    display: flex;
+    flex-direction: row;  /* 横並びにする */
+    justify-content: space-between; /* ラベルと値を左右に配置 */
+    align-items: center; /* 垂直方向を中央揃え */
+    margin-bottom: 10px;
+}
+
+/* ラベルのスタイル */
+.result-section label {
+    font-weight: bold;
+    font-size: 14px;
+
+}
+
+/* 値（span）のスタイル */
+.result-section span {
+    font-size: 14px;
+    text-align: right; /* 数値を右揃えにする */
+    flex: 0 0 40%; /* 値の幅を固定（調整可能） */
+}
+
+
+
+/* ボタンのスタイル */
+.modal button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;  /* ボタンを全幅に */
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.modal button:hover {
+    background-color: #45a049;
+}
+
+/* ×ボタンのスタイル */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    z-index: 1001;  /* コンテンツよりも前面に表示するための値 */
+    opacity: 1;  /* 確実に表示されるように設定 */
+    transition: color 0.3s ease;  /* 色だけのアニメーションにする */
+}
+
+.close:hover {
+  color: red;
+}
+.input-section label{
+  display: inline-block;
+
+ width:8rem!important
+}
+
+#saldo-final{
+  background-color: yellow
+}
+/* デフォルトの入力サイズ */
+.input-field {
+  width: 200px;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+/* フォーカス時に拡大するスタイル */
+.input-field.expanded {
+  width: 400px; /* 拡張時の幅 */
+  height: 100px; /* 拡張時の高さ */
+}
+#inserirMonys{
+  background-color: orange!important;
+  color:#333
+}
+#total-vendas{
+  font-size: 25px;
+  text-align: center;
+}
+#calculation-again{
+  background-color: gray
+}
+h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-btn {
+    background-color: #4CAF50; /* ボタンの背景色 */
+    color: white; /* ボタンの文字色 */
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width:8rem
+}
+
+.add-btn i {
+    font-size: 16px;
+}
+
+.add-btn:hover {
+    background-color: #45a049; /* ホバー時の色 */
+}
+
+.modal-add-menu {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden;
+    /* background-color: rgba(0, 0, 0, 0.5); */
+
+}
+
+.modal-content-add-menu {
+    background-color: #fff;
+    overflow: hidden !important;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 100%;
+    height: 95%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.filter-btn {
+    margin: 5px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter-btn:hover {
+    background-color: #45a049;
+}
+#category-filters,#menu-list,#option-list{
+  width:15%;
+  height:90%;
+  overflow-y: auto!important;
+  border:1px solid #333;
+  border-radius: 10px;
+  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 5px
+}
+.add-menu-child-div{
+  display: flex;
+  width:100%;
+  height:95%;
+  padding:10px
+}
+.add-menu-child-div button{
+  width:90%;
+  overflow: hidden;
+  font-size: 15px;
+  height: 3rem;
+  margin-top: 5px
+}
+
+.menu-item.selected {
+    background-color: #4CAF50; /* クリックされたときの背景色 */
+    color: white;
+}
+
+.now-oreder-list{
+  width:35%;
+  height:100%;
+  margin-left: 5px;
+}
+.add-or-cancel-btn{
+  position: absolute;
+  top:0;
+  left:70%;
+  display: flex;
+  justify-content: center;
+  width:18rem
+}
+.add-or-cancel-btn button{
+  margin-left: 15px
+}
+.add-btn-first{
+  margin-left:5px;
+  margin-right: 5px;
+  padding-top: 10%;
+  width:8%;
+  height: 100%;
+  align-items: center;
+
+}
+.add-btn-first button {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    padding: 0px;
+    background-color: orange;
+    color: white;
+    border: none;
+    clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-btn-first button:hover {
+    background-color: #45a049;
+}
+
+
+.add-or-cancel-btn button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.add-or-cancel-btn button:first-child {
+    background-color: #4CAF50; /* Adicionar ボタン: 緑色 */
+    color: white;
+}
+
+.add-or-cancel-btn button:last-child {
+    background-color: #f44336; /* Cancelar ボタン: 赤色 */
+    color: white;
+}
+
+.add-or-cancel-btn button:hover {
+    opacity: 0.8; /* ホバー時のエフェクト */
+}
+.remove-option,.remove-item{
+  width:2rem!important;
+  padding: 0px;
+  height: 1.2rem!important;
+  text-align: center;
+}
+#order-nbefore-list{
+  padding: 10px;
+  overflow-y: auto;
+  height: 70%;
+
+  border:1px solid #333;
+  border-radius: 10px;
+}
+.adicionar-menu-novo{
+  color:blue
+}
+.deletar-menu-da-lista{
+  color:red
+}
+
+#quantity-input {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    z-index: 1000;
+}
+
+.quantity-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.quantity-btn {
+    padding: 10px;
+    font-size: 18px;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.quantity-btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.quantity-btn.active {
+    background-color: #0056b3;
+    color: white;
+}
+
+.manual-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+#item-quantity {
+    font-size: 16px;
+    padding: 8px;
+    width: 60px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+#confirm-quantity-btn {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#confirm-quantity-btn:hover {
+    background-color: #0056b3;
+}
+.total-add-menu-display{
+  border:1px solid #333;
+  border-radius: 10px;
+  height: 15%;
+  width: 90%;
+  flex-wrap: wrap;
+  padding:15px
+}
+.total-add-menu-display span{
+
+  width:100%;
+  font-size: 30px
+}
+.tenkey-container {
+  width: 95%;
+  padding: 10px;
+}
+
+#tenkey-display {
+  width: 100%;
+  height: 40px;
+  font-size: 20px;
+  text-align: right;
+  margin-bottom: 10px;
+  padding-right: 8px;
+}
+
+.tenkey-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.tenkey-btn {
+  height: 50px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.tenkey-btn.wide {
+  grid-column: span 3;
+  background-color: #f88;
+}
+.top-pagamneto-mother{
+  height: 8%;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+  padding: 0px;
+  justify-content:space-between;
+  margin: 0px
+}
+
+#mergeModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 2px solid #333;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  z-index: 9998;
+  border-radius: 8px;
+}
+
+#mergeModal h3 {
+  margin-top: 0;
+  font-size: 16px;
+  text-align: center;
+}
+
+#order-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 10px 0;
+  padding: 5px;
+  border: 1px dashed #ccc;
+  background: #fafafa;
+}
+
+#order-list label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+#order-list input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+#merge-confirm {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#merge-confirm:hover {
+  background: #0056b3;
+}
+.pagamento-feito{
+  background-color: #ADD8E6 !important;
+  color:#333
+}
+
+.lang-select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  height: 40px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+
+.lang-select:hover {
+  border-color: #999;
+  background-color: #f9f9f9;
+}

@@ -1,0 +1,297 @@
+.div-left{
+  width:15%;
+  border: 0.5px solid #333;
+  border-radius: 10px;
+  padding: 10px!important;
+    height: 98%;
+}
+#categories-div{
+
+}
+.container{
+  padding: 10px!important;
+  display: flex;
+  justify-content: space-around;
+}
+#select-categorie{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+}
+#select-categorie select{
+  font-size: 20px;
+  width: 80%;
+  text-align: center;
+  border-radius: 5px
+}
+#center-div{
+  width:40%;
+  border: 0.5px solid #333;
+  border-radius: 10px;
+  padding: 10px!important;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content:space-around;
+  height: 98%;
+  overflow-y: auto;
+  gap: 10px!important; /* アイテム間のスペース */
+}
+#right-div{
+  width: 45%;
+  border: 0.5px solid #333;
+  border-radius: 10px;
+  padding: 10px!important;
+  height: 98%;
+  overflow: hidden;
+}
+#categories-div button{
+  font-size: 15px!important
+}
+.menu-item{
+  height:4rem!important;
+  width:42%!important;
+  margin: 5px;  /* 適度なスペース */
+
+}
+.menu-item h3,.menu-item p{
+    font-size: 15px!important
+}
+#list-order{
+  height:50% !important;
+  overflow-y: auto!important;
+  border-bottom: 0.5px solid #333;
+
+}
+#cashier{
+  width: 100%;
+  height:30%;
+  padding: 2px;
+
+}
+#total-amount{
+  width: 100%;
+
+}
+
+#cashier div{
+  border-bottom: 0.5px solid #333;
+  text-align:center;
+  font-size:30px
+}
+#tax-button{
+  width: 100%;
+  display: flex;
+  padding: 2px!important;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 10px
+}
+.detail_names-div{
+  width: 160px;
+  display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.item-amount{
+  width: 80px;
+  margin-right: 2px
+}
+#tax-button button{
+  width: 40%;
+  height: 80%
+}
+/* リスト全体のスタイル */
+#selectedItemsContainer li {
+  display: flex;
+  justify-content: space-between; /* アイテム名とボタンを左右に配置 */
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+#tax-button button {
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+#tax-button .selected {
+  background-color: #007bff;
+  color: white;
+}
+
+
+/* アイテム名と金額のスタイル */
+#selectedItemsContainer li span {
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+/* プラス・マイナスボタンのスタイル */
+#selectedItemsContainer li button {
+  width: 30px!important;
+  height: 30px!important;
+  font-size: 18px;
+  text-align: center;
+  line-height: 1.2;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 50%; /* 丸いボタンに */
+  margin: 0 5px;
+}
+
+#selectedItemsContainer li button:hover {
+  background-color: #f0f0f0; /* ボタンホバー時のスタイル */
+}
+
+/* 数量表示のスタイル */
+.quantity-display {
+  font-size: 18px;
+  margin: 0 10px;
+  min-width: 30px;
+  text-align: center;
+}
+.name-imput{
+  width:100%;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+}
+.name-imput input{
+  width:80%;
+  font-size: 20px
+}
+#total-amount{
+  width:100%;
+  text-align: center;
+  font-size: 15px
+}
+.datetime-picker{
+  width:100%;
+  display: flex;
+  justify-content: center
+}
+.datetime-picker input, .datetime-picker label{
+  font-size:25px
+}
+.datetime-picker label{
+  margin-right: 20px
+}
+.update-time-btn{
+  width:2.5rem;
+  overflow: hidden !important;
+  height:2.5rem;
+  margin-left:15px;
+  cursor: pointer;
+}
+.update-time-btn:hover{
+  background-color: blue
+}
+
+.menu-item-card {
+  width: 450px;
+  background: #fefefe;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+  margin: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.menu-item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.menu-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+.menu-content {
+  padding: 12px;
+  text-align: center;
+}
+
+.menu-name {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.menu-price {
+  font-size: 1rem;
+  color: #444;
+}
+
+.tax-info {
+  font-size: 1rem;
+  color: #888;
+}
+
+.menu-item-card {
+  width: 400px;
+  background: #fefefe;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+  margin: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.menu-item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.menu-image {
+  position: relative;
+}
+
+/* .menu-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(60%) brightness(0.9);
+} */
+
+.sold-out-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(255, 0, 0, 0.8);
+  color: #fff;
+  font-size: 2rem;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.menu-content {
+  padding: 12px;
+  text-align: center;
+}
+
+.menu-name {
+  font-size: 1.1rem;
+  color: #999;
+  margin: 0;
+  font-weight: 600;
+}
+
+.menu-item-card.sold-out {
+  cursor: not-allowed;
+  opacity: 0.7;
+}

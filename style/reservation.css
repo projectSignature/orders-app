@@ -1,0 +1,1157 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #343a40;
+    color: white;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-container a {
+    text-decoration: none;
+}
+
+.logo {
+    height: 20px;
+    margin-right: 15px;
+}
+
+.header-buttons {
+    display: flex;
+}
+
+.header-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    display: block;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.header-btn:hover {
+    background-color: #0056b3;
+}
+
+.container-reservation {
+    display: flex;
+    flex-direction: column;
+    width: 98%;
+    margin: 20px auto;
+    margin-bottom: 0 !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding-bottom: 20px;
+
+    height:80vh;
+    overflow: hidden;
+}
+
+.left-panel,
+.center-panel,
+.right-panel {
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.left-panel {
+    width: 20%;
+    background-color: #ffffff;
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
+}
+
+#delete-order {
+    background-color: #ffcccc;
+    /* 薄い赤色 */
+    border: none;
+    /* ボーダーをなしに */
+    padding: 10px 20px;
+    /* パディング */
+    border-radius: 5px;
+    /* ボタンの角を丸く */
+    cursor: pointer;
+    /* ポインタの形を手のアイコンに */
+}
+
+#delete-order:hover {
+    background-color: #ff9999;
+    /* ホバー時に少し濃い赤色 */
+}
+
+.center-panel {
+    width: 30%;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.right-panel {
+    width: 50%;
+    background-color: #f8f9fa;
+    border-left: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#orders-list .order-card {
+    background-color: #e9ecef;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: background-color 0.3s ease;
+}
+
+#orders-list .order-card:hover {
+    background-color: #ced4da;
+}
+
+#payment-summary p {
+    margin: 10px 0;
+    font-size: 30px
+}
+
+button {
+    padding: 10px;
+    margin-top: 1px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px
+}
+
+#confirm-payment {
+    background-color: #28a745;
+    color: white;
+}
+
+#confirm-payment:hover {
+    background-color: #218838;
+}
+
+#confirm-payment:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+#total-amount,
+#change-amount {
+    font-weight: bold;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logo-text {
+    display: flex;
+    align-items: baseline;
+}
+
+.orders-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ff8c00;
+    margin-right: 5px;
+}
+
+.kun-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+#payment-methods {
+    display: flex;
+    justify-content: space-between;
+    /* ボタンの間にスペースを均等に配置 */
+    /* flex-wrap: wrap; /* 画面に収まらない場合に折り返しを許可 */
+    gap: 10px;
+    /* ボタンの間にスペースを追加（オプション） */
+}
+
+.payment-method {
+    flex: 1;
+    /* 各ボタンが等しく幅をとるように設定 */
+    min-width: 0;
+    /* 折り返しを防ぐために最小幅を設定 */
+    padding: 10px;
+    text-align: center;
+    box-sizing: border-box;
+    /* ボタンのパディングを含めてサイズを計算 */
+    font-size: 16px;
+}
+
+#tax-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+#tax-buttons button {
+    width: 40% !important
+}
+
+.right-panel .payment-method.selected {
+    background-color: #ff6b6b !important;
+    color: white !important;
+    border-color: #ff6b6b !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.order-card {
+    /* Basic styling for the card */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.order-card:hover {
+    background-color: #f0f0f0;
+    /* Optional hover effect */
+}
+
+.selected-card {
+    background-color: #ff6b6b !important;
+    color: white !important;
+    border-color: #ff6b6b !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+#deposit-amount {
+    width: 10rem !important;
+    font-size: 1em
+}
+
+
+.custom-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #d4edda;
+    color: #155724;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+    text-align: center;
+}
+
+.custom-alert .alert-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-alert .checkmark {
+    font-size: 24px;
+    color: #28a745;
+    /* Green color */
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1966px) {
+    #deposit-amount {
+        width: 10rem;
+        font-size: 1em
+    }
+
+    button {
+        padding: 10px;
+        margin-top: 1px;
+        width: 100%;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 20px
+    }
+}
+
+.active-tax {
+    background-color: #4CAF50 !important;
+    /* 背景色を変更 */
+    color: white !important;
+    /* テキスト色を変更 */
+    border: 2px solid #4CAF50 !important;
+    /* ボーダーも変更 */
+}
+
+#payment-methods button {
+    width: 20rem;
+}
+
+.cfm-btns {
+    font-size: 2em
+}
+
+.header-btn.active {
+    background-color: orange;
+    color: white;
+    /* 文字色も変更 */
+}
+
+.menu-actions {
+    display: none;
+}
+
+.placeholder {
+    height: 30px;
+    /* プラホルダーの高さを調整 */
+    background-color: #ffeb3b;
+    /* プラホルダーの背景色を設定 */
+    margin: 5px 0;
+    /* 上下にスペースを作る */
+}
+
+/* #current_time {
+    text-align: center;
+    margin-top: 70px;
+    font-size: 35px;
+} */
+
+/* Mesas */
+
+.mesas {
+    display: flex;
+    flex-wrap: wrap;
+    width: 70%;
+    margin: auto;
+    gap: 30px;
+    justify-content: center;
+}
+
+.mesa {
+    width: 200px;
+    height: 100px;
+    background-color: #d4d4d456;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    gap: 10px;
+    border: 1px solid #000000;
+    box-shadow: 4px 5px 6px 0px rgba(145, 145, 145, 0.45);
+}
+.mesa div{
+  display: flex;
+  justify-content: center;
+}
+.mesa:hover {
+    cursor: pointer;
+}
+
+.mesa h2 {
+    font-size: 16px;
+    margin: 0px;
+}
+
+.mesa i {
+    font-size: 18.5px;
+    color: rgb(0, 0, 0);
+}
+
+.mesa__pessoas {
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.mesa__disponivel {
+    text-align: center;
+}
+
+/* Botão Adicionar */
+.adicionar-btn {
+  width:80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 5px;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    height:40%
+}
+
+.adicionar-btn button {
+    background-color: #ff8c00;
+    color: white;
+    font-weight: 600;
+    width: 230px;
+    height: 50px;
+    font-size: 21px;
+}
+
+.adicionar-btn button:hover {
+    background-color: #dc7a02;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: auto;
+    width: 100%;
+    max-width: 400px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 6px 6px 6px 0px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 90%;
+    overflow: auto;
+}
+
+.close {
+    font-size: 25px;
+    font-weight: 600;
+    text-align: end;
+    margin-bottom: 5px;
+    cursor: pointer;
+    text-align: right;
+    position: absolute;
+    right: 10px;
+    top: 0%;
+}
+
+.modal-content h2 {
+    margin: 0;
+    color: #000;
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 32px;
+}
+
+.modal-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.modal-input-container {
+    margin-bottom: 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+}
+
+.modal-content label {
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+    text-align: left;
+}
+
+.modal-content input {
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: transparent;
+    font-weight: 400;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: auto;
+}
+
+.modal-content input::placeholder {
+    color: #bdbdbd;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 40px;
+}
+
+.modal-btn {
+    margin: 7px;
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ff8c00;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #c76f04;
+}
+
+.modal-save {
+    background-color: rgba(89, 255, 0, 0.353);
+    color: black;
+    border: 1px solid #197c00;
+}
+
+.modal-save:hover {
+    background-color: rgba(89, 255, 0, 0.228);
+}
+
+.modal-delete {
+    background-color: rgba(255, 0, 0, 0.353);
+    color: black;
+    border: 1px solid #b30000;
+}
+
+.modal-delete:hover {
+    background-color: rgba(255, 0, 0, 0.273);
+}
+
+/* Foco nos campos de input */
+input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Reservas do dia */
+
+.right {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    height: 60%;
+    overflow: auto;
+}
+
+.right h2 {
+    font-size: 25px;
+}
+
+.reservation-tab-day {
+    width: 60%;
+
+    background-color: #1c1c1c;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 5px;
+    margin-top: 5px;
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.35);
+    padding: 4px 10px;
+    overflow: auto !important
+}
+
+.tab-dia-col {
+    color: #f98909;
+}
+
+/* PAGINA DE HISTORICO */
+.container-page {
+    width: 98%;
+    margin: 20px auto;
+    margin-bottom: 0 !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.container-historico {
+    border: 2px solid #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 80%;
+    max-width: 1200px;
+    margin: 25px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+.sticky-right {
+  position: sticky;
+  z-index: 2;
+}
+
+
+.filter h2 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-range label {
+    font-size: 1rem;
+    margin-right: 5px;
+}
+
+.date-range input {
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    color: #000;
+}
+
+.reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 1px solid #ffffff;
+}
+
+.tab-hist th {
+    background-color: #1c1c1c;
+    padding: 10px;
+    border-bottom: 2px solid #ffffff;
+    border: 1px solid #ffffff;
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.reservation-table tbody td {
+    background-color: #1c1c1c;
+    padding: 10px;
+    border-bottom: 1px solid #ffffff;
+    text-align: center;
+    border: 1px solid #ffffff;
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.reservation-table th,
+.reservation-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border: 1px solid #dddddd;
+    color: #ffffff;
+}
+
+.reservation-table th {
+    background-color: #333333;
+    font-weight: bold;
+}
+
+.reservation-table tbody tr {
+    background-color: #444444;
+}
+
+.reservation-table tbody tr:nth-child(even) {
+    background-color: #555555;
+}
+
+/* Loading */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Estilo para o spinner */
+/* .spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #000000;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+} */
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Notificacao */
+#notification-container {
+    margin-top: 10px;
+}
+
+.notification-success {
+    color: green;
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.notification-error {
+    color: red;
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Menu Hamburguer */
+.hamburger-menu {
+    display: none;
+}
+
+.hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.hamburger-icon span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+@media screen and (max-width: 767px) {
+    .header-buttons {
+        display: none;
+    }
+
+    .hamburger-menu {
+        display: block;
+        margin-right: 30px;
+    }
+
+    .header-btn {
+        background-color: transparent;
+        width: 40px;
+    }
+
+    #menu-toggle {
+        display: none;
+    }
+
+    #menu-toggle:checked+.hamburger-icon span:nth-child(1) {
+        transform: rotate(45deg);
+        position: relative;
+        top: 11px;
+    }
+
+    #menu-toggle:checked+.hamburger-icon span:nth-child(2) {
+        opacity: 0;
+    }
+
+    #menu-toggle:checked+.hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+        position: relative;
+        top: -10px;
+    }
+
+    .hamburger-items {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #343a40;
+        position: absolute;
+        top: 60px;
+        right: 0px;
+        padding: 15px;
+        border-radius: 8px;
+        width: 110px;
+    }
+
+    #menu-toggle:checked~.hamburger-items {
+        display: flex;
+    }
+
+    .hamburger-items .header-btn {
+        margin: 5px 0;
+        width: 100%;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .header-btn:hover {
+        background-color: transparent;
+    }
+
+    .orders-text {
+        font-size: 27px;
+    }
+
+    .kun-text {
+        font-size: 30px;
+    }
+
+    .header-buttons {
+        display: none;
+    }
+
+    /* .container {
+        width: 93%;
+    } */
+
+    #current_time {
+        margin-top: 10px;
+        font-size: 25px;
+    }
+
+    #create-reservation-btn {
+        width: 170px;
+        height: 40px;
+        font-size: 17px;
+    }
+
+    .right {
+        margin-top: 60px;
+    }
+
+    .right h2 {
+        font-size: 20px;
+    }
+
+
+
+    .tab-dia-col th {
+        font-size: 14px;
+    }
+
+    .reservation-tab-day td {
+        font-size: 12px;
+    }
+
+    /* PÁGINA DE HISTÓRICO */
+
+    .container-historico {
+        padding: 5px;
+        margin: 0;
+        width: 98%;
+    }
+
+    .date-range {
+        gap: 3px;
+    }
+
+    .date-range label {
+        font-size: 16px;
+    }
+
+    .hist-input {
+        width: 75px;
+        font-size: 10px;
+    }
+
+    .date-range button{
+        width: 70px;
+        height: 30px;
+        padding: 0;
+        font-size: 13px;
+    }
+
+    .tab-hist th {
+        font-size: 12px;
+    }
+
+    .reservation-table tbody td {
+        font-size: 12px;
+        padding: 4px;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    .header-buttons {
+        display: none;
+    }
+
+    .hamburger-menu {
+        display: block;
+        margin-right: 30px;
+    }
+
+    .header-btn {
+        background-color: transparent;
+        width: 40px;
+    }
+
+    #menu-toggle {
+        display: none;
+    }
+
+    #menu-toggle:checked+.hamburger-icon span:nth-child(1) {
+        transform: rotate(45deg);
+        position: relative;
+        top: 15px;
+    }
+
+    #menu-toggle:checked+.hamburger-icon span:nth-child(2) {
+        opacity: 0;
+    }
+
+    #menu-toggle:checked+.hamburger-icon span:nth-child(3) {
+        transform: rotate(-45deg);
+        position: relative;
+        top: -10px;
+    }
+
+    .hamburger-icon {
+        width: 40px;
+        height: 30px;
+    }
+
+    .hamburger-icon span {
+        height: 4px;
+    }
+
+    .hamburger-items {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #343a40;
+        position: absolute;
+        top: 60px;
+        right: 0px;
+        padding: 15px;
+        border-radius: 8px;
+        width: 150px;
+    }
+
+    #menu-toggle:checked~.hamburger-items {
+        display: flex;
+    }
+
+    .hamburger-items .header-btn {
+        margin: 5px 0;
+        width: 100%;
+        text-align: center;
+    }
+
+}
+
+.search {
+    width: 300px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    max-width: 250px;
+    margin: auto;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px; /* Ajustando o padding para diminuir o tamanho do botão */
+    font-size: 14px; /* Diminui o tamanho da fonte */
+    border: none;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    border-radius: 5px; /* Bordas arredondadas para um visual mais suave */
+}
+
+.pagination button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination button:hover {
+    background-color: #000000;
+    color: white;
+}
+
+.actions-btns{
+  display: flex;
+}
+
+table button{
+  cursor: pointer;
+  height:2rem;
+  font-size: 15px
+}
+table button:hover{
+  background-color: orange
+}
+
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px; /* モーダルの最大幅を設定 */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#orderUpdateForm {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+#orderUpdateForm label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+#orderUpdateForm select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+#orderUpdateForm select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+#orderUpdateForm select option {
+    padding: 10px;
+}
+
+#modal-save-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#modal-save-btn:hover {
+    background-color: #0056b3;
+}
+
+#modal-save-btn:active {
+    background-color: #003f7f;
+}
+
+#modal-save-btn:focus {
+    outline: none;
+}
+#mesas-container{
+  display: flex;
+  flex-wrap: nowrap !important;
+  height:20vh;
+  width: 100%;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+#mesas-container div{
+  width:10rem
+}
+.table-mother-div{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  max-height:200px;
+  overflow-y: auto; /* 横または縦にスクロールを可能に */
+
+}

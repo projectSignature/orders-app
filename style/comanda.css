@@ -1,0 +1,179 @@
+body {
+  width:100%;
+  overflow: hidden;
+}
+
+#order-list-comanda{
+  display: flex;
+  width: 100%;
+  height:90%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 10px
+}
+.order-items{
+  height: 70%;
+  overflow-y: auto;
+}
+
+/* スライダーのコンテナ全体 */
+.slider-container {
+    width: 100%;
+    overflow: hidden; /* スライド外のコンテンツは非表示 */
+    margin: 0 auto;
+}
+
+/* スライダーの中身を横並びに配置 */
+.slider-wrapper {
+    display: flex;
+    transition: transform 0.5s ease; /* スライド時のアニメーション */
+    will-change: transform;
+}
+
+/* 各カードのスタイル */
+.order-card {
+  padding:2px;
+    width: 22%; /* 4つのカードが横に並ぶように設定 */
+    box-sizing: border-box;
+    margin: 0 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    overflow-y:hidden;
+    max-height: 95%;
+    flex: none; /* 各カードの幅を固定 */
+
+}
+.order-card h3{
+  width: 100%;
+  background-color: #333;
+  color:#FFF;
+  font-weight: bold;
+  font-size: 35px;
+  text-align: center;
+  padding: 0px!important;
+  margin:0px!important;
+  overflow: hidden;
+
+}
+
+/* 各カードのスタイル */
+.order-card-comanda {
+  padding:2px;
+    width: 22%; /* 4つのカードが横に並ぶように設定 */
+    box-sizing: border-box;
+    margin: 0 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    overflow-y:hidden;
+    height: 95%;
+    flex: none; /* 各カードの幅を固定 */
+
+}
+.order-card-comanda h3{
+  width: 100%;
+  background-color: #333;
+  color:#FFF;
+  font-weight: bold;
+  font-size: 35px;
+  text-align: center;
+  padding: 0px!important;
+  margin:0px!important;
+  overflow: hidden;
+
+}
+
+/* 提供状況のスタイル */
+.serve-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: 10px;
+    font-size: 20px
+}
+
+.serve-status.pending {
+    background-color: red;
+    color: white;
+}
+
+.serve-status.served {
+    background-color: green;
+    color: white;
+}
+.order-item{
+  width: 100%;
+  height:4rem;
+  border-bottom: 1px solid #333;
+  margin-top: 5px;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.left-div{width: 90%}
+.option-div{
+  background-color: yellow;
+  width:100%
+}
+.order-time-div{
+  width:100%;
+  display:  flex;
+  justify-content: center;
+  max-height: 2rem;
+  background-color: orange;
+  padding: 0px!important;
+  overflow: hidden;
+}
+.order-time-div span{
+    font-size: 25px;
+}
+
+.image-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.image-modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  text-align: center;
+  border-radius: 10px;
+  position: relative;
+}
+
+.modal-content img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.close-btn{
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-description {
+  font-size: 14pt;
+  margin-top: 10px;
+  padding: 20px;
+  margin-left: 0; /* ← 30px → 0 に */
+  white-space: pre-wrap;
+  text-align: left; /* ← 明示的に左寄せ指定 */
+}
