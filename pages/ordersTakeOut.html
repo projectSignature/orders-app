@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders君</title>
+    <link rel="stylesheet" href="../style/appname.css">
+    <link rel="stylesheet" href="../style/loading-popup.css">
+    <link rel="stylesheet" href="../style/order-takeou.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <div id="order-categories">
+                <!-- カテゴリーを動的に生成 -->
+            </div>
+            <div id="language-switcher" style="margin-left: auto;">
+                <img src="../imagen/language-pt.png" alt="Português" class="language-icon" data-lang="pt">
+                <img src="../imagen/language-ja.png" alt="日本語" class="language-icon" data-lang="ja">
+                <img src="../imagen/language-en.png" alt="English" class="language-icon" data-lang="en">
+            </div>
+        </header>
+        <main>
+            <div id="menu-container">
+                <div id="menu-items">
+                    <!-- メニューを動的に生成 -->
+                </div>
+            </div>
+            <aside>
+                <h2 id="list-title-h2" data-translate-key="Lista de pedidos">Lista de pedidos</h2>
+                <ul id="selected-items" style="height:300px; max-height: 300px">
+                   <!-- 選択されたアイテムがここに表示される  -->
+                </ul>
+                <div id="total-amount">￥0</div>
+                <button id="confirm-order" data-translate-key="Confirmar pedido">Confirmar pedido</button>
+                <button id="edit-order" data-translate-key="Alterar o pedido">Alterar o pedido</button> <!-- 修正ボタンを追加 -->
+                <div class="logo-container">
+                  <div class="logo-text">
+                      <span class="orders-text">Orders</span>
+                      <span class="kun-text">君</span>
+                  </div>
+              </div>
+            </aside>
+            <!-- オーダー修正のためのモーダルウィンドウ -->
+            <div id="edit-order-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 data-translate-key="Alterar o pedido">Alterar o pedido</h2>
+                    <ul id="edit-order-list">
+                        <!-- 修正対象のオーダーアイテムをここに表示 -->
+                    </ul>
+                    <button id="save-changes-btn" data-translate-key="Salvar">Salvar</button>
+                </div>
+            </div>
+            <!-- 警告メッセージ用モーダルウィンドウ -->
+            <div id="alert-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 id="Atanction-title">Atenção</h2>
+                    <p id="alert-message">Selecione ou abra uma comanda</p>
+                    <button id="close-alert-btn">Fechar</button>
+                </div>
+            </div>
+            <div id="custom-alert" class="custom-alert">
+              <div class="alert-content">
+                  <span class="checkmark">✓</span>
+                  <p id="oder-successfully">オーダーが確定されました。</p>
+              </div>
+          </div>
+          <!-- 履歴表示のモーダルウィンドウ -->
+          <div id="history-modal" class="modal">
+              <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <h3 data-translate-key="Escolha a comanda">Escolha a comanda</h3>
+                  <div id="history-list">
+                      <!-- ここに履歴のオーダー名を追加 -->
+                  </div>
+              </div>
+          </div>
+          <!-- オーダー詳細を表示するためのモーダル -->
+        <div id="order-details-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="order-name-title"></h2>
+                <p id="order-total-amount"></p>
+                <ul id="order-items-list">
+                    <!-- アイテム詳細がここに表示される -->
+                </ul>
+            </div>
+        </div>
+    </main>
+    </div>
+    <div id="loading-popup" class="loading-popup">
+      <div class="loading-container">
+          <div class="spinner"></div>
+          <div class="loading-text">await</div>
+      </div>
+    </div>
+    <button id="fullscreenButton" style="">Enter Fullscreen</button>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="../script/loding-popup.js"></script>
+    <script src="../config.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/order-takeout.js"></script>
+</body>
+</html>

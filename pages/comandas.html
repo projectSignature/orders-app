@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Register</title>
+    <link rel="stylesheet" href="../style/loading-popup.css">
+    <link rel="stylesheet" href="../style/pos.css">
+    <link rel="stylesheet" href="../style/comanda.css">
+    <link rel="stylesheet" href="../style/common.css">
+    <!-- <link rel="stylesheet" href="../style/appname.css"> -->
+</head>
+<body>
+    <header class="header">
+      <div class="logo-container">
+       <div class="logo-text">
+            <span class="orders-text">Orders</span>
+            <span class="kun-text">君</span>
+       </div>
+      </div>
+      <div class="header-buttons">
+        <select id="language-select" class="lang-select">
+          <option value="jp">日本語</option>
+          <option value="pt" selected>Português</option>
+          <option value="en">English</option>
+        </select>
+        <button class="header-btn nav-btn" id="pedido-admin-btn" data-i18n="pedido_admin">Pedido<br>Admin</button>
+        <!-- <button class="header-btn nav-btn" id="pedido-client-btn" data-i18n="pedido_tablet">Pedido<br>tablet</button>
+        <button class="header-btn nav-btn" id="pedido-takeout-btn" data-i18n="pedido_takeout">Pedido<br>takeout</button> -->
+        <button class="header-btn nav-btn" id="comanda-btn" style="background-color: orange" data-i18n="orders">Orders</button>
+        <button class="header-btn nav-btn" id="reserva-btn" data-i18n="reservas">Reservas</button>
+        <button class="header-btn nav-btn" id="reserva-hist-btn" data-i18n="reservas_historico">Reservas<br>(histórico)</button>
+        <button class="header-btn nav-btn" id="pos-btn" data-i18n="pos">POS</button>
+        <button class="header-btn nav-btn" id="menu-btn" data-i18n="menu">Menu</button>
+        <button class="header-btn nav-btn" id="history-btn" data-i18n="historico_pedidos">Histórico<br>pedidos</button>
+        <button class="header-btn nav-btn" id="logout-btn" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+    <div id="order-list-comanda"></div>
+    <!-- アラーム音を再生するための <audio> タグ -->
+<audio id="alarmSound" src="../sound/orderin.mp3" preload="auto"></audio>
+<div id="loading-popup" class="loading-popup">
+  <div class="loading-container">
+      <div class="spinner"></div>
+      <div class="loading-text">await</div>
+  </div>
+</div>
+
+<div id="image-modal" class="image-modal hidden">
+  <div class="modal-content">
+    <span id="modal-close" class="close-btn">✕</span>
+    <img id="order-image" src="" alt="画像" />
+    <div id="modal-description" class="modal-description"></div>
+  </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="../script/translations.js"></script>
+    <script src="../script/loding-popup.js"></script>
+    <script src="../config.js"></script>
+    <script src="../script/comandas.js"></script> <!-- Link to your JavaScript file -->
+    <script src="../script/common.js"></script>
+</body>
+</html>

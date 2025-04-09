@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Management</title>
+    <link rel="stylesheet" href="../style/loading-popup.css">
+        <link rel="stylesheet" href="../style/pos.css">
+    <link rel="stylesheet" href="../style/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="anonymous" />
+    <link rel="stylesheet" href="../style/reservation.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <a href="/">
+                <div class="logo-text">
+                    <span class="orders-text">Orders</span>
+                    <span class="kun-text">君</span>
+                </div>
+            </a>
+        </div>
+        <div class="header-buttons">
+          <select id="language-select" class="lang-select">
+            <option value="jp">日本語</option>
+            <option value="pt" selected>Português</option>
+            <option value="en">English</option>
+          </select>
+          <button class="header-btn nav-btn" id="pedido-admin-btn" data-i18n="pedido_admin">Pedido<br>Admin</button>
+          <!-- <button class="header-btn nav-btn" id="pedido-client-btn" data-i18n="pedido_tablet">Pedido<br>tablet</button>
+          <button class="header-btn nav-btn" id="pedido-takeout-btn" data-i18n="pedido_takeout">Pedido<br>takeout</button> -->
+          <button class="header-btn nav-btn" id="comanda-btn" data-i18n="orders">Orders</button>
+          <button class="header-btn nav-btn" id="reserva-btn" data-i18n="reservas">Reservas</button>
+          <button class="header-btn nav-btn" id="reserva-hist-btn" style="background-color: orange" data-i18n="reservas_historico">Reservas<br>(histórico)</button>
+          <button class="header-btn nav-btn" id="pos-btn"  data-i18n="pos">POS</button>
+          <button class="header-btn nav-btn" id="menu-btn" data-i18n="menu">Menu</button>
+          <button class="header-btn nav-btn" id="history-btn" data-i18n="historico_pedidos">Histórico<br>pedidos</button>
+          <button class="header-btn nav-btn" id="logout-btn" data-i18n="logout">Logout</button>
+        </div>
+        <!-- Menu Hambúrguer -->
+        <!-- <div class="hamburger-menu">
+            <input type="checkbox" id="menu-toggle" />
+            <label for="menu-toggle" class="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            <div class="hamburger-items">
+                <a class="header-btn nav-btn" href="./index.html">Reservas</a>
+                <button class="header-btn nav-btn">POS</button>
+                <button class="header-btn nav-btn">Menu</button>
+                <a class="header-btn nav-btn" href="./historico.html">Histórico</a>
+                <button class="header-btn nav-btn">Logout</button>
+            </div> -->
+    </header>
+
+    <div class="container-page">
+        <div class="container-historico">
+          <div class="filter">
+            <h2 data-i18n="filter">Filtro</h2>
+            <div class="date-range">
+              <!-- <label data-i18n="between">Entre</label> -->
+              <input class="hist-input" type="date">~
+              <!-- <label data-i18n="to">até</label> -->
+              <input class="hist-input" type="date">
+              <button class="btn-primary search" data-i18n="search">Search</button>
+            </div>
+            </div>
+
+
+            <!-- Overlay de Loading -->
+
+
+            <table class="reservation-table">
+                <thead class="tab-hist">
+                    <tr>
+                      <th data-i18n="id">Id</th>
+                      <th data-i18n="date">Date</th>
+                      <th data-i18n="name">Name</th>
+                      <th data-i18n="table">Table</th>
+                      <th data-i18n="num_people_short">Quant. pessoas</th>
+                      <th data-i18n="remarks_short">Obs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas de reserva virão aqui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="pagination"></div>
+    <div id="loading-popup" class="loading-popup">
+      <div class="loading-container">
+          <div class="spinner"></div>
+          <div class="loading-text" data-i18n="loading">await</div>
+
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="../script/loding-popup.js"></script>
+    <script src="../script/translations.js"></script>
+    <script src="../script/historico.js"></script>
+    <script src="../script/common.js"></script>
+   <script src="../config.js"></script>
+</body>
+
+</html>

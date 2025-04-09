@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Orders君</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../style/main.css">
+    <link rel="stylesheet" href="../style/loading-popup.css">
+    <link rel="icon" href="../imagen/favicon.png" type="image/png">
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <img id="logoImage"  alt="Logo"/>
+    </div>
+    <div class="header-right">
+        <span id="spn-representative">User name</span>
+    </div>
+</header>
+
+<div class="button-container">
+    <button>
+        <i class="fas fa-chart-line"></i> análise
+    </button>
+    <!-- <button>
+        <i class="fas fa-wallet"></i> faturamento
+    </button>
+    <button>
+        <i class="fas fa-cash-register"></i> histórico<br> de caixa
+    </button> -->
+    <button>
+        <i class="fas fa-cog"></i> configuração
+    </button>
+</div>
+<div id="range-serch-datas" class="receita-data-input-mother-div"　>
+    <input type="date" id="salesStart" value="" />
+    <input type="date" id="salesFinish" value="" />
+    <input type="button" id="serche-sales" value="Buscr"/>
+</div>
+
+<div class="container">
+    <!-- 既存のカードとグラフ -->
+    <div class="card" id="card_income">
+        <h2>Total:</h2>
+        <p id="totalSales">¥0</p>
+    </div>
+    <div class="chart-container" id="salesChartContainer">
+        <canvas id="salesChart"></canvas>
+    </div>
+
+    <div class="chart-container" id="expensesChartContainer">
+        <!-- <canvas id="expensesChart"></canvas> -->
+    </div>
+
+    <!-- フィルターと検索ボタン -->
+    <div id="registerFilter" style="display: none;">
+        <!-- <label for="startDate">開始日: </label> -->
+        <input type="date" id="startDate">
+        <label for="endDate">～</label>
+        <input type="date" id="endDate">
+        <button id="filterButton">buscar</button>
+    </div>
+
+
+
+    <!-- レジ履歴の表示用のdiv -->
+    <div id="registerHistory" style="display: none;">
+        <!-- レジ履歴をここに表示 -->
+    </div>
+    <div id="registerSalesHistory" style="display: none;">
+        <!-- レジ履歴をここに表示 -->
+    </div>
+</div>
+<!-- ローディングインジケータ -->
+<div id="loadingIndicator" style="display: none;">
+    <div class="loader"></div>
+    <p>await...</p>
+</div>
+<!-- 設定リストを表示するためのdiv -->
+<div id="settingsList" style="display: none;">
+    <ul class="settings-list">
+      <li><i class="fas fa-user-cog"></i> Configurações pessoais</li>
+
+      <!-- <li><i class="fas fa-user"></i> Responsável pelo caixa</li> -->
+    </ul>
+</div>
+
+<!-- モーダルウィンドウのHTML構造 -->
+<div id="settingsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <div id="modalBody">
+            <!-- モーダルコンテンツがここに表示される -->
+        </div>
+        <div class="savebtn-form" id="savebtn-form">
+          <button id="saveButton">salvar</button>
+        </div>
+    </div>
+</div>
+
+<!-- モーダルのHTML -->
+<!-- モーダルのHTML -->
+<div id="updateModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Alterar vendas</h2>
+    <div id="itemDetailsContainer"></div> <!-- アイテム詳細を表示するコンテナ -->
+    <div class="moda-btn"><button class="custom-sale-btn custom-sale-btn-primary" onclick="saveChanges()">salvar</button></div>
+  </div>
+</div>
+<div id="loading-popup" class="loading-popup">
+  <div class="loading-container">
+      <div class="spinner"></div>
+      <div class="loading-text">await</div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../script/loding-popup.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="../script/dashboard.js"></script>
+
+
+</body>
+</html>

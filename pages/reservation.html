@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Management</title>
+    <link rel="stylesheet" href="../style/pos.css">
+    <link rel="stylesheet" href="../style/reservation.css">
+    <link rel="stylesheet" href="../style/loading-popup.css">
+    <link rel="stylesheet" href="../style/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="../script/reservation.js" defer></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <a href="/">
+                <div class="logo-text">
+                    <span class="orders-text">Orders</span>
+                    <span class="kun-text">君</span>
+                </div>
+            </a>
+        </div>
+        <div class="header-buttons">
+          <select id="language-select" class="lang-select">
+            <option value="jp">日本語</option>
+            <option value="pt" selected>Português</option>
+            <option value="en">English</option>
+          </select>
+          <button class="header-btn nav-btn" id="pedido-admin-btn" data-i18n="pedido_admin">Pedido<br>Admin</button>
+          <!-- <button class="header-btn nav-btn" id="pedido-client-btn" data-i18n="pedido_tablet">Pedido<br>tablet</button>
+          <button class="header-btn nav-btn" id="pedido-takeout-btn" data-i18n="pedido_takeout">Pedido<br>takeout</button> -->
+          <button class="header-btn nav-btn" id="comanda-btn" data-i18n="orders">Orders</button>
+          <button class="header-btn nav-btn" id="reserva-btn"style="background-color: orange" data-i18n="reservas">Reservas</button>
+          <button class="header-btn nav-btn" id="reserva-hist-btn" data-i18n="reservas_historico">Reservas<br>(histórico)</button>
+          <button class="header-btn nav-btn" id="pos-btn"  data-i18n="pos">POS</button>
+          <button class="header-btn nav-btn" id="menu-btn" data-i18n="menu">Menu</button>
+          <button class="header-btn nav-btn" id="history-btn" data-i18n="historico_pedidos">Histórico<br>pedidos</button>
+          <button class="header-btn nav-btn" id="logout-btn" data-i18n="logout">Logout</button>
+        </div>
+        <!-- Menu Hambúrguer -->
+        <!-- <div class="hamburger-menu">
+            <input type="checkbox" id="menu-toggle" />
+            <label for="menu-toggle" class="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            <div class="hamburger-items">
+              <a class="header-btn nav-btn" href="./index.html" data-i18n="reservas">Reservas</a>
+              <button class="header-btn nav-btn" data-i18n="pos">POS</button>
+              <button class="header-btn nav-btn" data-i18n="menu">Menu</button>
+              <a class="header-btn nav-btn" href="./historico.html" data-i18n="historico">Histórico</a>
+              <button class="header-btn nav-btn" data-i18n="logout">Logout</button>
+            </div> -->
+    </header>
+
+    <div class="container-reservation">
+        <!-- Data do dia atual -->
+        <div class="left">
+          <div class="adicionar-btn">
+            <h2 id="current_time"></h2>
+            <button id="create-reservation-btn" data-i18n="add_reservation">Adicionar Reserva</button>
+
+          </div>
+
+
+            <!--Mesas-->
+            <div class="mesas" id="mesas-container"></div>
+
+
+            <div id="notification-container" style="display: none;"></div>
+        </div>
+
+        <div class="right">
+          <h2 data-i18n="today_reservations">Reservas do Dia</h2>
+          <div class="table-mother-div">
+            <table class="reservation-tab-day">
+              <thead>
+                <tr class="tab-dia-col sticky-right">
+                  <th>ID</th>
+                  <th data-i18n="name">Nome</th>
+                  <th data-i18n="table">Mesa</th>
+                  <th data-i18n="quantity">Quantidade</th>
+                  <th colspan="2" data-i18n="time">Horário</th>
+                </tr>
+              </thead>
+              <tbody id="reservas-dia-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+
+        <!-- Modal Criar Reserva -->
+        <div id="create-reservation-modal" class="modal" style="display:none;">
+          <div class="modal-content">
+            <div class="modal-title">
+              <span class="close">&times;</span>
+              <h2 data-i18n="create_reservation_title">Criar Nova Reserva</h2>
+            </div>
+
+            <div class="modal-input-container">
+              <label for="create-reservation-date" data-i18n="reservation_date">Data da Reserva:</label>
+              <input id="create-reservation-date" type="date" placeholder="YYYY-MM-DD" required>
+            </div>
+
+            <div class="modal-input-container">
+              <label for="create-start-time" data-i18n="start_time">Hora de Início:</label>
+              <input id="create-start-time" type="time" required>
+            </div>
+
+            <div class="modal-input-container">
+              <label for="create-end-time" data-i18n="end_time">Hora de Término:</label>
+              <input id="create-end-time" type="time" required>
+            </div>
+
+            <div class="modal-input-container">
+              <label for="create-table-number" data-i18n="table_number">Número da Mesa:</label>
+              <input id="create-table-number" type="number" min="1" required>
+            </div>
+
+            <div class="modal-input-container">
+              <label for="create-reservation-name" data-i18n="reservation_name">Nome da Reserva:</label>
+              <input id="create-reservation-name" type="text" data-i18n-placeholder="customer_name_placeholder" required>
+            </div>
+
+            <div class="modal-input-container">
+              <label for="create-phone-number" data-i18n="phone">Telefone:</label>
+              <input id="create-phone-number" type="tel" placeholder="09012345678" required>
+            </div>
+
+            <div class="modal-input-container">
+              <label for="create-num-people" data-i18n="num_people">Número de Pessoas:</label>
+              <input id="create-num-people" type="number" min="1" required>
+            </div>
+
+            <div class="modal-input-container">
+              <label for="create-remarks" data-i18n="remarks">Observações:</label>
+              <input id="create-remarks" type="text" data-i18n-placeholder="remarks_placeholder">
+            </div>
+
+            <div class="modal-buttons">
+              <button id="submit-create-reservation" class="btn-primary" data-i18n="create_reservation_btn">Criar Reserva</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Editar/Excluir-->
+
+        <div id="mesa-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-title">
+      <span class="close" id="close-modal">&times;</span>
+      <h2 data-i18n="edit_reservation_title">Editar Reserva</h2>
+    </div>
+
+    <div class="modal-input-container">
+      <label for="modal-reservation-date" data-i18n="reservation_date">Data da Reserva:</label>
+      <input id="modal-reservation-date" type="date" required>
+    </div>
+
+    <div class="modal-input-container">
+      <label for="modal-start-time" data-i18n="start_time">Hora de Início:</label>
+      <input id="modal-start-time" type="time" required>
+    </div>
+
+    <div class="modal-input-container">
+      <label for="modal-end-time" data-i18n="end_time">Hora de Término:</label>
+      <input id="modal-end-time" type="time" required>
+    </div>
+
+    <div class="modal-input-container">
+      <label for="modal-table-number" data-i18n="table_number">Número da Mesa:</label>
+      <input id="modal-table-number" type="number" min="1" required>
+    </div>
+
+    <div class="modal-input-container">
+      <label for="modal-reservation-name" data-i18n="reservation_name">Nome da Reserva:</label>
+      <input id="modal-reservation-name" type="text" required>
+    </div>
+
+    <div class="modal-input-container">
+      <label for="modal-phone-number" data-i18n="phone">Telefone:</label>
+      <input id="modal-phone-number" type="tel" required>
+    </div>
+
+    <div class="modal-input-container">
+      <label for="modal-num-people" data-i18n="num_people">Número de Pessoas:</label>
+      <input id="modal-num-people" type="number" min="1" required>
+    </div>
+
+    <div class="modal-input-container">
+      <label for="modal-remarks" data-i18n="remarks">Observações:</label>
+      <input id="modal-remarks" type="text" data-i18n-placeholder="remarks_placeholder">
+    </div>
+
+    <div class="modal-buttons">
+      <button class="modal-save" id="submit-edit-reservation" data-i18n="save">Salvar</button>
+      <button class="modal-delete" id="modal-delete" data-i18n="delete">Deletar</button>
+    </div>
+  </div>
+</div>
+
+
+
+    </div>
+    <div id="loading-popup" class="loading-popup">
+      <div class="loading-container">
+          <div class="spinner"></div>
+          <div class="loading-text">await</div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="../script/loding-popup.js"></script>
+    <script src="../script/translations.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../config.js"></script>
+</body>
+
+</html>

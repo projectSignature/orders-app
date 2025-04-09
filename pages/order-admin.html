@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders君</title>
+    <link rel="stylesheet" href="../style/loading-popup.css">
+    <link rel="stylesheet" href="../style/pos.css">
+    <link rel="stylesheet" href="../style/orders-takeout.css">
+    <link rel="stylesheet" href="../style/order.css">
+    <link rel="stylesheet" href="../style/common.css">
+    <script src="../script/translations.js"></script>
+
+</head>
+<body>
+    <header class="header" style="height:5rem!important">
+      <div class="logo-container">
+        <div class="logo-text">
+            <span class="orders-text">Orders</span>
+            <span class="kun-text">君</span>
+        </div>
+      </div>
+      <div class="header-buttons">
+        <select id="language-select" class="lang-select">
+          <option value="jp">日本語</option>
+          <option value="pt" selected>Português</option>
+          <option value="en">English</option>
+        </select>
+        <button class="header-btn nav-btn" id="pedido-admin-btn" style="background-color: orange" data-i18n="pedido_admin">Pedido<br>Admin</button>
+        <!-- <button class="header-btn nav-btn" id="pedido-client-btn" data-i18n="pedido_tablet">Pedido<br>tablet</button>
+        <button class="header-btn nav-btn" id="pedido-takeout-btn" data-i18n="pedido_takeout">Pedido<br>takeout</button> -->
+        <button class="header-btn nav-btn" id="comanda-btn" data-i18n="orders">Orders</button>
+        <button class="header-btn nav-btn" id="reserva-btn" data-i18n="reservas">Reservas</button>
+        <button class="header-btn nav-btn" id="reserva-hist-btn" data-i18n="reservas_historico">Reservas<br>(histórico)</button>
+        <button class="header-btn nav-btn" id="pos-btn" data-i18n="pos">POS</button>
+        <button class="header-btn nav-btn" id="menu-btn" data-i18n="menu">Menu</button>
+        <button class="header-btn nav-btn" id="history-btn" data-i18n="historico_pedidos">Histórico<br>pedidos</button>
+        <button class="header-btn nav-btn" id="logout-btn" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+    <div class="container">
+      <div class="div-left">
+        <div id="select-categorie">
+          <select id="take-or-uber">
+           <option value='takeout'>Take out</option>
+           <option value="uber" selected>Uber</option>
+           <option value="demaekan">Demaekan</option>
+           <option value="other">Outros</option>
+           <option value="local">Local</option>
+         </select>
+        </div>
+        <div id="categories-div">
+       </div>
+     </div>
+     <div id="center-div"></div>
+     <div id="right-div">
+      <div id="list-order">
+      </div>
+      <div class="name-imput">
+        <input type="text" id="name-input" data-i18n-placeholder="customer_name" placeholder="Nome do cliente ou número do uber"/>
+
+      </div>
+      <div class="datetime-picker">
+        <label for="datetime-input" data-i18n="pickup_time">Pickup Time:</label>
+
+        <input type="datetime-local" id="pickup-time" name="datetime-input">
+        <img id="update-time-btn" class="update-time-btn"  src="../imagen/update.jpg"/>
+      </div>
+      <!-- <div id="tax-button">
+        <button id="tax8">8%</button>
+        <button id="tax10">10%</button>
+      </div> -->
+      <div id="cashier">
+        <div id="total-amount" data-i18n="without_tax">Sem imposto:￥0</div>
+        <div id="tax-by-amount" data-i18n="tax_amount">Imposto ￥0</div>
+        <!-- <div id="incluid-tax-total-amount" data-i18n="with_tax">Total ￥0</div> -->
+        <button id="confirm-order" data-i18n="register">Registrar</button>
+
+      </div>
+    </div>
+   </div>
+   <!-- <div id="loading-popup" class="loading-popup" style="">
+       await...
+   </div> -->
+   <div id="custom-alert" class="custom-alert">
+     <div class="alert-content">
+         <span class="checkmark">✓</span>
+         <p id="oder-successfully" data-i18n="order_success">Pedido feito</p>
+     </div>
+ </div>
+ <!-- 警告メッセージ用モーダルウィンドウ -->
+ <div id="alert-modal" class="modal">
+     <div class="modal-content">
+         <span class="close">&times;</span>
+         <h2 id="Atanction-title">Atenção</h2>
+         <p id="alert-message">Selecione ou abra uma comanda</p>
+         <button id="close-alert-btn">Fechar</button>
+     </div>
+ </div>
+ <div id="loading-popup" class="loading-popup">
+   <div class="loading-container">
+       <div class="spinner"></div>
+       <div class="loading-text">await</div>
+   </div>
+ </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="../script/loding-popup.js"></script>
+
+    <script src="../config.js"></script>
+    <script src="../script/order-admin.js"></script> <!-- Link to your JavaScript file -->
+    <script src="../script/common.js"></script>
+</body>
+</html>

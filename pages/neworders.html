@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders君</title>
+    <link rel="stylesheet" href="../style/loading-popup.css">
+    <link rel="stylesheet" href="../style/order.css">
+    <link rel="stylesheet" href="../style/appname.css">
+
+</head>
+<body>
+    <div id="app">
+        <header>
+            <div id="order-categories">
+                <!-- カテゴリーを動的に生成 -->
+            </div>
+            <div id="language-switcher" style="margin-left: auto;">
+                <img src="../imagen/language-pt.png" alt="Português" class="language-icon" data-lang="pt">
+                <img src="../imagen/language-ja.png" alt="日本語" class="language-icon" data-lang="ja">
+                <img src="../imagen/language-en.png" alt="English" class="language-icon" data-lang="en">
+            </div>
+            <div id="table-container">
+                <div id="div-table-btn">
+                    <img src="../imagen/table-illustration.png" alt="Table" id="table-illustration">
+                    <div id="table-number">1</div>
+                </div>
+                <div style="margin-top: 15px;display:flex">
+                    <button id="view-history" data-translate-key="Histórico">Histórico</button>
+                    <button id="update" data-translate-key="reload" style="margin-left:5px">
+                     <img src="https://orders-image.sgp1.digitaloceanspaces.com/common/update.png" alt="Reload" style="width: 35px; height: 35px;">
+                   </button>
+                </div>
+            </div>
+        </header>
+        <main>
+            <div id="menu-container">
+                <div id="menu-items">
+                    <!-- メニューを動的に生成 -->
+                </div>
+            </div>
+            <aside>
+                <div id="order-names-container" class="scrollable-names">
+                    <!-- 名前がここに追加される -->
+                </div>
+                <button id="show-add-name-modal" data-translate-key="Criar comanda">Criar comanda</button>
+                <h2 id="list-title-h2" data-translate-key="Lista de pedidos">Lista de pedidos</h2>
+                <ul id="selected-items">
+                    <!-- 選択されたアイテムがここに表示される -->
+                </ul>
+                <button id="confirm-order" data-translate-key="Confirmar pedido">Confirmar pedido</button>
+                <button id="edit-order" data-translate-key="Alterar">Alterar</button> <!-- 修正ボタンを追加 -->
+                <div class="logo-container" id="follow-us-window" onclick="openModal()">
+                  <img src='https://orders-image.sgp1.digitaloceanspaces.com/common/Follow.png'/>
+                </div>
+
+                <!-- Modal -->
+                <div id="socialModal" class="social-modal">
+                    <div class="social-modal-content">
+                        <span class="social-close" onclick="closeModal()">&times;</span>
+                        <div id="qr-container">
+                            <!-- QR images will be appended here -->
+                        </div>
+                    </div>
+                </div>
+
+
+            </aside>
+
+            <!-- 名前を追加するためのモーダルウィンドウ -->
+            <div id="add-name-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 data-translate-key="Digite o nome para registro da comanda">Digite o nome para registro da comanda</h2>
+                    <form autocomplete="off">
+                        <input type="text" id="name-input" name="no-autofill" autocomplete="off">
+                      </form>
+                    <button id="add-name-btn" data-translate-key="Criar comanda">Criar comanda</button>
+                </div>
+            </div>
+
+            <!-- オーダー修正のためのモーダルウィンドウ -->
+            <div id="edit-order-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 data-translate-key="Alterar o pedido">Alterar o pedido</h2>
+                    <ul id="edit-order-list">
+                        <!-- 修正対象のオーダーアイテムをここに表示 -->
+                    </ul>
+                    <button id="save-changes-btn" data-translate-key="Salvar">Salvar</button>
+                </div>
+            </div>
+
+            <!-- パスワード入力モーダル -->
+            <div id="password-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 data-translate-key="Senha para alterar número da mesa">Senha para alterar número da mesa</h2>
+                    <input type="password" id="password-input" placeholder="Enter pass" style="font-size: 50px">
+                    <button id="confirm-password-btn" data-translate-key="Confirmar"style="font-size: 50px; margin-top:25px">Confirmar</button>
+                </div>
+            </div>
+
+            <!-- テーブル番号変更モーダル -->
+            <div id="table-number-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 data-translate-key="Alterar número da mesa">Alterar número da mesa</h2>
+                    <input type="number" id="new-table-number" placeholder="Novo número da mesa" min="1" style="text-align: center;font-size: 50px">
+                    <button id="save-table-number-btn" data-translate-key="Salvar"style="font-size: 50px; margin-top:25px">Salvar</button>
+                </div>
+            </div>
+            <!-- 警告メッセージ用モーダルウィンドウ -->
+            <div id="alert-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 id="Atanction-title">Atenção</h2>
+                    <p id="alert-message">Selecione ou abra uma comanda</p>
+                    <button id="close-alert-btn">Fechar</button>
+                </div>
+            </div>
+            <div id="custom-alert" class="custom-alert">
+              <div class="alert-content">
+                  <span class="checkmark">✓</span>
+                  <p id="oder-successfully">オーダーが確定されました。</p>
+              </div>
+          </div>
+          <!-- 履歴表示のモーダルウィンドウ -->
+<div id="history-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 data-translate-key="Escolha a comanda">Escolha a comanda</h3>
+        <div id="history-list">
+            <!-- ここに履歴のオーダー名を追加 -->
+        </div>
+    </div>
+</div>
+<!-- オーダー詳細を表示するためのモーダル -->
+<div id="order-details-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="order-name-title"></h2>
+        <p id="order-total-amount"></p>
+        <ul id="order-items-list">
+            <!-- アイテム詳細がここに表示される -->
+        </ul>
+    </div>
+</div>
+<!-- <div id="loading-popup" class="loading-popup" style="display: none;">
+    登録中...
+</div> -->
+
+<div id="loading-popup" class="loading-popup">
+  <div class="loading-container">
+      <div class="spinner"></div>
+      <div class="loading-text">await</div>
+  </div>
+</div>
+
+        </main>
+    </div>
+
+    <div id="alcohol-warning-modal" class="alcohol-modal-overlay hidden">
+      <div class="alcohol-modal-content">
+        <!-- <img src="https://cdn.pixabay.com/photo/2016/11/29/09/08/alcohol-1869285_1280.jpg" alt="飲酒禁止" class="alcohol-modal-image"> -->
+        <h2 id="alcohol-modal-title">🚗 飲酒運転防止</h2>
+        <p id="alcohol-modal-message-ja">
+          お車を運転されるお客様への酒類の提供はできません。安全のため、ご理解とご協力をお願いいたします。
+        </p>
+        <p id="alcohol-modal-message-en" >
+          Alcoholic beverages cannot be served to drivers. Thank you for your understanding and cooperation.
+        </p>
+        <p id="alcohol-modal-message-pt">
+          Aos clientes que conduzem veículos, não servimos bebidas alcoólicas. Agradecemos a sua compreensão e colaboração.
+        </p>
+        <button id="close-alcohol-modal">閉じる / Close / Fechar</button>
+      </div>
+    </div>
+
+
+    <button id="fullscreenButton" style="display: none">Enter Fullscreen</button>
+    <button id="exitFullscreenButton" style="display: none;">Exit Fullscreen</button>
+    <script src="../../config.js"></script>
+    <script src="../script/loding-popup.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="../script/neworder.js"></script>
+</body>
+</html>
