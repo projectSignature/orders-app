@@ -454,6 +454,7 @@ button {
     transform: translate(-50%, -50%);
     max-height: 90%;
     overflow: auto;
+    z-index:9999
 }
 
 .close {
@@ -632,7 +633,7 @@ input:focus {
 }
 .sticky-right {
   position: sticky;
-  z-index: 2;
+
 }
 
 
@@ -1052,14 +1053,7 @@ table button:hover{
 }
 
 
-.modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px; /* モーダルの最大幅を設定 */
-}
+
 
 .close {
     color: #aaa;
