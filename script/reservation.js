@@ -78,7 +78,10 @@ function fillTableWithReservations(reservations) {
     tableContainer.innerHTML = ''; // Limpa qualquer conteúdo existente
     // Ordena as reservas pelo número da mesa (table_number) em ordem crescente
     // reservations.sort((a, b) => a.table_number - b.table_number);
-
+    if(reservations===undefined){
+      console.log('no order')
+      return
+    }
     reservations.forEach(reservation => {
         const tableElement = document.createElement('div');
         tableElement.classList.add('mesa');
@@ -180,57 +183,79 @@ function hasTimeConflict(newReservation, existingReservations) {
 }
 
 function createReservation() {
-    showLoadingPopup();
+  showLoadingPopup();
 
-    const tableNumber = document.getElementById('create-table-number').value;
+  const tableNumber = document.getElementById('create-table-number').value;
 
-    if (tableNumber > tableCount) {
-        hideLoadingPopup();
-        alert(`${t('table_number_limit')} ${tableCount}`, 'error');
-        return;
-    }
+  if (tableNumber > tableCount) {
+    hideLoadingPopup();
+    alert(`${t('table_number_limit')} ${tableCount}`, 'error');
+    return;
+  }
 
-    const url = `${server}/reservations/create`;
-    const reservationData = {
-        user_id: userInfo.id,
-        reservation_date: document.getElementById('create-reservation-date').value,
-        reservation_start_time: document.getElementById('create-start-time').value,
-        reservation_end_time: document.getElementById('create-end-time').value,
-        table_number: document.getElementById('create-table-number').value,
-        reservation_name: document.getElementById('create-reservation-name').value,
-        phone_number: document.getElementById('create-phone-number').value,
-        num_people: document.getElementById('create-num-people').value,
-        remarks: document.getElementById('create-remarks').value || null
-    };
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reservationData)
-    })
+  const reservationData = {
+    user_id: userInfo.id,
+    reservation_date: document.getElementById('create-reservation-date').value,
+    reservation_start_time: document.getElementById('create-start-time').value,
+    reservation_end_time: document.getElementById('create-end-time').value,
+    table_number: tableNumber,
+    reservation_name: document.getElementById('create-reservation-name').value,
+    phone_number: document.getElementById('create-phone-number').value,
+    num_people: document.getElementById('create-num-people').value,
+    remarks: document.getElementById('create-remarks').value || null
+  };
+
+  // ✅ クライアント側バリデーション（remarks以外）
+  const missingFields = [];
+  if (!reservationData.user_id) missingFields.push('user_id');
+  if (!reservationData.reservation_date) missingFields.push('reservation_date');
+  if (!reservationData.reservation_start_time) missingFields.push('reservation_start_time');
+  if (!reservationData.reservation_end_time) missingFields.push('reservation_end_time');
+  if (!reservationData.table_number) missingFields.push('table_number');
+  if (!reservationData.reservation_name) missingFields.push('reservation_name');
+  if (!reservationData.phone_number) missingFields.push('phone_number');
+  if (!reservationData.num_people) missingFields.push('num_people');
+
+  if (missingFields.length > 0) {
+    hideLoadingPopup();
+
+    const translated = missingFields.map(key => translation[currentLang]?.[key] || key);
+
+    alert(`⚠️ ${currentLang === 'jp' ? '未入力項目があります：' : currentLang === 'pt' ? 'Campos ausentes:' : 'Missing fields:'}\n\n${translated.join(', ')}`);
+    return;
+  }
+
+
+  fetch(`${server}/reservations/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(reservationData)
+  })
     .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao criar a reserva');
-        }
-        return response.json();
+      if (!response.ok) {
+        throw new Error('Erro ao criar a reserva');
+      }
+      return response.json();
     })
     .then(data => {
-        hideLoadingPopup();
-        if (data.success) {
-            showNotification(data.message, 'success');
-            document.getElementById('create-reservation-modal').style.display = 'none';
-            getTableData();
-        } else {
-            showNotification(data.message, 'error');
-        }
+      hideLoadingPopup();
+      if (data.success) {
+        showNotification(data.message, 'success');
+        document.getElementById('create-reservation-modal').style.display = 'none';
+        getTableData();
+      } else {
+        showNotification(data.message, 'error');
+      }
     })
     .catch(error => {
-        hideLoadingPopup();
-        showNotification(error.message, 'error');
-        console.error('Erro ao criar a reserva:', error);
+      hideLoadingPopup();
+      showNotification(error.message, 'error');
+      console.error('Erro ao criar a reserva:', error);
     });
 }
+
 
 const submitCreateReservationBtn = document.getElementById('submit-create-reservation');
 submitCreateReservationBtn.addEventListener('click', createReservation);
