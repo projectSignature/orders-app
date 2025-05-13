@@ -1054,10 +1054,10 @@ document.getElementById('confirm-password-btn').addEventListener('click', () => 
         document.getElementById('password-modal').style.display = 'none';
         document.getElementById('table-number-modal').style.display = 'block';
         // fullscreenButtonとexitFullscreenButtonの表示状態をチェック
-        const isFullscreenButtonVisible = document.getElementById('fullscreenButton').style.display === 'flex';
-        const isExitFullscreenButtonVisible = document.getElementById('exitFullscreenButton').style.display === 'flex';
+        //const isFullscreenButtonVisible = document.getElementById('fullscreenButton').style.display === 'flex';
+        //const isExitFullscreenButtonVisible = document.getElementById('exitFullscreenButton').style.display === 'flex';
 
-      document.getElementById('exitFullscreenButton').style.display = 'block'
+      //document.getElementById('exitFullscreenButton').style.display = 'block'
         // モーダルを閉じたときにボタンを非表示にするイベントリスナーを追加
         document.getElementById('table-number-modal').addEventListener('click', () => {
             document.getElementById('fullscreenButton').style.display = 'none';
