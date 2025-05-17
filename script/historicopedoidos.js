@@ -291,13 +291,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 const deleteBtn = tr.querySelector('.delete-btn');
 deleteBtn.addEventListener('click', () => {
-    // 確認ダイアログを表示
-    const confirmDelete = confirm(`${t('confirm_delete_id')} : ${order.id}`);
+    // clients_id が 20 の場合はパスワード確認
+    if (clients.id === 20) {
+        const password = prompt('Digite a senha para deletar a comanda:');
+        if (password !== '1515') {
+            alert('Senha incorreta.');
+            return;
+        }
+    }
 
+    const confirmDelete = confirm(`Deseja deletar a comanda : ${order.id}`);
     if (confirmDelete) {
-        // 削除処理を実行
-        const itemIds = order.OrderItems.map(item => item.id); // OrderItems の itemIds を取得
-        console.log(itemIds)
+        const itemIds = order.OrderItems.map(item => item.id);
+        console.log(itemIds);
         deleteOrder(order.id, itemIds);
     }
 });
