@@ -623,6 +623,8 @@ input:focus {
     width: 80%;
     max-width: 1200px;
     margin: 25px auto;
+    height: 90%;
+    overflow: auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -901,11 +903,6 @@ input:focus {
 
     /* PÁGINA DE HISTÓRICO */
 
-    .container-historico {
-        padding: 5px;
-        margin: 0;
-        width: 98%;
-    }
 
     .date-range {
         gap: 3px;
