@@ -767,6 +767,7 @@ document.getElementById("add-option-to-modal").addEventListener("click", () => {
 
 
 document.getElementById("save-option-modal").addEventListener("click", async () => {
+   showLoadingPopup();
   try {
     const res = await fetch(`${server}/orders/update/options`, {
       method: 'POST',
@@ -788,6 +789,7 @@ document.getElementById("save-option-modal").addEventListener("click", async () 
     } else {
       alert(result.message || 'Erro ao salvar opções');
     }
+    hideLoadingPopup()
   } catch (err) {
     console.error(err);
     alert('Falha na atualização das opções');
