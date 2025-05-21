@@ -234,6 +234,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         menuItemElement.addEventListener('click', () => {
             if (!isDragging) { // ドラッグ中でない場合のみクリックイベントを処理
                 displayMenuItem(menuItem);
+                document.getElementById('edit-options-btn').style.display='flex'
             }
         });
 
@@ -275,6 +276,7 @@ function saveMenuOrder(filteredMenus) {
 }
 
     function displayMenuItem(menuItem) {
+      console.log(menuItem)
       stockMotherDiv.style.display = 'none';
       menuForm.style.display = 'block';
         currentMenuItem = menuItem;
@@ -292,24 +294,24 @@ function saveMenuOrder(filteredMenus) {
         document.getElementById('stock_status').value = menuItem.stock_status ? "true" : "false";
 
         // Display options with delete functionality
-        optionsListElement.innerHTML = '';
-        const menuOptions = options.filter(option => option.menu_id === menuItem.id);
-        menuOptions.forEach(option => {
-        const liElement = document.createElement('li');
-        liElement.classList.add('option-item');
-        liElement.textContent = `${option.option_name_pt} (${option.additional_price})`;
-
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Deletar';
-        deleteButton.classList.add('delete-option-btn');
-        deleteButton.addEventListener('click', async () => {
-            await deleteOption(option.id);
-            liElement.remove();
-        });
-
-        liElement.appendChild(deleteButton);
-        optionsListElement.appendChild(liElement);
-});
+//         optionsListElement.innerHTML = '';
+//         const menuOptions = options.filter(option => option.menu_id === menuItem.id);
+//         menuOptions.forEach(option => {
+//         const liElement = document.createElement('li');
+//         liElement.classList.add('option-item');
+//         liElement.textContent = `${option.option_name_pt} (${option.additional_price})`;
+//
+//         const deleteButton = document.createElement('button');
+//         deleteButton.textContent = 'Deletar';
+//         deleteButton.classList.add('delete-option-btn');
+//         deleteButton.addEventListener('click', async () => {
+//             await deleteOption(option.id);
+//             liElement.remove();
+//         });
+//
+//         liElement.appendChild(deleteButton);
+//         optionsListElement.appendChild(liElement);
+// });
         // Remove the active class from the previously active menu item, if any
         const activeMenuItem = document.querySelector('.menu-item.active');
         if (activeMenuItem) {
@@ -424,58 +426,58 @@ async function deleteOption(optionId) {
     }
 }
 
-document.getElementById('add-option-btn').addEventListener('click', async () => {
-    const optionNameEn = document.getElementById('new-option-en').value;
-    const optionNamePt = document.getElementById('new-option-pt').value;
-    const optionNameJa = document.getElementById('new-option-ja').value;
-    const additionalPrice = document.getElementById('new-option-price').value;
-
-    if (!optionNameEn || !additionalPrice) {
-        alert('Selecione todos os campos para o registro');
-        return;
-    }
-
-    const newOption = {
-        user_id: clients.id,
-        menu_id: clients.currenMenuID,
-        option_name_en: optionNameEn,
-        option_name_pt: optionNamePt,
-        option_name_ja: optionNameJa,
-        additional_price: additionalPrice
-    };
-
-    try {
-      fetch(`${server}/orders/add/option`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(newOption)
-      })
-      .then(response => response.json())
-      .then(data => {
-        showCustomAlert(`Adicionado`)
-        const liElement = document.createElement('li');
-        liElement.textContent = `${addedOption.option_name_en} (${addedOption.additional_price})`;
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.classList.add('delete-option-btn');
-        deleteButton.addEventListener('click', async () => {
-            await deleteOption(addedOption.id);
-            liElement.remove();
-        });
-
-        liElement.appendChild(deleteButton);
-        optionsListElement.appendChild(liElement);
-
-        alert('Option added successfully');
-          console.log('Order updated:', data);
-      })
-    } catch (error) {
-        console.error('Failed to add option:', error);
-        alert('Failed to add option');
-    }
-});
+// document.getElementById('add-option-btn').addEventListener('click', async () => {
+//     const optionNameEn = document.getElementById('new-option-en').value;
+//     const optionNamePt = document.getElementById('new-option-pt').value;
+//     const optionNameJa = document.getElementById('new-option-ja').value;
+//     const additionalPrice = document.getElementById('new-option-price').value;
+//
+//     if (!optionNameEn || !additionalPrice) {
+//         alert('Selecione todos os campos para o registro');
+//         return;
+//     }
+//
+//     const newOption = {
+//         user_id: clients.id,
+//         menu_id: clients.currenMenuID,
+//         option_name_en: optionNameEn,
+//         option_name_pt: optionNamePt,
+//         option_name_ja: optionNameJa,
+//         additional_price: additionalPrice
+//     };
+//
+//     try {
+//       fetch(`${server}/orders/add/option`, {
+//           method: 'POST',
+//           headers: {
+//               'Content-Type': 'application/json'
+//           },
+//           body: JSON.stringify(newOption)
+//       })
+//       .then(response => response.json())
+//       .then(data => {
+//         showCustomAlert(`Adicionado`)
+//         const liElement = document.createElement('li');
+//         liElement.textContent = `${addedOption.option_name_en} (${addedOption.additional_price})`;
+//         const deleteButton = document.createElement('button');
+//         deleteButton.textContent = 'Delete';
+//         deleteButton.classList.add('delete-option-btn');
+//         deleteButton.addEventListener('click', async () => {
+//             await deleteOption(addedOption.id);
+//             liElement.remove();
+//         });
+//
+//         liElement.appendChild(deleteButton);
+//         optionsListElement.appendChild(liElement);
+//
+//         alert('Option added successfully');
+//           console.log('Order updated:', data);
+//       })
+//     } catch (error) {
+//         console.error('Failed to add option:', error);
+//         alert('Failed to add option');
+//     }
+// });
 
 
 document.getElementById('delete-menu-item').addEventListener('click', async () => {
@@ -524,6 +526,7 @@ function clearMenuForm() {
 
 
 document.getElementById('add-new-menu').addEventListener('click', () => {
+  document.getElementById('edit-options-btn').style.display='none'
   stockMotherDiv.style.display = 'none';
   menuForm.style.display = 'block';
   newFlug =true
@@ -543,9 +546,9 @@ document.getElementById('add-new-menu').addEventListener('click', () => {
     document.getElementById('display_order').value = '';
     document.getElementById('stock_status').checked = true;
     document.getElementById('menu_name_control').value = ''
-    document.getElementById('options-list').style.display='none'
-    document.getElementById('add-option-form').style.display='none'
-    document.getElementById('optionsTitle').style.display='none'
+    // document.getElementById('options-list').style.display='none'
+    // document.getElementById('add-option-form').style.display='none'
+    // document.getElementById('optionsTitle').style.display='none'
 
     const newCategorySelect = document.getElementById('new-category-select');
     // 既存のオプションをクリア
@@ -679,3 +682,140 @@ function showCustomAlert(message) {
         alertBox.style.display = 'none';
     }, 1000); // 1秒間表示
 }
+
+let currentOptions = [];
+
+function renderOptions() {
+  const list = document.getElementById("option-modal-list");
+  list.innerHTML = "";
+
+  currentOptions.forEach((opt, idx) => {
+    const div = document.createElement("div");
+    div.className = "option-item";
+    div.innerHTML = `
+      <input value="${opt.option_name_pt}" onchange="currentOptions[${idx}].option_name_pt=this.value">
+      <input value="${opt.option_name_en}" onchange="currentOptions[${idx}].option_name_en=this.value">
+      <input value="${opt.option_name_ja}" onchange="currentOptions[${idx}].option_name_ja=this.value">
+      <input type="number" value="${opt.additional_price}" onchange="currentOptions[${idx}].additional_price=this.value">
+      <button class="delete-option-btn">Deletar</button>
+    `;
+
+    div.querySelector("button").addEventListener("click", () => {
+      currentOptions.splice(idx, 1); // currentOptions から削除
+      div.remove(); // 表示も削除
+    });
+
+    list.appendChild(div);
+  });
+
+}
+
+function updateOption(index, key, value) {
+  currentOptions[index][key] = value;
+}
+
+function removeOption(index) {
+  currentOptions.splice(index, 1);
+  renderOptions();
+}
+
+// document.getElementById("add-option-btn").addEventListener("click", () => {
+//   currentOptions.push({ option_name_pt: "", option_name_en: "", option_name_ja: "", additional_price: 0 });
+//   renderOptions();
+// });
+
+document.getElementById("edit-options-btn").addEventListener("click", () => {
+  console.log(clients.options)
+  const optionModal = document.getElementById("option-modal");
+  const list = document.getElementById("option-modal-list");
+  list.innerHTML = "";
+  currentOptions = clients.options.filter(opt => opt.menu_id === clients.currenMenuID);
+
+  currentOptions.forEach((opt, idx) => {
+    const div = document.createElement("div");
+    div.className = "option-item";
+    div.innerHTML = `
+      <input value="${opt.option_name_pt}" onchange="currentOptions[${idx}].option_name_pt=this.value">
+      <input value="${opt.option_name_en}" onchange="currentOptions[${idx}].option_name_en=this.value">
+      <input value="${opt.option_name_ja}" onchange="currentOptions[${idx}].option_name_ja=this.value">
+      <input type="number" value="${opt.additional_price}" onchange="currentOptions[${idx}].additional_price=this.value">
+      <button class="delete-option-btn">Deletar</button>
+    `;
+
+    const deleteBtn = div.querySelector(".delete-option-btn");
+    deleteBtn.addEventListener("click", () => {
+      currentOptions.splice(idx, 1); // currentOptionsから削除
+      div.remove(); // 表示上も削除
+    });
+
+    list.appendChild(div);
+  });
+
+
+  optionModal.style.display = "flex";
+});
+
+document.getElementById("add-option-to-modal").addEventListener("click", () => {
+  currentOptions.push({
+    option_name_pt: "",
+    option_name_en: "",
+    option_name_ja: "",
+    additional_price: 0
+  });
+  renderOptions(); // 再描画してUIにも反映
+});
+
+
+document.getElementById("save-option-modal").addEventListener("click", async () => {
+  try {
+    const res = await fetch(`${server}/orders/update/options`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        menu_id: clients.currenMenuID,
+        user_id: clients.id,
+        options: currentOptions
+      })
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      showCustomAlert("Opções atualizadas");
+      document.getElementById("option-modal").style.display = "none";
+
+      // フロントの clients.options を更新
+      clients.options = clients.options.filter(opt => opt.menu_id !== clients.currenMenuID).concat(result.data);
+    } else {
+      alert(result.message || 'Erro ao salvar opções');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Falha na atualização das opções');
+  }
+});
+
+
+// document.getElementById("add-option-to-modal").addEventListener("click", () => {
+//   const newOption = {
+//     user_id: clients.id,
+//     menu_id: clients.currenMenuID,
+//     option_name_pt: "",
+//     option_name_en: "",
+//     option_name_ja: "",
+//     additional_price: 0
+//   };
+//   fetch(`${server}/orders/add/option`, {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify(newOption)
+//   })
+//   .then(res => res.json())
+//   .then(() => {
+//     showCustomAlert("Opção adicionada");
+//     document.getElementById("edit-options-btn").click(); // 再描画
+//   });
+// });
+
+document.getElementById("close-option-modal").addEventListener("click", () => {
+  document.getElementById("option-modal").style.display = "none";
+});
