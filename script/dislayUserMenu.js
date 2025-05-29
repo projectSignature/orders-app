@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const orderCategories = document.getElementById('order-categories');
     const menuItemsContainer = document.getElementById('menu-items');
     const header = document.querySelector('header');
-   const users = [,"Buonissimo",,,,,,,,,,,,,,,,"Roots Grill",,,"Buonissimo Nagooya"]
+   const users = [,"Buonissimo",,,,,,,,,,,,,,,,"Roots Grill",,,"Buonissimo Nagoya"]
     document.getElementById('userTitle').innerText = users[clientId]
 
     const translations = {
