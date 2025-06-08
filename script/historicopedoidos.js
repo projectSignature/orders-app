@@ -70,6 +70,25 @@ function t(key) {
    applyTranslation(currentLang);
 
 document.addEventListener('DOMContentLoaded', () => {
+
+
+  if (clients.id === 20) {
+      const password = prompt('Digite a senha para acessar a página.');
+
+      // キャンセルが押された場合
+      if (password === null) {
+          window.location.href = './pos.html'
+      return
+        }
+
+      if (password !== '1515') {
+        alert('Senha incorreta.');
+        return;
+      }
+}
+
+
+   
     let allOrdes = []; // Armazenar todas as reservas localmente
     const itemsPerPage = 10; // Limite de 10 itens por página
     const maxDateRange = 30; // Limitar o intervalo de dias para evitar sobrecarga
