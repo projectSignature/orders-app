@@ -627,6 +627,10 @@ async function newAddMenu() {
     alert('Insira o nome de controle')
     return
   }
+
+    const selectedId = document.getElementById('new-category-select').value;
+  const selectedCategory = clients.categories.find(cat => cat.id === Number(selectedId));
+  
     const menuData = {
         user_id: clients.id,
         category_id: document.getElementById('new-category-select').value,
@@ -639,7 +643,8 @@ async function newAddMenu() {
         price: document.getElementById('price').value,
         display_order: document.getElementById('display_order').value,
         stock_status: document.getElementById('stock_status').value === "true",
-        admin_item_name: document.getElementById('menu_name_control').value
+        admin_item_name: document.getElementById('menu_name_control').value,
+        is_takeout :selectedCategory.is_takeout
     };
     const menuImageInput = document.getElementById('menu_image');
     const menuImageFile = menuImageInput.files[0]; // Pega o primeiro arquivo
