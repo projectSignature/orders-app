@@ -676,6 +676,10 @@ function updateActiveName(activeDiv) {
     activeDiv.classList.add('active');
 }
 
+   document.getElementById('update').addEventListener('click', function () {
+    location.reload(); // ページをリロード
+});
+
 // オーダーにアイテムを追加
 function addToOrder(item) {
     if (selectedName) {
