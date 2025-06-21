@@ -134,21 +134,20 @@ main {
     overflow-x: scroll;
     display: flex;
     flex-wrap: wrap;
-    padding: 20px;
+    /* padding: 20px; */
     gap: 10px;
     background-color: #fff;
     border: 1px solid #ddd;
-
-    box-sizing: border-box; /* パディングを含めて高さを計算 */
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
 }
-
 #menu-items {
     display: flex;
     flex-wrap: nowrap; /* 折り返しを防止し、横方向に配置 */
     gap: 10px;
     overflow-x: auto; /* 横スクロールを有効化 */
     overflow-y: hidden; /* 縦スクロールを無効化 */
-
     width: 100%;
     height: 100%; /* 高さを親コンテナに合わせる */
 }
@@ -228,18 +227,7 @@ button {
     cursor: pointer;
 }
 
-.menu-item h3 {
-    font-family: 'Montserrat', sans-serif; /* モダンでスタイリッシュなフォント */
-    font-size: 1.8rem; /* 大きめで目を引くサイズ */
-    font-weight: 700; /* 少し太めにして視認性をアップ */
-    color: #2c3e50; /* ダークブルーでエレガントな印象 */
-    margin: 15px 0 10px 0; /* 上下の余白を広めに設定 */
-    text-transform: capitalize; /* 単語の最初だけ大文字に */
-    letter-spacing: 0.8px; /* 文字間を広げて高級感を演出 */
-    text-align: center; /* 中央揃えで整った印象に */
-    transition: color 0.3s ease; /* ホバー時の色変化にスムーズさを */
-    overflow: hidden;
-}
+
 
 .menu-item p {
     font-family: 'Lato', sans-serif; /* 洗練されたシンプルなフォント */
@@ -874,28 +862,39 @@ button + button {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
-.menu-image img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  display: block;
+.menu-image {
+    width: 100%;
+    overflow: hidden;
+    height: 75%;
 }
 
 .menu-content {
-  padding: 12px;
-  text-align: center;
+    height: 25%;
+    padding: 10px;
 }
 
 .menu-name {
-  font-size: 1.1rem;
-  color: #333;
-  margin: 0 0 6px;
-  font-weight: 600;
+    font-size: 1em;
+    font-weight: bold;
+    color: #d32f2f;
+    text-shadow: 1px 1px 2px #aaa;
+    letter-spacing: 0.5px;
+    margin: 0.5em 0;
+    font-family: 'Segoe UI', sans-serif;
+    height: 50%;
+    padding-left: 10%;
 }
 
-.menu-price {
-  font-size: 1rem;
-  color: #444;
+
+.menu-item p {
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    color: #34495e;
+    margin: 0;
+    letter-spacing: 0.6px;
+    line-height: 1.6;
+    text-align: center;
+    transition: color 0.3s ease;
 }
 
 .tax-info {
@@ -949,12 +948,12 @@ button + button {
   text-align: center;
 }
 
-.menu-name {
+/* .menu-name {
   font-size: 1.1rem;
   color: #999;
   margin: 0;
   font-weight: 600;
-}
+} */
 
 .menu-item-card.sold-out {
   cursor: not-allowed;
