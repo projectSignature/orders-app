@@ -136,22 +136,22 @@ const modal = document.getElementById('add-name-modal');
 const showAddNameModalBtn = document.getElementById('show-add-name-modal');
 const closeModalBtn = document.querySelector('.modal .close');
 
-document.getElementById('fullscreenButton').addEventListener('click', () => {
-    const docElement = document.documentElement;
-    if (docElement.requestFullscreen) {
-        docElement.requestFullscreen();
-    } else if (docElement.mozRequestFullScreen) { // Firefox
-        docElement.mozRequestFullScreen();
-    } else if (docElement.webkitRequestFullscreen) { // Chrome, Safari, Opera
-        docElement.webkitRequestFullscreen();
-    } else if (docElement.msRequestFullscreen) { // IE/Edge
-        docElement.msRequestFullscreen();
-    }
+// document.getElementById('fullscreenButton').addEventListener('click', () => {
+//     const docElement = document.documentElement;
+//     if (docElement.requestFullscreen) {
+//         docElement.requestFullscreen();
+//     } else if (docElement.mozRequestFullScreen) { // Firefox
+//         docElement.mozRequestFullScreen();
+//     } else if (docElement.webkitRequestFullscreen) { // Chrome, Safari, Opera
+//         docElement.webkitRequestFullscreen();
+//     } else if (docElement.msRequestFullscreen) { // IE/Edge
+//         docElement.msRequestFullscreen();
+//     }
 
-    // フルスクリーンボタンを非表示、解除ボタンを表示
-    document.getElementById('fullscreenButton').style.display = 'none';
+//     // フルスクリーンボタンを非表示、解除ボタンを表示
+//     document.getElementById('fullscreenButton').style.display = 'none';
 
-});
+// });
 
 
 
