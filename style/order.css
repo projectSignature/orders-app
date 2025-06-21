@@ -118,7 +118,7 @@ header {
     cursor: pointer;
     width: 15.5%;
     height: 2.5rem;
-    font-size: 0.8em;
+    font-size: 1em;
 }
 
 #view-history {
@@ -700,8 +700,8 @@ button + button {
 }
 
 #table-illustration {
-    width: 60px;
-    height: 60px;
+    width: 4em;
+    height: 4em;
 }
 
 #table-number {
@@ -778,6 +778,7 @@ button + button {
 .history-item {
     padding: 10px;
     margin: 5px 0;
+
     background-color: #f1f1f1;
     border-radius: 5px;
     cursor: pointer;
