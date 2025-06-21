@@ -378,6 +378,14 @@ button {
     background-color: #e74c3c; /* 戻るボタンは赤 */
     margin-top: 10px;
 }
+#div-table-btn{
+  height: 40%;
+  overflow: hidden;
+}
+#update{
+  height: 100%;
+  margin: 0px !important
+}
 
 .scrollable-names {
     white-space: nowrap; /* テキストが改行されずに横に並ぶようにします */
