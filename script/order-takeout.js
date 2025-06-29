@@ -429,6 +429,7 @@ itemPriceElement.textContent = getTaxText(totalPrice);
                     table_no: orderList.tableNo,
                     items: orderList.order[selectedName],
                     orderId:'',
+                    order_type:'takeout',
                     pickup_time: getJapanTime()
                 })
             });
