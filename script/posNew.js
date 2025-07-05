@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async  () => {
   const MainData = await makerequest(`${server}/orders/getBasedata?user_id=${clients.id}`)
   let pendingOrders = await fetchPendingOrders(clients.id);
   const registerData = await getRegisters(clients.id);
-   await getOrdersbyPickupTime()
+   // await getOrdersbyPickupTime()
    openModalBtn.onclick = function() {
      openCaixaModal()
        setCashMode('open')
@@ -2056,12 +2056,11 @@ async function getOrdersbyPickupTime() {
               let countedInSummary = false;
 
               order.OrderItems.forEach(item => {
-                if(order.id === 6656){
-                  console.log(item)
-                }
+                const menuData = item.menu || item.Menu; // ← 両対応にする！
 
-                const isTakeout = item.menu?.is_takeout;
-                const price = parseFloat(item.item_price  || 0);
+                const isTakeout = menuData?.is_takeout;
+                const price = parseFloat(item.item_price || 0);
+
                 if (!isNaN(price)) {
                   orderTotal += price;
                   itemCount += 1;
@@ -2076,12 +2075,12 @@ async function getOrdersbyPickupTime() {
                 paymentSummary[key].total_amount += price;
                 paymentSummary[key].items.push(item);
 
-                // 👇 order単位で1回だけカウント
                 if (!countedInSummary) {
                   paymentSummary[key].count += 1;
                   countedInSummary = true;
                 }
               });
+
 
 
               // 🔽 カードを作成
