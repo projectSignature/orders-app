@@ -66,6 +66,11 @@ let clients ={
   regiterCaixa:0
 
 }
+console.log(clients)
+
+// if(clients.id === 17){
+//     window.location.href = '../posNew.html';
+// }
 
 if(clients.id===1){
   document.getElementById('print-invoice').style.display='none'
@@ -1988,7 +1993,7 @@ async function nextDayfinshTimeGFet(){
 
 async function getOrdersbyPickupTime() {
     showLoadingPopup();
-    // const startDate = `${salesStart.value}:00.000Z`;  // UTC指定のため'Z'を追加
+    const startDate = `${salesStart.value}:00.000Z`;  // UTC指定のため'Z'を追加
     const endDate = `${salesFinish.value}:59.999Z`;   // 23:59:59を設定
     const orderCardContainer = document.getElementById("order-card-under");
 
