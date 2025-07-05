@@ -67,7 +67,7 @@ let clients ={
 console.log(clients)
 
 if(clients.id === 17){
-    window.location.href = '../posNew.html';
+    window.location.href = '../pages/posNew.html';
 }
 
 if(clients.id===1){
