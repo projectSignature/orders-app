@@ -66,6 +66,10 @@ let clients ={
 }
 console.log(clients)
 
+if(clients.id === 17){
+    window.location.href = '../posNew.html';
+}
+
 if(clients.id===1){
   document.getElementById('print-invoice').style.display='none'
 }
