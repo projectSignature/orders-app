@@ -1989,9 +1989,14 @@ async function nextDayfinshTimeGFet(){
                         return formattedDate
 }
 
-
+let isLoadingOrders = false;
 
 async function getOrdersbyPickupTime() {
+  if (isLoadingOrders) {
+    console.warn("⚠️ getOrdersbyPickupTime() is already running. Skipping.");
+    return;
+  }
+  isLoadingOrders = true;
     showLoadingPopup();
     const startDate = `${salesStart.value}:00.000Z`;  // UTC指定のため'Z'を追加
     const endDate = `${salesFinish.value}:59.999Z`;   // 23:59:59を設定
@@ -2009,105 +2014,100 @@ async function getOrdersbyPickupTime() {
             }
         });
         const data = await response.json();
-        console.log(data)
         hideLoadingPopup();
-
-
         if (data.length > 0) {
           const paymentSummary = {
             cash10: { total_amount: 0, count: 0, items: [] },
             card10: { total_amount: 0, count: 0, items: [] },
             cash8:  { total_amount: 0, count: 0, items: [] },
             card8:  { total_amount: 0, count: 0, items: [] },
-            uber:   { total_amount: 0, count: 0, orders: [] }
+            uber:   { total_amount: 0, count: 0, orders: [] },
+            unconfirmed: { total_amount: 0, count: 0, orders: [] }  // 🆕
           };
-
 
           data.forEach(order => {
             const method = order.payment_method;
             const type = order.order_type;
+            if (order.order_status === "confirmed") {
+              // ✅ 既存のロジックをそのまま実行
+              if (type === "uber") {
+                const amount = parseFloat(order.total_amount);
+                paymentSummary.uber.orders.push(order);
+                paymentSummary.uber.total_amount += amount;
+                paymentSummary.uber.count += 1;
 
-            // Uberだけはそのまま合算（混載でもOK）
-            if (type === "uber") {
-              const amount = parseFloat(order.total_amount);
-              paymentSummary.uber.orders.push(order);
-              paymentSummary.uber.total_amount += amount;
-              paymentSummary.uber.count += 1;
+                const card = document.createElement("div");
+                card.className = "order-card-under uber-card";
+                card.innerHTML = `
+                  <div><strong >ID #${order.id}</strong></div>
+                  <div>${order.order_name}</div>
+                  <div>${order.order_type}</div>
+                  <div>${order.payment_method}</div>
+                  <div>￥${Number(order.total_amount).toLocaleString()}</div>
+                `;
+                orderCardContainer.appendChild(card);
+              } else {
+                let orderTotal = 0;
+                let itemCount = 0;
+                let countedInSummary = false;
+                order.OrderItems.forEach(item => {
+                  const menuData = item.menu || item.Menu;
+                  const isTakeout = menuData?.is_takeout;
+                  const price = parseFloat(item.item_price || 0);
+                  if (!isNaN(price)) {
+                    orderTotal += price;
+                    itemCount += 1;
+                  }
+                  if (isNaN(price)) return;
+                  const key = (method === "cash"
+                    ? (isTakeout ? "cash8" : "cash10")
+                    : (isTakeout ? "card8" : "card10")
+                  );
 
-              // Uberカードもここで作る
+                  paymentSummary[key].total_amount += price;
+                  paymentSummary[key].items.push(item);
+
+                  if (!countedInSummary) {
+                    paymentSummary[key].count += 1;
+                    countedInSummary = true;
+                  }
+                });
+                const card = document.createElement("div");
+                card.className = "order-card-under";
+                card.innerHTML = `
+                  <div><strong >ID #${order.id}</strong></div>
+                  <div>${order.order_name}</div>
+                  <div>${order.order_type}</div>
+                  <div>${order.payment_method}</div>
+                  <div>￥${Number(order.total_amount).toLocaleString()}</div>
+                `;
+                orderCardContainer.appendChild(card);
+              }
+            } else {
+              const unconfirmedLabel = getUnconfirmedLabel(clients.language);
+              // 合計に追加
+              const amount = parseFloat(order.total_amount || 0);
+              if (!isNaN(amount)) {
+                paymentSummary.unconfirmed.total_amount += amount;
+                paymentSummary.unconfirmed.count += 1;
+                paymentSummary.unconfirmed.orders.push(order);
+              }
+              // カード作成
               const card = document.createElement("div");
-              card.className = "order-card-under uber-card"; // ← uber専用クラスを追加
+              card.className = "order-card-under unconfirmed-card";
               card.innerHTML = `
-              <div><strong >ID #${order.id}</strong></div>
-              <div>${order.order_name}</div>
-              <div>${order.order_type}</div>
-              <div>${order.payment_method}</div>
-              <div>￥${Number(order.total_amount).toLocaleString()}</div>
-
+                <div><strong>ID #${order.id}</strong> ${unconfirmedLabel}</div>
+                <div>${order.order_name}</div>
+                <div>${order.order_type}</div>
+                <div>${order.payment_method}</div>
+                <div>￥${Number(order.total_amount).toLocaleString()}</div>
               `;
-
-              orderCardContainer.appendChild(card); // ← 親に追加！
-
-
-            }else{
-              let orderTotal = 0;
-              let itemCount = 0;
-
-              let countedInSummary = false;
-
-              order.OrderItems.forEach(item => {
-                const menuData = item.menu || item.Menu; // ← 両対応にする！
-
-                const isTakeout = menuData?.is_takeout;
-                const price = parseFloat(item.item_price || 0);
-
-                if (!isNaN(price)) {
-                  orderTotal += price;
-                  itemCount += 1;
-                }
-                if (isNaN(price)) return;
-
-                const key = (method === "cash"
-                  ? (isTakeout ? "cash8" : "cash10")
-                  : (isTakeout ? "card8" : "card10")
-                );
-
-                paymentSummary[key].total_amount += price;
-                paymentSummary[key].items.push(item);
-
-                if (!countedInSummary) {
-                  paymentSummary[key].count += 1;
-                  countedInSummary = true;
-                }
-              });
-
-
-
-              // 🔽 カードを作成
-                  const card = document.createElement("div");
-                  card.className = "order-card-under";
-                  card.innerHTML = `
-                    <div><strong >ID #${order.id}</strong></div>
-                    <div>${order.order_name}</div>
-                    <div>${order.order_type}</div>
-                    <div>${order.payment_method}</div>
-                    <div>￥${Number(order.total_amount).toLocaleString()}</div>
-
-                  `;
-
-
-                  // 🔽 DOMに追加
-                  orderCardContainer.appendChild(card);
+              orderCardContainer.appendChild(card);
             }
-
-
-  // console.log(orderCardContainer)
           });
 
           clients.salesInfo = paymentSummary;
           renderSalesSummaryToUI(clients.salesInfo)
-
-          console.log(clients.salesInfo)
           applyTranslation(clients.language)
         }else {
             console.log('No orders found for the given pickup time');
@@ -2115,10 +2115,10 @@ async function getOrdersbyPickupTime() {
     } catch (error) {
         hideLoadingPopup();
         console.error('Error fetching orders by pickup time:', error);
-    }
+    }　finally {
+    isLoadingOrders = false;
+  }
 }
-
-
 
 
 function renderSalesSummaryToUI(salesInfo) {
@@ -2133,7 +2133,14 @@ function renderSalesSummaryToUI(salesInfo) {
 
   const uberEl = document.getElementById('uberSales');
   uberEl.innerHTML = format(salesInfo.uber.total_amount, salesInfo.uber.count);
-  // uberEl.style.color = '#e91e63'; // Uberのみピンク強調（任意）
+
+  // 🔻 未確定注文を表示（存在すれば）
+  if (salesInfo.unconfirmed) {
+    const uncEl = document.getElementById('unconfirmedSales');
+    if (uncEl) {
+      uncEl.innerHTML = format(salesInfo.unconfirmed.total_amount, salesInfo.unconfirmed.count);
+    }
+  }
 
   // 🔻 総合計の表示要素がなければ作る（初回だけ）
   let totalEl = document.getElementById('sales-total-summary');
@@ -2144,29 +2151,37 @@ function renderSalesSummaryToUI(salesInfo) {
     document.querySelector('.receitas-por-tipo').appendChild(totalEl);
   }
 
-  // 🔢 総合計の計算
+  // 🔢 総合計の計算（未確定注文も含める！）
   const totalAmount =
     salesInfo.cash8.total_amount +
     salesInfo.cash10.total_amount +
     salesInfo.card8.total_amount +
     salesInfo.card10.total_amount +
-    salesInfo.uber.total_amount;
+    salesInfo.uber.total_amount +
+    (salesInfo.unconfirmed?.total_amount || 0);  // 🆕
 
   const totalCount =
     salesInfo.cash8.count +
     salesInfo.cash10.count +
     salesInfo.card8.count +
     salesInfo.card10.count +
-    salesInfo.uber.count;
+    salesInfo.uber.count +
+    (salesInfo.unconfirmed?.count || 0); // 🆕
+
+  document.getElementById('total-vendas').value = `￥${totalAmount.toLocaleString()}`;
+  const saldo = salesInfo.cash10.total_amount + salesInfo.cash8.total_amount;
+  console.log(clients.regiterCaixa);
+  document.getElementById('totalBalance').innerText = `￥${(saldo + clients.regiterCaixa).toLocaleString()}`;
+}
 
 
-  document.getElementById('total-vendas').value = `￥${totalAmount.toLocaleString()}`
-  const saldo = salesInfo.cash10.total_amount  + salesInfo.cash8.total_amount
-  // const openCaixa = document.getElementById('totalAmount').value
-  console.log(clients.regiterCaixa)
-  document.getElementById('totalBalance').innerText = `￥${(saldo+ clients.regiterCaixa).toLocaleString()}`
-
-
+function getUnconfirmedLabel(lang) {
+  switch (lang) {
+    case 'ja': return '🚧 未確定';
+    case 'en': return '🚧 Unconfirmed';
+    case 'pt': return '🚧 Não confirmado';
+    default:   return '🚧 Unconfirmed';
+  }
 }
 
 
