@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Register</title>
+    <link rel="stylesheet" href="../style/pos.css"> <!-- Link to your stylesheet -->
+    <link rel="stylesheet" href="../style/loading-popup.css">
+    <link rel="stylesheet" type="text/css" href="../style/dynamicModal.css" />
+    <link rel="stylesheet" href="../style/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+      <div class="logo-container">
+        <div class="logo-text">
+            <span class="orders-text">Orders</span>
+            <span class="kun-text">君</span>
+        </div>
+    </div>
+    <div class="header-buttons">
+      <select id="language-select" class="lang-select">
+        <option value="jp">日本語</option>
+        <option value="pt" selected>Português</option>
+        <option value="en">English</option>
+      </select>
+      <button class="header-btn nav-btn" id="pedido-admin-btn" data-i18n="pedido_admin">Pedido<br>Admin</button>
+      <!-- <button class="header-btn nav-btn" id="pedido-client-btn" data-i18n="pedido_tablet">Pedido<br>tablet</button>
+      <button class="header-btn nav-btn" id="pedido-takeout-btn" data-i18n="pedido_takeout">Pedido<br>takeout</button> -->
+      <button class="header-btn nav-btn" id="comanda-btn" data-i18n="orders">Orders</button>
+      <button class="header-btn nav-btn" id="reserva-btn" data-i18n="reservas">Reservas</button>
+      <button class="header-btn nav-btn" id="reserva-hist-btn" data-i18n="reservas_historico">Reservas<br>(histórico)</button>
+      <button class="header-btn nav-btn" id="pos-btn" style="background-color: orange" data-i18n="pos">POS</button>
+      <button class="header-btn nav-btn" id="menu-btn" data-i18n="menu">Menu</button>
+      <button class="header-btn nav-btn" id="history-btn" data-i18n="historico_pedidos">Histórico<br>pedidos</button>
+      <button class="header-btn nav-btn" id="logout-btn" data-i18n="logout">Logout</button>
+    </div>
+
+    </header>
+    <div class="container">
+      <div class="left-panel">
+        <h2 data-i18n="unpaid_orders">Comandas não pagas</h2>
+        <div id="orders-list"></div>
+      </div>
+
+      <div class="center-panel">
+        <h2 data-i18n="order_details">
+          Detalhes da comanda
+          <button id="addOrderBtn" class="add-btn">
+            <i class="fas fa-plus"></i>
+          </button>
+        </h2>
+        <ul id="order-items"></ul>
+      </div>
+
+        <!-- メニュー表を表示するためのモーダル   <span class="close">&times;</span>-->
+        <div id="menuModal" class="modal-add-menu">
+      <div id="quantity-input" style="display: none;">
+        <div class="quantity-buttons">
+          <button class="quantity-btn active" data-value="1">1</button>
+          <button class="quantity-btn" data-value="2">2</button>
+          <button class="quantity-btn" data-value="3">3</button>
+          <button class="quantity-btn" data-value="4">4</button>
+          <button class="quantity-btn" data-value="5">5</button>
+        </div>
+        <div class="manual-input">
+          <label for="item-quantity" data-i18n="label_quantity">Quantidade:</label>
+          <input type="number" id="item-quantity" min="1" max="99" value="1">
+        </div>
+        <button id="confirm-quantity-btn" data-i18n="confirm">Confirmar</button>
+      </div>
+
+      <div class="modal-content-add-menu" id="modal-update-order-mother">
+        <div>
+          <h2 data-i18n="add_item">Adicionar item</h2>
+        </div>
+
+        <div class="add-menu-child-div">
+          <div id="category-filters">
+            <!-- カテゴリーボタンがここに生成される -->
+          </div>
+
+          <div id="menu-list">
+            <!-- ここにメニューアイテムが表示される -->
+          </div>
+
+          <div id="option-list">
+            <!-- ここに選択されたメニューのオプションが表示される -->
+          </div>
+
+          <div class="add-btn-first">
+            <button id="add-for-new-list" data-i18n="add">Adicionar</button>
+          </div>
+
+          <div class="now-oreder-list">
+            <div id="order-nbefore-list"></div>
+
+            <div class="add-or-cancel-btn">
+              <button id="save-add-menu" data-i18n="save">Salvar</button>
+              <button id="close-menuModal" data-i18n="cancel">Cancelar</button>
+            </div>
+
+            <div class="total-add-menu-display">
+              <div><span class="total-ammount" id="total-alter-order-count"></span></div>
+              <div><span class="total-ammount" id="total-alter-order-amount"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="top-pagamneto-mother">
+        <h2 data-i18n="payment">Pagamento</h2>
+
+        <div class="register-caixa-btn">
+          <button id="juntar-comandas" data-i18n="merge_orders">Juntar comanda</button>
+          <input id="yet-regit-info" value="Caixa não registrado" readonly style="display:none" data-i18n="cash_not_registered"/>
+          <button id="openModalBtn" data-i18n="cash_status">Status do caixa</button>
+        </div>
+      </div>
+
+    <!-- モーダル -->
+    <div id="registerModal" class="modal" style="display: none;">
+ <div class="modal-content">
+   <span class="close">&times;</span>
+
+   <div id="modal-left-input" class="modal-left">
+     <!-- 🔁 モード切り替えボタン -->
+      <div class="mode-toggle">
+        <button id="openModeBtn" class="mode-btn active">🟢 OPEN</button>
+        <span class="switch-icon">🔄</span>
+        <button id="closeModeBtn" class="mode-btn">🔴 CLOSE</button>
+      </div>
+
+      <!-- 現在のモード表示 -->
+      <div id="cashModeLabel" class="mode-label mode-open">🟢 OPENモード</div>
+
+
+     <label data-i18n="label_date">data:</label>
+     <input type="date" id="registerDate" value="" />
+     <div class='kouka-mother'>
+       <div class='kouka'>
+         <div class="input-section" id="bill-mother-div">
+           <h3 data-i18n="bills">notas</h3>
+           <label>10,000:</label>
+           <input type="number" id="bill10000" min="0" value="0" /><br />
+           <label>5,000:</label>
+           <input type="number" id="bill5000" min="0" value="0" /><br />
+           <label>1,000:</label>
+           <input type="number" id="bill1000" min="0" value="0" /><br />
+         </div>
+
+         <div class="input-section" id="coins-mother-div">
+           <h3 data-i18n="coins">moedas</h3>
+           <label>500:</label>
+           <input type="number" id="coin500" min="0" value="0" /><br />
+           <label>100:</label>
+           <input type="number" id="coin100" min="0" value="0" /><br />
+           <label>50:</label>
+           <input type="number" id="coin50" min="0" value="0" /><br />
+           <label>10:</label>
+           <input type="number" id="coin10" min="0" value="0" /><br />
+           <label>5:</label>
+           <input type="number" id="coin5" min="0" value="0" /><br />
+           <label>1:</label>
+           <input type="number" id="coin1" min="0" value="0" /><br />
+         </div>
+       </div>
+       <div class="total-section" id="total-caixa-input">
+         <h3 data-i18n="total_cash_value">Total do valor do caixa</h3>
+         <input type="text" id="totalAmount" value="0" readonly />
+
+         <button id="closeRegisterBtn" data-i18n="register">Registrar</button>
+       </div>
+     </div>
+
+
+
+
+   </div>
+
+   <div class="modal-right">
+     <h2 data-i18n="sales_today">receita do dia</h2>
+
+     <div class="receita-data-input-mother-div">
+       <input type="datetime-local" id="salesStart" value="" />
+       <input type="datetime-local" id="salesFinish" value="" />
+       <!-- <input type="button" id="serche-sales" value="Serch" data-i18n="search_sales" /> -->
+     </div>
+
+    <div class="receitas-por-tipo">
+     <div class="result-section">
+       <label data-i18n="cash_sales8">Vendas dinheiro(8%):</label>
+       <div id="cashSales8">￥0</div>
+     </div>
+     <div class="result-section">
+       <label data-i18n="cash_sales10">Vendas dinheiro(10%):</label>
+       <div id="cashSales10">￥0</div>
+     </div>
+     <div class="result-section">
+       <label data-i18n="credit_sales8">Vendas cartão(8%):</label>
+       <div id="creditSales8">￥0</div>
+     </div>
+     <div class="result-section">
+       <label data-i18n="credit_sales10">Vendas cartão(10%):</label>
+       <div id="creditSales10">￥0</div>
+     </div>
+     <!-- <div class="result-section">
+       <label data-i18n="other_sales">Vendas outras:</label>
+       <span id="otherSales">￥0</span>
+     </div> -->
+     <div class="result-section">
+       <label data-i18n="credit_salesUber">Vendas uber:</label>
+       <div id="uberSales">￥0</div>
+     </div>
+   </div>
+     <!-- <div class="result-section">
+       <label data-i18n="unregistered_sales">Vendas não registradas:</label>
+       <span id="sale-yet-register">￥0</span>
+     </div>
+     <div class="result-section">
+       <label data-i18n="unregistered_sales">Vendas uber:</label>
+       <span id="sale-yet-register">￥0</span>
+     </div> -->
+
+     <!-- <div class="result-section">
+       <label data-i18n="unregistered_cash">vendas não registradas(dinheiro):</label>
+       <input id="notregister-by-money" placeholder="insira o valor" value=0 />
+     </div>
+
+     <div class="result-section">
+       <label data-i18n="unregistered_card">vendas não registradas(cartão):</label>
+       <input id="noregister-by-card" placeholder="insira o valor" value=0 />
+     </div> -->
+
+     <div class="result-section-total">
+       <label data-i18n="total_sales">Total de vendas:</label>
+       <input id="total-vendas" value=0 />
+     </div>
+     <div class="result-section-total">
+       <label data-i18n="notes">anotações:</label>
+       <input id="anotacoes" class="input-field" placeholder="Click to expand">
+     </div>
+     <div id="saldo-final" class="result-section-total">
+       <label data-i18n="balance">saldo :</label>
+       <span id="totalBalance">￥0</span>
+     </div>
+     <div class='orders' id="order-card-under">
+
+    </div>
+
+     <button id="calculation-again" onclick='getOrdersbyPickupTime()' data-i18n="search">Calcular novamente</button>
+     <!-- <button id="inserirMonys" data-i18n="insert_values">Inserir valores</button> -->
+
+   </div>
+ </div>
+</div>
+
+    <!-- <div id="tax-buttons">
+      <button id="tax-8" class="tax-button">8% Tax</button>
+      <button id="tax-10" class="tax-button">10% Tax</button>
+    </div> -->
+    <div id="payment-summary">
+      <div class="second-payment-div">
+        <div class="payment-summary-mother">
+          <div class="payment-summary-child">
+            <span data-i18n="amount_without_tax">Valor (Sem imposto):</span>
+          </div>
+          <div class="payment-summary-child">
+            <span id="total-amount">￥0</span>
+          </div>
+        </div>
+        <div class="payment-summary-mother">
+          <div class="payment-summary-child">
+            <span data-i18n="tax">Imposto:</span>
+          </div>
+          <div class="payment-summary-child">
+            <span id="tax-total">￥0</span>
+          </div>
+        </div>
+        <div class="payment-summary-mother">
+          <div class="payment-summary-child">
+            <span data-i18n="amount_with_tax">Valor (Com imposto):</span>
+          </div>
+          <div class="payment-summary-child">
+            <span id="tax-included-amount">￥0</span>
+          </div>
+        </div>
+        <div class="payment-summary-mother">
+          <div class="payment-summary-child">
+            <span data-i18n="received">Recebido:</span>
+          </div>
+          <div class="payment-summary-child">
+            <input type="text" id="deposit-amount" value="" placeholder="">
+          </div>
+        </div>
+        <div class="payment-summary-mother">
+          <div class="payment-summary-child">
+            <span data-i18n="change">Troco:</span>
+          </div>
+          <div class="payment-summary-child">
+            <input type="text" id="change-amount" value="￥0" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="second-payment-div-right">
+        <div id="payment-methods">
+          <button id="cash-payment" class="cfm-btns payment-method" data-i18n="cash">Dinheiro</button>
+          <button id="credit-payment" class="cfm-btns payment-method" data-i18n="card">Cartão</button>
+          <button id="other-payment" class="cfm-btns payment-method" data-i18n="other">Outros</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cupon-btn" style="display:flex;justify-content: space-around">
+      <button class="cfm-btns" id="print-receipt" data-i18n="receipt">Recibo</button>
+      <button class="cfm-btns" id="print-invoice" data-i18n="invoice">Ryoshusho</button>
+      <button class="cfm-btns" id="print-cupom" data-i18n="cupom">Cupom</button>
+    </div>
+
+  <div class="third-div">
+    <div class="left-third-div">
+       <div class="tenkey-container">
+        <div class="tenkey-grid">
+          <button class="tenkey-btn">7</button>
+          <button class="tenkey-btn">8</button>
+          <button class="tenkey-btn">9</button>
+
+          <button class="tenkey-btn">4</button>
+          <button class="tenkey-btn">5</button>
+          <button class="tenkey-btn">6</button>
+
+          <button class="tenkey-btn">1</button>
+          <button class="tenkey-btn">2</button>
+          <button class="tenkey-btn">3</button>
+
+          <button class="tenkey-btn">0</button>
+          <button class="tenkey-btn">.</button>
+          <button class="tenkey-btn" id="tenkey-del">←</button>
+
+          <button class="tenkey-btn wide" id="tenkey-clear">C</button>
+        </div>
+      </div>
+</div>
+
+<div class="right-third-div">
+  <button class="cfm-btns-second" id="confirm-payment" data-i18n="confirm_payment">Confirmar pagamento</button>
+  <button class="cfm-btns-second" id="confirm-ptakes" data-i18n="mark_delivered">Colocar como entregue</button>
+  <button class="cfm-btns-second" id="delete-order" data-i18n="cancel_order">Cancelar pedido</button>
+</div>
+
+</div>
+<div id="custom-alert" class="custom-alert">
+  <div class="alert-content">
+      <span class="checkmark">✓</span>
+      <p>オーダーが確定されました。</p>
+  </div>
+</div>
+<div id="loading-popup" class="loading-popup">
+  <div class="loading-container">
+      <div class="spinner"></div>
+      <div class="loading-text">await</div>
+  </div>
+</div>
+    </div>
+
+    <!-- MODAL DINÂMICO -->
+    <div class="dynamic-modal-overlay" id="dynamicModal">
+    <div class="dynamic-modal-content" id="dynamicModalContent">
+      <h2 id="dynamicModalTitle" data-i18n="modal_title">Título</h2>
+      <p id="dynamicModalMessage" data-i18n="modal_message">Aqui vai a mensagem</p>
+      <button class="dynamic-btn-close" id="dynamicModalClose" data-i18n="close">Fechar</button>
+    </div>
+  </div>
+
+  <!-- オーダー統合モーダル -->
+  <div id="mergeModal" style="display:none">
+    <h3 data-i18n="choose_orders">Escolha as comandas</h3>
+    <div id="order-list"></div>
+    <button id="merge-confirm" data-i18n="merge">Juntar</button>
+  </div>
+
+  <!-- モーダル本体 -->
+<div id="edit-order-modal" class="custom-modal hidden">
+  <div class="custom-modal-content">
+    <h3 data-i18n="edit_order">注文を編集</h3>
+
+    <label for="edit-order-type" data-i18n="order_type">注文タイプ</label>
+    <select id="edit-order-type">
+      <option value="admin" data-i18n="pedido_admin">新規注文</option>
+      <option value="tablet" data-i18n="pedido_tablet">注文タブレット</option>
+      <option value="takeout" data-i18n="pedido_takeout">注文持ち帰り</option>
+    </select>
+
+    <label for="edit-payment-method" data-i18n="payment_method">支払い方法</label>
+    <select id="edit-payment-method">
+      <option value="cash" data-i18n="cash">現金</option>
+      <option value="card" data-i18n="card">カード</option>
+      <option value="uber" data-i18n="credit_salesUber">ウーバー売上</option>
+      <option value="other" data-i18n="other">その他</option>
+    </select>
+
+    <div class="modal-actions">
+      <button id="save-order-edit" class="edit-btn" data-i18n="save">保存</button>
+      <button id="cancel-order-edit" class="cancel-btn" data-i18n="cancel">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+
+
+      <!-- <input type="text" id="scan-input" style="position:absolute; left:-9999px;" /> -->
+
+
+   <!-- <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="../script/netCheck.js"></script>
+    <script src="../script/translations.js"></script>
+    <script src="../script/dynamicModal.js"></script>
+    <script src="../script/loding-popup.js"></script>
+    <script src="../script/netCheck.js"></script>
+    <!-- <script src="../script/dynamicModal.js"></script> -->
+    <script src="../config.js"></script>
+    <script src="../script/posNew.js"></script>
+    <script src="../script/common.js"></script>
+</body>
+</html>
