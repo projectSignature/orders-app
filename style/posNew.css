@@ -1034,10 +1034,10 @@ h2 {
   margin-top: 5px;
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* ラベルと値を横並びにする */
@@ -1050,7 +1050,9 @@ h2 {
     border: 0.8px solid #333;
     border-radius: 5px;
     height: 90%;
-    width: 6rem
+    width: 6rem;
+    margin-left: 5px
+    /* marginLeft: */
 }
 
 /* ラベルのスタイル */
@@ -1059,6 +1061,11 @@ h2 {
     font-size: 14px;
 
 }
+.unconfirmed-card {
+  background-color: #fff7e6;
+  border-left: 4px solid orange;
+}
+
 
 /* 値（span）のスタイル */
 .result-section span {
