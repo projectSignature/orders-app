@@ -253,6 +253,7 @@ button {
    <div class="modal" id="modal">
      <!-- モーダルの中身（.modal-content）を書き換え -->
 <div class="modal-content">
+  <p>Escolha a quantidade</p>
   <p>枚数を入力してください</p>
   <div id="displayCount" style="font-size: 32px; margin-bottom: 15px;">0</div>
   <div class="keypad">
@@ -270,8 +271,8 @@ button {
     <button onclick="setCount('0')">C</button>
   </div>
   <br>
-  <button onclick="printLabel()">印刷</button>
-  <button onclick="closeModal()">キャンセル</button>
+  <button onclick="printLabel()"> Imprimir(印刷)</button>
+  <button onclick="closeModal()">Cancelalr(キャンセル)</button>
 </div>
 
    </div>
@@ -399,7 +400,7 @@ function updateDisplay() {
  async function submitPastelLabel() {
    const itemName = document.getElementById('itemName').value;
    const date = document.getElementById('dateMade').value;
-    const creator = document.getElementById('creator').value.trim();
+   const creator = document.getElementById('creator').value.trim();
    const count = parseInt(document.getElementById('labelCount').value);
 
    if (!itemName || !date || !creator || count <= 0) {
@@ -414,11 +415,11 @@ function updateDisplay() {
        body: JSON.stringify({ itemName, date, creator, count })
      });
      const result = await res.json();
-     if (result.success) {
-       alert("✅ 印刷リクエスト完了");
-     } else {
-       alert("❌ 印刷エラー: " + result.error);
-     }
+     // if (result.success) {
+     //   alert("✅ 印刷リクエスト完了");
+     // } else {
+     //   alert("❌ 印刷エラー: " + result.error);
+     // }
    } catch (e) {
      alert("⚠️ 通信エラー: " + e.message);
    }
