@@ -14,6 +14,31 @@ let userInfo ={
   iat: 1727826129
 }
 
+let clients ={
+  id:decodedToken.userId, //クライアントid
+  language:decodedToken.language, //クライアント言語
+  paytype:'',　//ユーザー支払い方法
+  selectedOrder:"",　//選択オーダー
+  printInfo:"",　//？？
+  taxtType:"",　//税金区分
+  registerInfo:"",
+  salesInfo:"", //セールデータ
+  kubun:decodedToken.role,　//admin or operator
+  table_count:decodedToken.table_count,
+  takeout_enabled:decodedToken.takeout_enabled,
+  uber_enabled:decodedToken.uber_enabled,
+  tax_use:decodedToken.tax_enabled,
+  invoice_number:decodedToken.invoice_number,
+  pendingOrders:null,
+  receipt_display_name:decodedToken.receipt_display_name,
+  receipt_postal_code:decodedToken.receipt_postal_code,
+  receipt_address:decodedToken.receipt_address,
+  receipt_tel:decodedToken.receipt_tel,
+  tax_type:decodedToken.tax_type,
+  regiterCaixa:0
+
+}
+
  let currentLang = localStorage.getItem('loacastrogg') || 'pt';
 
 
