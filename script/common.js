@@ -20,10 +20,13 @@ document.getElementById('logout-btn').addEventListener('click',()=>{
   window.location.href = '../index.html';
 })
 
+if(clients){
     if(clients.id===17){
       
       document.getElementById('label-btn').style.display = 'block'
     }
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const navButtons = document.querySelectorAll('.header-btn');
