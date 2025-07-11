@@ -19,6 +19,12 @@ document.getElementById('logout-btn').addEventListener('click',()=>{
   window.localStorage.removeItem('token');
   window.location.href = '../index.html';
 })
+
+    if(clients.id===17){
+      
+      document.getElementById('label-btn').style.display = 'block'
+    }
+
 document.addEventListener('DOMContentLoaded', function() {
     const navButtons = document.querySelectorAll('.header-btn');
     // ページ読み込み時に現在のページに対応するボタンをハイライトする
