@@ -399,7 +399,7 @@ function updateDisplay() {
  async function submitPastelLabel() {
    const itemName = document.getElementById('itemName').value;
    const date = document.getElementById('dateMade').value;
-   const creator = document.getElementById('creatorName').value.trim();
+    const creator = document.getElementById('creator').value.trim();
    const count = parseInt(document.getElementById('labelCount').value);
 
    if (!itemName || !date || !creator || count <= 0) {
