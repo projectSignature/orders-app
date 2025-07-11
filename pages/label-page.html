@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Register</title>
+    <link rel="stylesheet" href="../style/loading-popup.css">
+    <link rel="stylesheet" href="../style/pos.css">
+    <link rel="stylesheet" href="../style/comanda.css">
+    <link rel="stylesheet" href="../style/common.css">
+    <!-- <link rel="stylesheet" href="../style/appname.css"> -->
+</head>
+<style>
+html{
+  padding: 0px;
+  margin: 0px
+}
+    body {
+      font-family: sans-serif;
+      padding: 0px;
+      margin: 0px;
+      background: #f7f7f7;
+    height: 100vh;
+  overflow: hidden;}
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 10px;
+        background-color: #343a40;
+        color: white;
+        height: 10%
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo {
+        height: 20px;
+        margin-right: 15px;
+    }
+    .kun-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+    .orders-text {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #ff8c00;
+        margin-right: 5px;
+    }
+    .header-buttons {
+        display: flex;
+    }
+
+    .header-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 2px 5px;
+        margin-left: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        width: 6rem;
+        transition: background-color 0.3s ease;
+        font-size: 20px!important
+    }
+    h2 { margin-top: 40px; }
+
+    .label-container,.print-label,.label-container-sweet {
+      width: 33%;
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    overflow-y: auto;}
+
+    .label-item img {
+  width: 150px;
+  height: 100px;
+  object-fit: contain; /* ←縦横比を崩さず内側に収める */
+  background: #fff;
+}
+
+    .modal {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: none; z-index: 10;
+      width:50%;
+      height: 85%
+    }
+    .overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5); display: none; z-index: 5;
+    }
+    .print-label {
+      border: 1px dashed #999; padding: 20px; background: white;
+      width: 300px; margin-top: 10px;
+    }
+    .modal-content{
+      display: block;
+    }
+    .modal-content p {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.modal-content input {
+  width: 80px;
+  height: 40px;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  font-size: 18px;
+  margin: 5px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4285f4;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-content button:hover {
+  background-color: #306ac9;
+}
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 60px);
+  gap: 10px;
+  justify-content: center;
+}
+
+.keypad button {
+  font-size: 20px;
+  padding: 15px;
+  border: none;
+  background: #eee;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.keypad button:hover {
+  background: #ddd;
+}
+.main-div{
+  width: :100%;
+  height: 85%;
+  display: flex;
+  justify-content: space-between;
+
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1966px) {
+button {
+    padding: 10px;
+    margin-top: 1px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+}
+}
+
+  </style>
+<body>
+    <header class="header">
+      <div class="logo-container">
+       <div class="logo-text">
+            <span class="orders-text">Orders</span>
+            <span class="kun-text">君</span>
+       </div>
+      </div>
+      <div class="header-buttons">
+        <select id="language-select" class="lang-select">
+          <option value="jp">日本語</option>
+          <option value="pt" selected>Português</option>
+          <option value="en">English</option>
+        </select>
+          <button class="header-btn nav-btn" id="label-btn">Label</button>
+        <button class="header-btn nav-btn" id="pedido-admin-btn" data-i18n="pedido_admin">Pedido<br>Admin</button>
+
+        <!-- <button class="header-btn nav-btn" id="pedido-client-btn" data-i18n="pedido_tablet">Pedido<br>tablet</button>
+        <button class="header-btn nav-btn" id="pedido-takeout-btn" data-i18n="pedido_takeout">Pedido<br>takeout</button> -->
+        <button class="header-btn nav-btn" id="comanda-btn" style="background-color: orange" data-i18n="orders">Orders</button>
+        <button class="header-btn nav-btn" id="reserva-btn" data-i18n="reservas">Reservas</button>
+        <button class="header-btn nav-btn" id="reserva-hist-btn" data-i18n="reservas_historico">Reservas<br>(histórico)</button>
+        <button class="header-btn nav-btn" id="pos-btn" data-i18n="pos">POS</button>
+        <button class="header-btn nav-btn" id="menu-btn" data-i18n="menu">Menu</button>
+        <button class="header-btn nav-btn" id="history-btn" data-i18n="historico_pedidos">Histórico<br>pedidos</button>
+        <button class="header-btn nav-btn" id="logout-btn" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+
+    <div class="main-div">
+      <div class="label-container" id="labelContainer">
+      </div>
+      <div class="label-container" id="labelContainer-sweet"></div>
+   <div class="print-label">
+     <label for="itemName">Tipo(タイプ選択)</label><br>
+     <select id="itemName" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+       <option value="Pastel de carne">Pastel de carne（牛肉）</option>
+       <option value="Pastel de queijo">Pastel de queijo（チーズ）</option>
+       <option value="Pastel de pizza">Pastel de pizza（ピザ）</option>
+       <option value="Pastel carne com queijo">Pastel carne com queijo（牛＋チーズ）</option>
+       <option value="Pastel frango com queijo">Pastel frango com queijo（鶏＋チーズ）</option>
+       <option value="Pastel de frango com catupiry">Pastel de frango com catupiry（鶏＋カトゥピリ）</option>
+       <option value="Pastel de palmito">Pastel de palmito（ヤシの芽）</option>
+       <option value="Pastel de carne seca com queijo">Pastel de carne seca com queijo（干し肉＋チーズ）</option>
+       <option value="Pastel de costela">Pastel de costela（スペアリブ）</option>
+     </select>
+
+     <label for="dateMade">Data(日付)</label><br>
+     <input type="date" id="dateMade" style="width: 100%; padding: 10px; margin-bottom: 10px;" value="" />
+
+     <label for="creatorName">Nome(段取者)</label><br>
+     <select id="creator" style="width: 100%; padding: 10px; margin-bottom: 10px;" >
+       <option value="Paulo">Paulo</optiono>
+      <option value="Hana">Hana</optiono>
+      <option value="Pri">Pri</optiono>
+      <option value="Cris">Cris</optiono>
+      <option value="Hayate">Hayate</optiono>
+      </select>
+     <!-- <input type="text" id="creatorName" placeholder="例: Paulo" style="width: 100%; padding: 10px; margin-bottom: 10px;" /> -->
+
+     <label for="labelCount">Quantidade(枚数)</label><br>
+     <input type="number" id="labelCount" value="1" min="1" style="width: 100%; padding: 10px; margin-bottom: 10px;" />
+
+     <button onclick="submitPastelLabel()" style="width: 100%; padding: 12px;">🖨️ Imprimir(印刷)</button>
+   </div>
+    </div>
+
+
+
+   <!-- モーダル -->
+   <div class="overlay" id="overlay" onclick="closeModal()"></div>
+   <div class="modal" id="modal">
+     <!-- モーダルの中身（.modal-content）を書き換え -->
+<div class="modal-content">
+  <p>枚数を入力してください</p>
+  <div id="displayCount" style="font-size: 32px; margin-bottom: 15px;">0</div>
+  <div class="keypad">
+    <button onclick="addDigit(1)">1</button>
+    <button onclick="addDigit(2)">2</button>
+    <button onclick="addDigit(3)">3</button>
+    <button onclick="addDigit(4)">4</button>
+    <button onclick="addDigit(5)">5</button>
+    <button onclick="addDigit(6)">6</button>
+    <button onclick="addDigit(7)">7</button>
+    <button onclick="addDigit(8)">8</button>
+    <button onclick="addDigit(9)">9</button>
+    <button onclick="clearCount()">←</button>
+    <button onclick="addDigit(0)">0</button>
+    <button onclick="setCount('0')">C</button>
+  </div>
+  <br>
+  <button onclick="printLabel()">印刷</button>
+  <button onclick="closeModal()">キャンセル</button>
+</div>
+
+   </div>
+   <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+
+   <script>
+
+   const token = window.localStorage.getItem('token');
+
+   if (!token) {
+      window.location.href = '../index.html';
+   }
+   const decodedToken = jwt_decode(token); // jwtDecodeではなくjwt_decodeを使用
+
+   let clients ={
+     id:decodedToken.userId, //クライアントid
+     language:decodedToken.language, //クライアント言語
+     paytype:'',　//ユーザー支払い方法
+     selectedOrder:"",　//選択オーダー
+     printInfo:"",　//？？
+     taxtType:"",　//税金区分
+     registerInfo:"",
+     salesInfo:"", //セールデータ
+     kubun:decodedToken.role,　//admin or operator
+     table_count:decodedToken.table_count,
+     takeout_enabled:decodedToken.takeout_enabled,
+     uber_enabled:decodedToken.uber_enabled,
+     tax_use:decodedToken.tax_enabled,
+     invoice_number:decodedToken.invoice_number,
+     pendingOrders:null,
+     receipt_display_name:decodedToken.receipt_display_name,
+     receipt_postal_code:decodedToken.receipt_postal_code,
+     receipt_address:decodedToken.receipt_address,
+     receipt_tel:decodedToken.receipt_tel,
+     tax_type:decodedToken.tax_type,
+     regiterCaixa:0
+
+   }
+   console.log(clients)
+
+   if(clients.id === 17){
+
+   }
+     const labelContainer = document.getElementById('labelContainer');
+     const overlay = document.getElementById('overlay');
+     const modal = document.getElementById('modal');
+     const countInput = document.getElementById('countInput');
+     let selectedImageUrl = '';
+
+     for (let i = 1; i <= 12; i++) {
+       const url = `https://orders-image.sgp1.digitaloceanspaces.com/labelsRoots/label${i}.png`;
+       const div = document.createElement('div');
+       div.className = 'label-item';
+       div.innerHTML = `<img src="${url}" alt="label${i}">`;
+       div.onclick = () => {
+         selectedImageUrl = url;
+         overlay.style.display = 'block';
+         modal.style.display = 'flex';
+       };
+       labelContainer.appendChild(div);
+     }
+
+     function closeModal() {
+       overlay.style.display = 'none';
+       modal.style.display = 'none';
+     }
+
+
+
+     async function printLabel() {
+  const count = parseInt(currentCount || '0');
+  if (count <= 0) return alert("1枚以上を指定してください");
+
+  try {
+    const res = await fetch('http://localhost:3001/print-label', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageUrl: selectedImageUrl,
+        count
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('🖨️ 印刷を開始しました');
+    } else {
+      alert('❌ 印刷失敗: ' + data.error);
+    }
+  } catch (e) {
+    alert('⚠️ 通信エラー: ' + e.message);
+  }
+
+  closeModal();
+}
+
+     let currentCount = '';
+
+function addDigit(num) {
+  if (currentCount.length < 3) {
+    currentCount += num.toString();
+    updateDisplay();
+  }
+}
+
+function clearCount() {
+  currentCount = currentCount.slice(0, -1);
+  updateDisplay();
+}
+
+function setCount(val) {
+  currentCount = val;
+  updateDisplay();
+}
+
+function updateDisplay() {
+  document.getElementById('displayCount').innerText = currentCount || '0';
+}
+
+// 日付デフォルトを今日に
+ document.addEventListener('DOMContentLoaded', () => {
+   const today = new Date().toISOString().split('T')[0];
+   document.getElementById('dateMade').value = today;
+ });
+
+ async function submitPastelLabel() {
+   const itemName = document.getElementById('itemName').value;
+   const date = document.getElementById('dateMade').value;
+   const creator = document.getElementById('creatorName').value.trim();
+   const count = parseInt(document.getElementById('labelCount').value);
+
+   if (!itemName || !date || !creator || count <= 0) {
+     alert('全ての項目を入力してください');
+     return;
+   }
+
+   try {
+     const res = await fetch('http://localhost:3001/print-custom-label', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ itemName, date, creator, count })
+     });
+     const result = await res.json();
+     if (result.success) {
+       alert("✅ 印刷リクエスト完了");
+     } else {
+       alert("❌ 印刷エラー: " + result.error);
+     }
+   } catch (e) {
+     alert("⚠️ 通信エラー: " + e.message);
+   }
+ }
+
+// function printLabel() {
+//   const count = parseInt(currentCount || '0');
+//   if (count <= 0) return alert("1枚以上を指定してください");
+//   for (let i = 0; i < count; i++) {
+//     const win = window.open('', '_blank');
+//     win.document.write(`<img src="${selectedImageUrl}" onload="window.print(); window.close();" style="width:300px;" />`);
+//   }
+//   closeModal();
+// }
+
+   </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="../script/translations.js"></script>
+    <script src="../script/loding-popup.js"></script>
+    <script src="../config.js"></script>
+    <script src="../script/comandas.js"></script> <!-- Link to your JavaScript file -->
+    <script src="../script/common.js"></script>
+</body>
+</html>
