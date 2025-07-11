@@ -12,7 +12,8 @@ const pageToButtonMap = {
     'ordersTakeOut.html':'pedido-takeout-btn',
     'order-admin.html':'pedido-admin-btn',
     'reservation.html':'reserva-btn',
-    'reservationhistorico.html':'reserva-hist-btn'
+    'reservationhistorico.html':'reserva-hist-btn',
+    'label-page.html':'label-btn',
 };
 document.getElementById('logout-btn').addEventListener('click',()=>{
   window.localStorage.removeItem('token');
