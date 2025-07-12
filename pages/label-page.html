@@ -138,6 +138,11 @@ html{
 .modal-content button:hover {
   background-color: #306ac9;
 }
+
+.header-btn.active {
+    /* background-color: orange; */
+    color: white; /* 文字色も変更 */
+}
 .keypad {
   display: grid;
   grid-template-columns: repeat(3, 60px);
@@ -341,6 +346,36 @@ button {
      }
 
 
+const labelContainerSweet = document.getElementById('labelContainer-sweet');
+
+for (let i = 1; i <= 12; i++) {
+  const url = `https://orders-image.sgp1.digitaloceanspaces.com/labelsRoots/desert/${i}.png`;
+
+  const img = document.createElement('img');
+  img.src = url;
+  img.alt = `label ${i}`;
+  img.style.width = '150px';
+  img.style.height = '100px';
+  img.style.objectFit = 'contain';
+  img.style.background = '#fff';
+
+  const div = document.createElement('div');
+  div.className = 'label-item';
+  div.appendChild(img);
+
+  // 必要であれば、クリック時に印刷選択なども追加できる
+  div.onclick = () => {
+    selectedImageUrl = url;
+    overlay.style.display = 'block';
+    modal.style.display = 'flex';
+  };
+
+  labelContainerSweet.appendChild(div);
+}
+
+
+
+
 
      async function printLabel() {
   const count = parseInt(currentCount || '0');
@@ -356,11 +391,11 @@ button {
       })
     });
     const data = await res.json();
-    if (data.success) {
-      alert('🖨️ 印刷を開始しました');
-    } else {
-      alert('❌ 印刷失敗: ' + data.error);
-    }
+    // if (data.success) {
+    //   alert('🖨️ 印刷を開始しました');
+    // } else {
+    //   alert('❌ 印刷失敗: ' + data.error);
+    // }
   } catch (e) {
     alert('⚠️ 通信エラー: ' + e.message);
   }
