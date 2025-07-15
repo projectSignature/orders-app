@@ -76,6 +76,8 @@ if(clients.id===1){
   document.getElementById('print-invoice').style.display='none'
 }
 
+
+
 document.addEventListener('DOMContentLoaded', async  () => {
   showLoadingPopup()
   daysSet()
@@ -1738,6 +1740,7 @@ function getCurrentDateTime() {
 
  // 合計金額を算出する関数
  function calculateTotal() {
+   console.log('kokonihairu')
    const bill10000 = parseInt(document.getElementById('bill10000').value) || 0;
    const bill5000 = parseInt(document.getElementById('bill5000').value) || 0;
    const bill1000 = parseInt(document.getElementById('bill1000').value) || 0;
@@ -1749,15 +1752,16 @@ function getCurrentDateTime() {
    const coin1 = parseInt(document.getElementById('coin1').value) || 0;
 
    // 各金額を計算
-   const total = (bill5000 * 10000) + (bill5000 * 5000) + (bill1000 * 1000) +
+   const total = (bill10000 * 10000) + (bill5000 * 5000) + (bill1000 * 1000) +
                  (coin500 * 500) + (coin100 * 100) + (coin50 * 50) +
                  (coin10 * 10) + (coin5 * 5) + (coin1 * 1);
 
    document.getElementById('totalAmount').value = '￥' + total.toLocaleString() ;
    console.log(total.toLocaleString())
    console.log(total)
-   clients.regiterCaixa = total
-   console.log(clients.regiterCaixa)
+   if(currentMode==='open'){
+        clients.regiterCaixa = total
+   }
    getOrdersbyPickupTime()
  }
 
@@ -1842,7 +1846,7 @@ caixaDate.addEventListener('change', async () => {
       registerDT:registerDT
   };
   // 合計金額の計算
-  const totalAmount = (data.bill_5000 * 10000) +
+  const totalAmount = (data.bill_10000 * 10000) +
                       (data.bill_5000 * 5000) +
                       (data.bill_1000 * 1000) +
                       (data.coin_500 * 500) +
@@ -1905,7 +1909,7 @@ openCaixaNer()
 };
 // 合計金額の計算
 const totalAmount = (data.bill_5000 * 5000) +
-(data.bill_5000 * 10000) +
+                    (data.bill_10000 * 10000) +
                     (data.bill_1000 * 1000) +
                     (data.coin_500 * 500) +
                     (data.coin_100 * 100) +
@@ -2014,6 +2018,7 @@ async function getOrdersbyPickupTime() {
             }
         });
         const data = await response.json();
+        console.log(data)
         hideLoadingPopup();
         if (data.length > 0) {
           const paymentSummary = {
