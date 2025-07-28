@@ -69,11 +69,11 @@ async function signin(payload) {
       if(response.data.kubun==='operator'){
         window.location.href = './pages/pos.html';
       }else if(response.data.kubun==='dine_in'){
-        if(payload.email==='Buonissimo pedidos'){
-          window.location.href = './pages/orders.html';
-        }else{
+        //if(payload.email==='Buonissimo pedidos'){
+         // window.location.href = './pages/orders.html';
+        //}else{
           window.location.href = './pages/neworders.html';
-        }
+        //}
         //
       }else if(response.data.kubun==='takeout'){
         window.location.href = './pages/ordersTakeOut.html';
