@@ -284,6 +284,21 @@ document.addEventListener('DOMContentLoaded', async  () => {
 
     updateChange();
     clients.receiptData = receiptData;
+
+    console.log('kokokmadekiteru')
+
+    console.log(receiptData.items)
+    console.log(receiptData.totalWithTax)
+
+        const channel = new BroadcastChannel('customer-display');
+        channel.postMessage({
+          type: 'update',
+          order_id: order.id,
+          totalWithTax: receiptData.totalWithTax,
+          items: receiptData.items,
+          paymentAmount: 2000 // ←★お客様からの預かり金額
+        });
+
   }
 
 
@@ -394,6 +409,11 @@ button.addEventListener('click', () => {
         updatePayType('cash',button);
     } else if (button === creditPaymentButton) {
         updatePayType('credit',button);
+        console.log(clients.id)
+        if(clients.id===17){
+          sendSquareCheckout(1500);
+        }
+
     } else if (button === otherPaymentButton) {
         updatePayType('other',button);
     }
@@ -2191,12 +2211,19 @@ function getUnconfirmedLabel(lang) {
 
 
 async function postCashExpense(categoryId, amount, memo,registerDate) {
+
+  const datetimeValue = document.getElementById('salesStart').value;
+// → "2025-07-15T13:45" のような文字列が返る
+
+const dateOnly = datetimeValue.split('T')[0];
+console.log(dateOnly); // "2025-07-15"
+
   const data = {
     userId:26,
-    date: registerDate,
+    date: dateOnly,
     method:'cash',
     supplier:'9999',
-      amount: String(amount),
+    amount: String(amount),
     memo: `${memo}`,
     category: categoryId,
     kubun:1
@@ -2205,7 +2232,7 @@ async function postCashExpense(categoryId, amount, memo,registerDate) {
   console.log(data)
 
   try {
-    const response = await fetch(`${server}/keirikun/data/regist/expenses`, {
+    const response = await fetch(`${server}/keirikun/data/upsert/expenses/by/orderskun`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -2216,10 +2243,54 @@ async function postCashExpense(categoryId, amount, memo,registerDate) {
 
     const resJson = await response.json();
 
-  } catch (error) {
+    if (response.ok) {
+  // ✅ 売上確定したら財布も更新
+  await updateWalletBalanceAPI(amount);
+}
 
+  } catch (error) {
+console.error('登録エラー', error);
   }
 }
+
+async function updateWalletBalanceAPI(addAmount) {
+  try {
+    // 現在の残高取得
+    const res = await fetch(`${server}/wallet/get-balance?user_id=26`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${window.localStorage.getItem('token')}`
+      }
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error('残高取得失敗');
+
+    const currentBalance = parseFloat(data.balance) || 0;
+    const newBalance = currentBalance + parseFloat(addAmount);
+
+    // 更新API
+    const updateRes = await fetch(`${server}/wallet/update-balance`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${window.localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        user_id: 26,
+        balance: newBalance
+      })
+    });
+
+    const updateData = await updateRes.json();
+    if (!updateRes.ok) throw new Error('残高更新失敗');
+
+  } catch (err) {
+    console.error('wallet update error:', err);
+  }
+}
+
 
 
 
@@ -2510,3 +2581,112 @@ document.getElementById('save-order-edit').addEventListener('click', () => {
 
 // キャンセルボタン
 document.getElementById('cancel-order-edit').addEventListener('click', closeEditOrderModal);
+
+
+
+//チェックアウト処理
+// async function sendSquareCheckout() {
+//   const rawText = taxIncluidAmountElent.innerText; // "￥5,180"
+//   const amountStr = rawText.replace(/[^\d]/g, ''); // "5180"
+//   const amount = parseInt(amountStr, 10);
+//
+//   // 確認モダル表示
+//   const confirmed = window.confirm(`この金額でチェックアウトしますか？\n${rawText}`);
+//   if (!confirmed) {
+//     return; // キャンセルされたら処理中断
+//   }
+//
+//   console.log('チェックアウト開始');
+//
+//   const response = await fetch('http://localhost:3001/checkout-terminal', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({
+//       amount: amount,
+//       note: "POSからの会計"
+//     })
+//   });
+//
+//   const result = await response.json();
+//   if (result.status === 'ok') {
+//     alert('端末に送信しました！');
+//   } else {
+//     alert('エラーが発生しました: ' + result.message);
+//   }
+// }
+
+
+async function sendSquareCheckout(){
+  const loadingModal = document.getElementById('loadingModal');
+
+  try {
+    const rawText = taxIncluidAmountElent.innerText;
+    const amountStr = rawText.replace(/[^\d]/g, '');
+    const amount = parseInt(amountStr, 10);
+
+    const confirmed = window.confirm(`この金額でチェックアウトしますか？\n${rawText}`);
+    if (!confirmed) return;
+
+    // ✅ 処理中モーダル表示
+    loadingModal.style.display = 'flex';
+
+    console.log('チェックアウト開始');
+
+    const checkoutRes = await fetch('http://localhost:3001/checkout-terminal', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        amount: amount,
+        note: "POSからの会計"
+      })
+    });
+
+    const result = await checkoutRes.json();
+    console.log(result.data.checkout.id);
+
+    const checkoutId = result.data.checkout.id;
+    const start = Date.now();
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`http://localhost:3001/checkout-status?id=${checkoutId}`);
+        const data = await res.json();
+
+        const status = data.status;
+        console.log(`📡 ステータス: ${status}`);
+
+        if (status === 'COMPLETED') {
+          clearInterval(interval);
+          loadingModal.style.display = 'none'; // ✅ 完了で非表示
+          alert('✅ 支払い完了！');
+          
+        } else if (status === 'CANCELED' || status === 'FAILED') {
+          clearInterval(interval);
+          loadingModal.style.display = 'none'; // ✅ 異常終了で非表示
+          alert('❌ 支払いが失敗またはキャンセル');
+        }
+
+        if (Date.now() - start > 90000) {
+          clearInterval(interval);
+          loadingModal.style.display = 'none'; // ✅ タイムアウトでも非表示
+          alert('⚠ タイムアウト');
+        }
+
+      } catch (err) {
+        clearInterval(interval);
+        loadingModal.style.display = 'none'; // ✅ エラーでも非表示
+        alert('⚠ ステータス確認失敗');
+        console.error(err);
+      }
+    }, 3000);
+
+  } catch (err) {
+    loadingModal.style.display = 'none'; // ✅ 例外発生でも非表示
+    console.error('❌ チェックアウトエラー:', err);
+    alert('会計処理に失敗しました');
+  }
+}
