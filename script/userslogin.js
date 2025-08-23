@@ -67,6 +67,9 @@ async function signin(payload) {
       window.localStorage.setItem('token', token);
       hideLoading(); // Oculta o carregamento
       if(response.data.kubun==='operator'){
+        if(payload.email==='Roots Grill'){
+          window.open('./pages/customer_display.html', '_blank', 'width=600,height=800');
+        }
         window.location.href = './pages/pos.html';
       }else if(response.data.kubun==='dine_in'){
         //if(payload.email==='Buonissimo pedidos'){
@@ -148,3 +151,4 @@ function hideLoading() {
   var modal = document.getElementById("loadingModal");
   modal.style.display = "none";
 }
+
