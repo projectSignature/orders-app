@@ -55,6 +55,7 @@ async function signin(payload) {
     urlBase = 'http://localhost:3000';
   }
 
+   console.log(`${server}/noauth/orders/signin`)
   axios.post(`${server}/noauth/orders/signin`, payload, {
     headers: {
       'Content-Type': 'application/json'
@@ -65,25 +66,45 @@ async function signin(payload) {
     if (response.data.success) {
       const { token } = response.data.info;
       window.localStorage.setItem('token', token);
-      hideLoading(); // Oculta o carregamento
-      if(response.data.kubun==='operator'){
-        if(payload.email==='Roots Grill'){
-          window.open('./pages/customer_display.html', '_blank', 'width=600,height=800');
+      hideLoading();
+
+      console.log(payload.email)
+
+
+
+      if(response.data.kubun === 'operator'){
+        if (payload.email === 'Roots Grill') {
+          // モニター2の座標 (例: メインモニターが1920px幅の場合)
+          const secondMonitorX = 1920; // サブモニターの開始X座標
+          const secondMonitorY = 0;
+
+          // サブモニターの解像度
+          const width = 1920;
+          const height = 1080;
+
+          const win = window.open(
+            './pages/customer_display.html',
+            '_blank',
+            `left=${secondMonitorX},top=${secondMonitorY},width=${width},height=${height}`
+          );
+
+          // フルスクリーンにしたいなら
+          if (win) {
+            win.moveTo(secondMonitorX, secondMonitorY);
+            win.resizeTo(width, height);
+          }
         }
+
         window.location.href = './pages/pos.html';
-      }else if(response.data.kubun==='dine_in'){
-        //if(payload.email==='Buonissimo pedidos'){
-         // window.location.href = './pages/orders.html';
-        //}else{
-          window.location.href = './pages/neworders.html';
-        //}
-        //
-      }else if(response.data.kubun==='takeout'){
+
+        window.location.href = './pages/pos.html';
+      } else if(response.data.kubun === 'dine_in'){
+        window.location.href = './pages/neworders.html';
+      } else if(response.data.kubun === 'takeout'){
         window.location.href = './pages/ordersTakeOut.html';
-      }else{
+      } else {
         window.location.href = './pages/dashboard.html';
       }
-      // window.location.href = './pages/pos.html'; // Redireciona para renda.html
     } else {
       errormessage = "Check username and password";
       document.getElementById("pass").value = "";
@@ -151,4 +172,3 @@ function hideLoading() {
   var modal = document.getElementById("loadingModal");
   modal.style.display = "none";
 }
-
