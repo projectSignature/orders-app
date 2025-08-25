@@ -74,30 +74,33 @@ async function signin(payload) {
 
       if(response.data.kubun === 'operator'){
         if (payload.email === 'Roots Grill') {
-          // モニター2の座標 (例: メインモニターが1920px幅の場合)
-          const secondMonitorX = 1920; // サブモニターの開始X座標
-          const secondMonitorY = 0;
-
-          // サブモニターの解像度
-          const width = 1920;
-          const height = 1080;
-
-          const win = window.open(
-            './pages/customer_display.html',
-            '_blank',
-            `left=${secondMonitorX},top=${secondMonitorY},width=${width},height=${height}`
-          );
-
-          // フルスクリーンにしたいなら
-          if (win) {
-            win.moveTo(secondMonitorX, secondMonitorY);
-            win.resizeTo(width, height);
-          }
+            window.location.href = './pages/posNew.html';
+          // // モニター2の座標 (例: メインモニターが1920px幅の場合)
+          // const secondMonitorX = 1920; // サブモニターの開始X座標
+          // const secondMonitorY = 0;
+          //
+          // // サブモニターの解像度
+          // const width = 1920;
+          // const height = 1080;
+          //
+          // const win = window.open(
+          //   './pages/customer_display.html',
+          //   '_blank',
+          //   `left=${secondMonitorX},top=${secondMonitorY},width=${width},height=${height}`
+          // );
+          //
+          // // フルスクリーンにしたいなら
+          // if (win) {
+          //   win.moveTo(secondMonitorX, secondMonitorY);
+          //   win.resizeTo(width, height);
+          // }
+        }else{
+          window.location.href = './pages/pos.html';
         }
 
-        window.location.href = './pages/pos.html';
 
-        window.location.href = './pages/pos.html';
+
+
       } else if(response.data.kubun === 'dine_in'){
         window.location.href = './pages/neworders.html';
       } else if(response.data.kubun === 'takeout'){
