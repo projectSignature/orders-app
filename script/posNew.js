@@ -289,17 +289,41 @@ document.addEventListener('DOMContentLoaded', async  () => {
 
     console.log(receiptData.items)
     console.log(receiptData.totalWithTax)
+    console.log(order.id)
+    console.log(receiptData.totalWithTax)
+    console.log(receiptData.items)
 
-        const channel = new BroadcastChannel('customer-display');
-        channel.postMessage({
-          type: 'update',
-          order_id: order.id,
-          totalWithTax: receiptData.totalWithTax,
-          items: receiptData.items,
-          paymentAmount: 2000 // ←★お客様からの預かり金額
-        });
+    // 注文確定時点では paymentAmount を付けない（null送信）
+    const channel = new BroadcastChannel('customer-display');
+    channel.postMessage({
+      type: 'update',
+      order_id: order.id,
+      totalWithTax: receiptData.totalWithTax,
+      items: receiptData.items,
+      paymentAmount: null
+    });
+
 
   }
+  document.getElementById('deposit-amount').addEventListener('input', (e) => {
+    // 全角/半角の￥やカンマ、空白を全部消す
+    const raw = e.target.value.replace(/[¥￥,，\s]/g, '');
+    const paymentAmount = parseFloat(raw) || 0;
+
+    console.log("入力値:", e.target.value, "→ 数字だけ:", raw, "→ 数値:", paymentAmount);
+
+    const channel = new BroadcastChannel('customer-display');
+    channel.postMessage({
+      type: 'update',
+      order_id: clients.selectedOrder,
+      totalWithTax: clients.receiptData.totalWithTax,
+      items: clients.receiptData.items,
+      paymentAmount: paymentAmount
+    });
+  });
+
+
+
 
 
     // depositAmountElement.addEventListener('input', updateChange);
@@ -317,7 +341,11 @@ document.addEventListener('DOMContentLoaded', async  () => {
     }
     // Confirm Payment Button Logic
     document.getElementById('confirm-payment').addEventListener('click', async () => {
-    // Assuming you have a selectedOrder variable that stores the current order
+      console.log('reset')
+      const channel = new BroadcastChannel('customer-display');
+      channel.postMessage({
+        type: 'reset'   // ← 待機に戻すトリガー
+      });
     registeConfirm()
 });
 document.getElementById('confirm-ptakes').addEventListener('click',async ()=>{
@@ -2663,7 +2691,6 @@ async function sendSquareCheckout(){
           clearInterval(interval);
           loadingModal.style.display = 'none'; // ✅ 完了で非表示
           alert('✅ 支払い完了！');
-          
         } else if (status === 'CANCELED' || status === 'FAILED') {
           clearInterval(interval);
           loadingModal.style.display = 'none'; // ✅ 異常終了で非表示
