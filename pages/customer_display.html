@@ -70,22 +70,27 @@
   </div>
 
   <script>
-    const orderDisplay = document.getElementById('orderDisplay');
-    const channel = new BroadcastChannel('customer-display');
+  const orderDisplay = document.getElementById('orderDisplay');
+  const channel = new BroadcastChannel('customer-display');
+  let resetTimer = null;
 
-    const renderWaiting = () => {
-      orderDisplay.innerHTML = `
-        <div class="center-container">
-          <img src="../imagen/logo.png" class="logo" alt="Logo">
-          <div class="waiting">🕒 ご注文をお待ちしています...</div>
-        </div>
-      `;
-    };
+  const renderWaiting = () => {
+    orderDisplay.innerHTML = `
+      <div class="center-container">
+        <img src="../imagen/logo.png" class="logo" alt="Logo">
+        <div class="waiting">🕒 ご注文をお待ちしています...</div>
+      </div>
+    `;
+  };
 
-    channel.onmessage = (event) => {
-      const { type, order_id, totalWithTax, items, paymentAmount } = event.data;
-      if (type !== 'update') return;
+  // 受信処理
+  channel.onmessage = (event) => {
+    const data = event.data;
 
+    console.log(data)
+
+    if (data.type === 'update') {
+      const { order_id, totalWithTax, items, paymentAmount } = data;
       const change = paymentAmount != null ? paymentAmount - totalWithTax : null;
 
       orderDisplay.innerHTML = `
@@ -103,10 +108,21 @@
         </div>
       `;
 
-      setTimeout(renderWaiting, 20000);
-    };
+      // 保険：2分後に待機へ戻す
+      if (resetTimer) clearTimeout(resetTimer);
+      resetTimer = setTimeout(renderWaiting, 2 * 60 * 1000);
 
-    renderWaiting();
+    } else if (data.type === 'reset') {
+      // Confirm ボタンクリックからのリセット
+      if (resetTimer) clearTimeout(resetTimer);
+      renderWaiting();
+    }
+  };
+
+  // 初期表示は待機
+  renderWaiting();
+
+
   </script>
 </body>
 </html>
