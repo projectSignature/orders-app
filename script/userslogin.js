@@ -104,7 +104,7 @@ async function signin(payload) {
       } else if(response.data.kubun === 'dine_in'){
         window.location.href = './pages/neworders.html';
       } else if(response.data.kubun === 'takeout'){
-        window.location.href = './pages/ordersTakeOut.html';
+          window.location.href = './pages/ordersTakeOutRoots.html';;
       } else {
         window.location.href = './pages/dashboard.html';
       }
@@ -175,3 +175,4 @@ function hideLoading() {
   var modal = document.getElementById("loadingModal");
   modal.style.display = "none";
 }
+
