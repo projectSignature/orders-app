@@ -434,7 +434,25 @@ button.addEventListener('click', () => {
     paymentButtons.forEach(btn => btn.classList.remove('selected'));
     // Update the paytype based on the selected button
     if (button === cashPaymentButton) {
-        updatePayType('cash',button);
+      console.log('hire');
+      console.log(depositAmountElement.value);
+
+      // ￥やカンマを除去して数値化
+      const raw = depositAmountElement.value.replace(/[¥￥,，\s]/g, '');
+      const paymentAmount = parseFloat(raw) || 0;
+
+      // 現金決済の処理
+      updatePayType('cash', button);
+
+      // 対面モニターへ送信
+      const channel = new BroadcastChannel('customer-display');
+      channel.postMessage({
+        type: 'update',
+        order_id: clients.selectedOrder,
+        totalWithTax: clients.receiptData.totalWithTax,
+        items: clients.receiptData.items,
+        paymentAmount: paymentAmount
+      });
     } else if (button === creditPaymentButton) {
         updatePayType('credit',button);
         console.log(clients.id)
@@ -2717,3 +2735,4 @@ async function sendSquareCheckout(){
     alert('会計処理に失敗しました');
   }
 }
+
