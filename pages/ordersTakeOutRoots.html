@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders君</title>
+    <link rel="stylesheet" href="../style/appname.css">
+    <link rel="stylesheet" href="../style/loading-popup.css">
+    <link rel="stylesheet" href="../style/orders-takeoutRoots.css">
+</head>
+<body>
+  <div class="mother-div">
+    <div id="language-switcher" style="margin-left: auto;">
+        <img src="../imagen/language-pt.png" alt="Português" class="language-icon" data-lang="pt">
+        <img src="../imagen/language-ja.png" alt="日本語" class="language-icon" data-lang="ja">
+        <img src="../imagen/language-en.png" alt="English" class="language-icon" data-lang="en">
+    </div>
+   <div  id="order-categories" class="category-div">
+
+   </div>
+   <div id="menu-items" class="menu-div">
+
+   </div>
+ </div>
+ <!-- 右上カート -->
+ <div id="cart-button">
+   🛒 <span id="cart-count">0</span>
+ </div>
+
+ <!-- カートモーダル -->
+
+ <div id="cart-modal" class="hidden">
+   <h2 data-translate-key="注文リスト">Lista de pedidos</h2>
+   <ul id="cart-items"></ul>
+   <div id="cart-total"><span data-translate-key="合計">Total</span>: ￥0</div>
+   <button id="confirm-order" data-translate-key="Confirmar pedido">Confirmar pedido</button>
+   <button id="close-cart" data-translate-key="閉じる">Fechar</button>
+ </div>
+
+ <div id="cart-overlay" class="hidden"></div>
+
+ <div id="loading-popup" class="loading-popup">
+   <div class="loading-container">
+       <div class="spinner"></div>
+       <div class="loading-text">await</div>
+   </div>
+ </div>
+
+ <div id="custom-alert" class="custom-alert">
+   <div class="alert-content">
+       <span class="checkmark">✓</span>
+       <p id="oder-successfully">オーダーが確定されました。</p>
+   </div>
+</div>
+
+
+
+
+    <!-- <button id="fullscreenButton" style="">Enter Fullscreen</button> -->
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="../script/loding-popup.js"></script>
+    <script src="../config.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/order-takeoutRoots.js"></script>
+</body>
+</html>
