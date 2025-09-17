@@ -21,7 +21,7 @@
 
     h1 {
       margin: 0;
-      font-size: 28px; /* ↑さらに大きく */
+      font-size: 28px;
       font-weight: bold;
       letter-spacing: 1px;
     }
@@ -29,7 +29,7 @@
     select {
       margin-top: 10px;
       padding: 8px 12px;
-      font-size: 18px; /* ↑大きめ */
+      font-size: 16px;
       border-radius: 6px;
       border: none;
       background: #fff;
@@ -38,67 +38,107 @@
     }
 
     .container {
-      padding: 16px;
+      padding: 20px;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
     }
 
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr); /* ← 2列に変更 */
-      gap: 16px;
+      grid-template-columns: 1fr; /* ← 1列固定 */
+      gap: 20px;
       width: 100%;
-      max-width: 900px; /* 横幅制御 */
+      max-width: 500px;
     }
 
     .product-card {
-      position: relative;
       background: #1b1b1b;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      animation: fadeUp 0.6s ease forwards;
-    }
-
-    @keyframes fadeUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      text-align: center;
     }
 
     .product-card img {
       width: 100%;
-      height: 200px;
+      height: 220px;
       object-fit: cover;
     }
 
     .product-info {
-      padding: 12px;
-      text-align: center;
+      padding: 14px;
     }
 
     .product-name {
-      font-size: 22px; /* ↑大きく */
+      font-size: 22px;
       font-weight: 600;
       margin: 8px 0;
     }
 
     .product-price {
-      font-size: 21px; /* ↑大きく */
+      font-size: 20px;
       font-weight: bold;
       color: #ff3b3b;
       margin-bottom: 12px;
     }
 
-    .promo-badge {
-      position: absolute;
-      top: 10px;
-      left: 0;
+    .product-info button {
       background: #e74c3c;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* モーダル */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      text-align: left;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      font-size: 22px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 6px;
+    }
+
+    .modal-content p {
+      margin: 6px 0;
+      font-size: 16px;
+      color: #ddd;
+    }
+
+    .close-btn {
+      background: #e74c3c;
+      border: none;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 6px;
       color: #fff;
       font-size: 16px;
-      font-weight: bold;
-      padding: 6px 14px;
-      border-radius: 0 8px 8px 0;
+      width: 100%;
+      cursor: pointer;
     }
 
     footer {
@@ -106,10 +146,10 @@
       color: #ccc;
       padding: 24px 12px;
       text-align: center;
-      font-size: 18px; /* ↑大きく */
+      font-size: 16px;
     }
-    footer h3 { margin-top: 0; color: #fff; font-size: 20px; }
-    footer a { color: #ff6f61; text-decoration: none; font-size: 18px; }
+    footer h3 { margin-top: 0; color: #fff; font-size: 18px; }
+    footer a { color: #ff6f61; text-decoration: none; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -127,6 +167,18 @@
   <div class="product-grid" id="product-grid"></div>
 </div>
 
+<!-- 詳細モーダル -->
+<div id="product-modal" class="modal">
+  <div class="modal-content">
+    <h2 id="modal-name"></h2>
+    <p id="modal-desc"></p>
+    <p id="modal-origin"></p>
+    <p id="modal-usage"></p>
+    <p id="modal-storage"></p>
+    <button class="close-btn" onclick="closeModal()">閉じる</button>
+  </div>
+</div>
+
 <footer>
   <h3>店舗情報</h3>
   <p>住所：愛知県碧南市サンプル1-2-3</p>
@@ -136,16 +188,24 @@
 
 <script>
   const products = [
-    { img:"./imagen/rump.jpg", name:{ja:"ランプ",en:"Rump",pt:"Alcatra"}, price:2500, promo:false },
-    { img:"./imagen/ichibo.jpg", name:{ja:"イチボ",en:"Rump Cap",pt:"Picanha"}, price:2800, promo:true },
-    { img:"./imagen/sirloin.jpg", name:{ja:"サーロイン",en:"Sirloin",pt:"Contrafilé"}, price:3200, promo:false },
-    { img:"./imagen/ribeye.jpg", name:{ja:"リブアイ",en:"Ribeye",pt:"Ancho"}, price:3500, promo:true }
+    { img:"./imagen/rump.jpg", name:{ja:"ランプ",en:"Rump",pt:"Alcatra"}, price:2500,
+      desc:{ja:"赤身が多く食感しっかり",en:"Lean meat with firm texture",pt:"Carne magra com textura firme"},
+      origin:{ja:"国産牛",en:"Domestic beef",pt:"Boi nacional"},
+      usage:{ja:"ステーキ・ロースト向き",en:"Good for steak & roast",pt:"Bom para bife e assado"},
+      storage:{ja:"冷蔵3日・冷凍1ヶ月",en:"3 days refrigerated, 1 month frozen",pt:"3 dias refrigerado, 1 mês congelado"}
+    },
+    { img:"./imagen/ichibo.jpg", name:{ja:"イチボ",en:"Rump Cap",pt:"Picanha"}, price:2800,
+      desc:{ja:"希少部位で旨味濃厚",en:"Rare cut with rich flavor",pt:"Corte raro com sabor intenso"},
+      origin:{ja:"国産和牛",en:"Japanese Wagyu",pt:"Wagyu japonês"},
+      usage:{ja:"焼肉・ステーキに最適",en:"Perfect for BBQ & steak",pt:"Perfeito para churrasco e bife"},
+      storage:{ja:"冷蔵2日・冷凍1ヶ月",en:"2 days refrigerated, 1 month frozen",pt:"2 dias refrigerado, 1 mês congelado"}
+    }
   ];
 
   const translations = {
-    ja:{ title:"Amigos Butchers Shop", currency:"円/kg" },
-    en:{ title:"Amigos Butchers Shop", currency:"JPY/kg" },
-    pt:{ title:"Amigos Butchers Shop", currency:"JPY/kg" }
+    ja:{ title:"Amigos Butchers Shop", currency:"円/kg", details:"詳細を見る", close:"閉じる" },
+    en:{ title:"Amigos Butchers Shop", currency:"JPY/kg", details:"Details", close:"Close" },
+    pt:{ title:"Amigos Butchers Shop", currency:"JPY/kg", details:"Detalhes", close:"Fechar" }
   };
 
   const productGrid=document.getElementById("product-grid");
@@ -156,20 +216,33 @@
     productGrid.innerHTML="";
     pageTitle.textContent=translations[lang].title;
 
-    products.forEach((p)=>{
+    products.forEach((p,index)=>{
       const card=document.createElement("div");
       card.className="product-card";
-      let promoBadge=p.promo?`<div class="promo-badge">${lang==="ja"?"特価":lang==="pt"?"Promoção":"SALE"}</div>`:"";
       card.innerHTML=`
-        ${promoBadge}
         <img src="${p.img}" alt="${p.name[lang]}">
         <div class="product-info">
           <div class="product-name">${p.name[lang]}</div>
           <div class="product-price">${p.price} ${translations[lang].currency}</div>
+          <button onclick="openModal(${index}, '${lang}')">${translations[lang].details}</button>
         </div>
       `;
       productGrid.appendChild(card);
     });
+  }
+
+  function openModal(index,lang){
+    const p=products[index];
+    document.getElementById("modal-name").textContent=p.name[lang];
+    document.getElementById("modal-desc").textContent=p.desc[lang];
+    document.getElementById("modal-origin").textContent="産地 / Origin: "+p.origin[lang];
+    document.getElementById("modal-usage").textContent="用途 / Usage: "+p.usage[lang];
+    document.getElementById("modal-storage").textContent="保存方法 / Storage: "+p.storage[lang];
+    document.getElementById("product-modal").style.display="flex";
+  }
+
+  function closeModal(){
+    document.getElementById("product-modal").style.display="none";
   }
 
   langSelect.addEventListener("change",e=>renderProducts(e.target.value));
