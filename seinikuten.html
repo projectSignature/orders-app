@@ -15,13 +15,13 @@
     header {
       background: linear-gradient(90deg, #8e0e00, #1f1c18);
       color: #fff;
-      padding: 16px;
+      padding: 20px;
       text-align: center;
     }
 
     h1 {
       margin: 0;
-      font-size: 26px; /* ↑大きくした */
+      font-size: 28px; /* ↑さらに大きく */
       font-weight: bold;
       letter-spacing: 1px;
     }
@@ -29,7 +29,7 @@
     select {
       margin-top: 10px;
       padding: 8px 12px;
-      font-size: 16px; /* ↑大きくした */
+      font-size: 18px; /* ↑大きめ */
       border-radius: 6px;
       border: none;
       background: #fff;
@@ -40,16 +40,15 @@
     .container {
       padding: 16px;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      justify-content: center;
     }
 
     .product-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* ← 2列に変更 */
+      gap: 16px;
       width: 100%;
-      max-width: 420px; /* スマホ用幅 */
+      max-width: 900px; /* 横幅制御 */
     }
 
     .product-card {
@@ -68,26 +67,26 @@
 
     .product-card img {
       width: 100%;
-      height: 220px;
+      height: 200px;
       object-fit: cover;
     }
 
     .product-info {
-      padding: 14px;
+      padding: 12px;
       text-align: center;
     }
 
     .product-name {
-      font-size: 20px; /* ↑大きくした */
+      font-size: 22px; /* ↑大きく */
       font-weight: 600;
-      margin: 6px 0;
+      margin: 8px 0;
     }
 
     .product-price {
-      font-size: 19px; /* ↑大きくした */
+      font-size: 21px; /* ↑大きく */
       font-weight: bold;
-      color: #e74c3c;
-      margin-bottom: 10px;
+      color: #ff3b3b;
+      margin-bottom: 12px;
     }
 
     .promo-badge {
@@ -96,21 +95,21 @@
       left: 0;
       background: #e74c3c;
       color: #fff;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: bold;
-      padding: 5px 14px;
+      padding: 6px 14px;
       border-radius: 0 8px 8px 0;
     }
 
     footer {
       background: #1f1c18;
       color: #ccc;
-      padding: 20px 10px;
+      padding: 24px 12px;
       text-align: center;
-      font-size: 16px; /* ↑大きくした */
+      font-size: 18px; /* ↑大きく */
     }
-    footer h3 { margin-top: 0; color: #fff; font-size: 18px; } /* ↑大きくした */
-    footer a { color: #ff6f61; text-decoration: none; font-size: 16px; }
+    footer h3 { margin-top: 0; color: #fff; font-size: 20px; }
+    footer a { color: #ff6f61; text-decoration: none; font-size: 18px; }
   </style>
 </head>
 <body>
