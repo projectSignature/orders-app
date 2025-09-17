@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: #121212;
+      background: #111;
       color: #f5f5f5;
       margin: 0;
       padding: 0;
@@ -15,20 +15,21 @@
     header {
       background: linear-gradient(90deg, #8e0e00, #1f1c18);
       color: #fff;
-      padding: 15px;
+      padding: 16px;
       text-align: center;
     }
 
     h1 {
       margin: 0;
       font-size: 22px;
+      font-weight: bold;
       letter-spacing: 1px;
     }
 
     select {
       margin-top: 10px;
       padding: 8px 12px;
-      font-size: 16px;
+      font-size: 15px;
       border-radius: 6px;
       border: none;
       background: #fff;
@@ -37,53 +38,60 @@
     }
 
     .container {
-      padding: 15px;
+      padding: 16px;
     }
 
     .product-grid {
       display: grid;
-      grid-template-columns: 1fr; /* 常に1列 */
+      grid-template-columns: 1fr; /* 常に縦並び */
       gap: 20px;
     }
 
     .product-card {
       position: relative;
-      background: #1e1e1e;
+      background: #1b1b1b;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      transform: translateY(30px);
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .product-card img {
       width: 100%;
-      aspect-ratio: 1 / 1; /* 正方形で統一 */
+      aspect-ratio: 16 / 9; /* 横長で綺麗に */
       object-fit: cover;
     }
 
     .product-info {
-      padding: 15px;
+      padding: 14px;
       text-align: center;
     }
 
     .product-name {
-      font-size: 20px;
-      font-weight: bold;
-      margin: 10px 0;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 6px 0;
     }
 
     .product-price {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
       color: #e74c3c;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .product-info button {
       background: #e74c3c;
       border: none;
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 15px;
       color: #fff;
       cursor: pointer;
       width: 100%;
@@ -95,11 +103,13 @@
       left: 0;
       background: #e74c3c;
       color: #fff;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: bold;
-      padding: 6px 14px;
+      padding: 5px 14px;
       border-radius: 0 8px 8px 0;
+      animation: pulse 1.5s infinite;
     }
+    @keyframes pulse { 50% { background: #ff6f61; } }
 
     /* モーダル */
     .modal {
@@ -121,16 +131,24 @@
       width: 100%;
       max-width: 400px;
       text-align: left;
+      animation: zoomIn 0.3s ease;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     .modal-content h2 {
       margin-top: 0;
-      font-size: 20px;
+      font-size: 18px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 6px;
     }
 
     .modal-content p {
-      margin: 8px 0;
-      font-size: 16px;
+      margin: 6px 0;
+      font-size: 15px;
       color: #ddd;
     }
 
@@ -138,10 +156,10 @@
       background: #e74c3c;
       border: none;
       padding: 12px;
-      margin-top: 15px;
+      margin-top: 12px;
       border-radius: 6px;
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       width: 100%;
     }
 
@@ -150,9 +168,9 @@
       color: #ccc;
       padding: 20px 10px;
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
     }
-    footer h3 { margin-top: 0; color: #fff; font-size: 16px; }
+    footer h3 { margin-top: 0; color: #fff; font-size: 15px; }
     footer a { color: #ff6f61; text-decoration: none; }
   </style>
 </head>
@@ -191,37 +209,29 @@
 
 <script>
   const products = [
-    { 
-      img: "./imagen/rump.jpg", 
-      name: { ja:"ランプ", en:"Rump", pt:"Alcatra" }, price: 2500, promo: false,
-      desc: { ja:"赤身が多く、しっかりした食感。", en:"Lean meat with firm texture.", pt:"Carne magra com textura firme." },
-      origin: { ja:"国産牛", en:"Domestic beef", pt:"Boi nacional" },
-      usage: { ja:"ステーキ、ローストにおすすめ", en:"Good for steak and roast", pt:"Bom para bife e assado" },
-      storage:{ ja:"冷蔵3日、冷凍1ヶ月", en:"3 days refrigerated, 1 month frozen", pt:"3 dias refrigerado, 1 mês congelado" }
+    { img:"./imagen/rump.jpg", name:{ja:"ランプ",en:"Rump",pt:"Alcatra"}, price:2500, promo:false,
+      desc:{ja:"赤身が多く、しっかりした食感。", en:"Lean meat with firm texture.", pt:"Carne magra com textura firme."},
+      origin:{ja:"国産牛",en:"Domestic beef",pt:"Boi nacional"},
+      usage:{ja:"ステーキ、ローストにおすすめ",en:"Good for steak and roast",pt:"Bom para bife e assado"},
+      storage:{ja:"冷蔵3日、冷凍1ヶ月",en:"3 days refrigerated, 1 month frozen",pt:"3 dias refrigerado, 1 mês congelado"}
     },
-    { 
-      img: "./imagen/ichibo.jpg", 
-      name: { ja:"イチボ", en:"Rump Cap", pt:"Picanha" }, price: 2800, promo: true,
-      desc: { ja:"希少部位で濃厚な旨味。", en:"Rare cut with rich flavor.", pt:"Corte raro com sabor intenso." },
-      origin:{ ja:"国産和牛", en:"Japanese Wagyu", pt:"Wagyu japonês" },
-      usage:{ ja:"焼肉・ステーキに最適", en:"Perfect for yakiniku & steak", pt:"Perfeito para churrasco e bife" },
-      storage:{ ja:"冷蔵2日、冷凍1ヶ月", en:"2 days refrigerated, 1 month frozen", pt:"2 dias refrigerado, 1 mês congelado" }
+    { img:"./imagen/ichibo.jpg", name:{ja:"イチボ",en:"Rump Cap",pt:"Picanha"}, price:2800, promo:true,
+      desc:{ja:"希少部位で濃厚な旨味。", en:"Rare cut with rich flavor.", pt:"Corte raro com sabor intenso."},
+      origin:{ja:"国産和牛",en:"Japanese Wagyu",pt:"Wagyu japonês"},
+      usage:{ja:"焼肉・ステーキに最適",en:"Perfect for yakiniku & steak",pt:"Perfeito para churrasco e bife"},
+      storage:{ja:"冷蔵2日、冷凍1ヶ月",en:"2 days refrigerated, 1 month frozen",pt:"2 dias refrigerado, 1 mês congelado"}
     },
-    { 
-      img: "./imagen/sirloin.jpg", 
-      name: { ja:"サーロイン", en:"Sirloin", pt:"Contrafilé" }, price: 3200, promo: false,
-      desc: { ja:"柔らかく脂のバランスが絶妙。", en:"Tender with balanced fat.", pt:"Macio com gordura equilibrada." },
-      origin:{ ja:"オーストラリア産", en:"Australian beef", pt:"Carne australiana" },
-      usage:{ ja:"厚切りステーキに最適", en:"Best for thick steak", pt:"Ótimo para bife grosso" },
-      storage:{ ja:"冷蔵3日、冷凍1ヶ月", en:"3 days refrigerated, 1 month frozen", pt:"3 dias refrigerado, 1 mês congelado" }
+    { img:"./imagen/sirloin.jpg", name:{ja:"サーロイン",en:"Sirloin",pt:"Contrafilé"}, price:3200, promo:false,
+      desc:{ja:"柔らかく脂のバランスが絶妙。", en:"Tender with balanced fat.", pt:"Macio com gordura equilibrada."},
+      origin:{ja:"オーストラリア産",en:"Australian beef",pt:"Carne australiana"},
+      usage:{ja:"厚切りステーキに最適",en:"Best for thick steak",pt:"Ótimo para bife grosso"},
+      storage:{ja:"冷蔵3日、冷凍1ヶ月",en:"3 days refrigerated, 1 month frozen",pt:"3 dias refrigerado, 1 mês congelado"}
     },
-    { 
-      img: "./imagen/ribeye.jpg", 
-      name: { ja:"リブアイ", en:"Ribeye", pt:"Ancho" }, price: 3500, promo: true,
-      desc: { ja:"ジューシーで風味豊か。", en:"Juicy and flavorful.", pt:"Suculento e saboroso." },
-      origin:{ ja:"アメリカ産", en:"US beef", pt:"Carne americana" },
-      usage:{ ja:"焼肉・グリルに最適", en:"Perfect for grill & BBQ", pt:"Perfeito para grelha e churrasco" },
-      storage:{ ja:"冷蔵3日、冷凍1ヶ月", en:"3 days refrigerated, 1 month frozen", pt:"3 dias refrigerado, 1 mês congelado" }
+    { img:"./imagen/ribeye.jpg", name:{ja:"リブアイ",en:"Ribeye",pt:"Ancho"}, price:3500, promo:true,
+      desc:{ja:"ジューシーで風味豊か。", en:"Juicy and flavorful.", pt:"Suculento e saboroso."},
+      origin:{ja:"アメリカ産",en:"US beef",pt:"Carne americana"},
+      usage:{ja:"焼肉・グリルに最適",en:"Perfect for grill & BBQ",pt:"Perfeito para grelha e churrasco"},
+      storage:{ja:"冷蔵3日、冷凍1ヶ月",en:"3 days refrigerated, 1 month frozen",pt:"3 dias refrigerado, 1 mês congelado"}
     }
   ];
 
