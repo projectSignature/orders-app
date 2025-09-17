@@ -27,9 +27,9 @@
     }
 
     select {
-      margin-top: 10px;
-      padding: 8px 12px;
-      font-size: 15px;
+      margin-top: 8px;
+      padding: 6px 10px;
+      font-size: 14px;
       border-radius: 6px;
       border: none;
       background: #fff;
@@ -39,12 +39,17 @@
 
     .container {
       padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .product-grid {
-      display: grid;
-      grid-template-columns: 1fr; /* 常に縦並び */
+      display: flex;
+      flex-direction: column;
       gap: 20px;
+      width: 100%;
+      max-width: 420px; /* ← スマホで幅を制御 */
     }
 
     .product-card {
@@ -53,23 +58,22 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      transform: translateY(30px);
-      opacity: 0;
       animation: fadeUp 0.6s ease forwards;
     }
 
     @keyframes fadeUp {
+      from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
 
     .product-card img {
       width: 100%;
-      aspect-ratio: 16 / 9; /* 横長で綺麗に */
-      object-fit: cover;
+      height: 220px; /* 高さ固定 */
+      object-fit: cover; /* ← きれいに収める */
     }
 
     .product-info {
-      padding: 14px;
+      padding: 12px;
       text-align: center;
     }
 
@@ -107,60 +111,6 @@
       font-weight: bold;
       padding: 5px 14px;
       border-radius: 0 8px 8px 0;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse { 50% { background: #ff6f61; } }
-
-    /* モーダル */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .modal-content {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 400px;
-      text-align: left;
-      animation: zoomIn 0.3s ease;
-    }
-
-    @keyframes zoomIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .modal-content h2 {
-      margin-top: 0;
-      font-size: 18px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 6px;
-    }
-
-    .modal-content p {
-      margin: 6px 0;
-      font-size: 15px;
-      color: #ddd;
-    }
-
-    .close-btn {
-      background: #e74c3c;
-      border: none;
-      padding: 12px;
-      margin-top: 12px;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 15px;
-      width: 100%;
     }
 
     footer {
@@ -169,6 +119,7 @@
       padding: 20px 10px;
       text-align: center;
       font-size: 13px;
+      margin-top: 20px;
     }
     footer h3 { margin-top: 0; color: #fff; font-size: 15px; }
     footer a { color: #ff6f61; text-decoration: none; }
@@ -189,17 +140,6 @@
   <div class="product-grid" id="product-grid"></div>
 </div>
 
-<div id="product-modal" class="modal">
-  <div class="modal-content">
-    <h2 id="modal-name"></h2>
-    <p id="modal-desc"></p>
-    <p id="modal-origin"></p>
-    <p id="modal-usage"></p>
-    <p id="modal-storage"></p>
-    <button class="close-btn" onclick="closeModal()">閉じる</button>
-  </div>
-</div>
-
 <footer>
   <h3>店舗情報</h3>
   <p>住所：愛知県碧南市サンプル1-2-3</p>
@@ -209,36 +149,16 @@
 
 <script>
   const products = [
-    { img:"./imagen/rump.jpg", name:{ja:"ランプ",en:"Rump",pt:"Alcatra"}, price:2500, promo:false,
-      desc:{ja:"赤身が多く、しっかりした食感。", en:"Lean meat with firm texture.", pt:"Carne magra com textura firme."},
-      origin:{ja:"国産牛",en:"Domestic beef",pt:"Boi nacional"},
-      usage:{ja:"ステーキ、ローストにおすすめ",en:"Good for steak and roast",pt:"Bom para bife e assado"},
-      storage:{ja:"冷蔵3日、冷凍1ヶ月",en:"3 days refrigerated, 1 month frozen",pt:"3 dias refrigerado, 1 mês congelado"}
-    },
-    { img:"./imagen/ichibo.jpg", name:{ja:"イチボ",en:"Rump Cap",pt:"Picanha"}, price:2800, promo:true,
-      desc:{ja:"希少部位で濃厚な旨味。", en:"Rare cut with rich flavor.", pt:"Corte raro com sabor intenso."},
-      origin:{ja:"国産和牛",en:"Japanese Wagyu",pt:"Wagyu japonês"},
-      usage:{ja:"焼肉・ステーキに最適",en:"Perfect for yakiniku & steak",pt:"Perfeito para churrasco e bife"},
-      storage:{ja:"冷蔵2日、冷凍1ヶ月",en:"2 days refrigerated, 1 month frozen",pt:"2 dias refrigerado, 1 mês congelado"}
-    },
-    { img:"./imagen/sirloin.jpg", name:{ja:"サーロイン",en:"Sirloin",pt:"Contrafilé"}, price:3200, promo:false,
-      desc:{ja:"柔らかく脂のバランスが絶妙。", en:"Tender with balanced fat.", pt:"Macio com gordura equilibrada."},
-      origin:{ja:"オーストラリア産",en:"Australian beef",pt:"Carne australiana"},
-      usage:{ja:"厚切りステーキに最適",en:"Best for thick steak",pt:"Ótimo para bife grosso"},
-      storage:{ja:"冷蔵3日、冷凍1ヶ月",en:"3 days refrigerated, 1 month frozen",pt:"3 dias refrigerado, 1 mês congelado"}
-    },
-    { img:"./imagen/ribeye.jpg", name:{ja:"リブアイ",en:"Ribeye",pt:"Ancho"}, price:3500, promo:true,
-      desc:{ja:"ジューシーで風味豊か。", en:"Juicy and flavorful.", pt:"Suculento e saboroso."},
-      origin:{ja:"アメリカ産",en:"US beef",pt:"Carne americana"},
-      usage:{ja:"焼肉・グリルに最適",en:"Perfect for grill & BBQ",pt:"Perfeito para grelha e churrasco"},
-      storage:{ja:"冷蔵3日、冷凍1ヶ月",en:"3 days refrigerated, 1 month frozen",pt:"3 dias refrigerado, 1 mês congelado"}
-    }
+    { img:"./imagen/rump.jpg", name:{ja:"ランプ",en:"Rump",pt:"Alcatra"}, price:2500, promo:false },
+    { img:"./imagen/ichibo.jpg", name:{ja:"イチボ",en:"Rump Cap",pt:"Picanha"}, price:2800, promo:true },
+    { img:"./imagen/sirloin.jpg", name:{ja:"サーロイン",en:"Sirloin",pt:"Contrafilé"}, price:3200, promo:false },
+    { img:"./imagen/ribeye.jpg", name:{ja:"リブアイ",en:"Ribeye",pt:"Ancho"}, price:3500, promo:true }
   ];
 
   const translations = {
-    ja:{ title:"Amigos Butchers Shop", currency:"円/kg", details:"詳細を見る", close:"閉じる" },
-    en:{ title:"Amigos Butchers Shop", currency:"JPY/kg", details:"Details", close:"Close" },
-    pt:{ title:"Amigos Butchers Shop", currency:"JPY/kg", details:"Detalhes", close:"Fechar" }
+    ja:{ title:"Amigos Butchers Shop", currency:"円/kg" },
+    en:{ title:"Amigos Butchers Shop", currency:"JPY/kg" },
+    pt:{ title:"Amigos Butchers Shop", currency:"JPY/kg" }
   };
 
   const productGrid=document.getElementById("product-grid");
@@ -249,35 +169,21 @@
     productGrid.innerHTML="";
     pageTitle.textContent=translations[lang].title;
 
-    products.forEach((p,index)=>{
+    products.forEach((p)=>{
       const card=document.createElement("div");
       card.className="product-card";
-
       let promoBadge=p.promo?`<div class="promo-badge">${lang==="ja"?"特価":lang==="pt"?"Promoção":"SALE"}</div>`:"";
-
       card.innerHTML=`
         ${promoBadge}
         <img src="${p.img}" alt="${p.name[lang]}">
         <div class="product-info">
           <div class="product-name">${p.name[lang]}</div>
           <div class="product-price">${p.price} ${translations[lang].currency}</div>
-          <button onclick="openModal(${index}, '${lang}')">${translations[lang].details}</button>
         </div>
       `;
       productGrid.appendChild(card);
     });
   }
-
-  function openModal(index,lang){
-    const p=products[index];
-    document.getElementById("modal-name").textContent=p.name[lang];
-    document.getElementById("modal-desc").textContent=p.desc[lang];
-    document.getElementById("modal-origin").textContent="産地 / Origin: "+p.origin[lang];
-    document.getElementById("modal-usage").textContent="用途 / Usage: "+p.usage[lang];
-    document.getElementById("modal-storage").textContent="保存方法 / Storage: "+p.storage[lang];
-    document.getElementById("product-modal").style.display="flex";
-  }
-  function closeModal(){ document.getElementById("product-modal").style.display="none"; }
 
   langSelect.addEventListener("change",e=>renderProducts(e.target.value));
   renderProducts("ja");
