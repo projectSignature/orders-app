@@ -21,6 +21,8 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     h1 {
@@ -136,32 +138,79 @@
       100% { background: #e74c3c; }
     }
 
-    /* スマホ対応 */
+    /* 📱 スマホ対応 */
     @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-      }
-      h1 {
-        font-size: 24px;
-      }
-      .container {
-        padding: 15px;
-      }
       .product-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 15px;
+        grid-template-columns: 1fr; /* 縦一列表示 */
       }
       .product-card img {
-        height: 150px;
+        height: 180px;
       }
       .product-name {
-        font-size: 16px;
+        font-size: 18px;
       }
       .product-price {
         font-size: 16px;
       }
+    }
+
+    /* モーダル */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: #fff;
+    }
+    .modal-content p {
+      margin: 10px 0;
+      color: #ddd;
+    }
+    .close-btn {
+      background: #e74c3c;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* 店舗情報 */
+    footer {
+      background: #1f1c18;
+      color: #ccc;
+      padding: 30px 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+    footer h3 {
+      margin-top: 0;
+      color: #fff;
+    }
+    footer p {
+      margin: 5px 0;
+    }
+    footer a {
+      color: #ff6f61;
+      text-decoration: none;
     }
   </style>
 </head>
@@ -182,18 +231,71 @@
   </div>
 </div>
 
+<!-- モーダル -->
+<div id="product-modal" class="modal">
+  <div class="modal-content">
+    <h2 id="modal-name"></h2>
+    <p id="modal-desc"></p>
+    <p id="modal-origin"></p>
+    <p id="modal-usage"></p>
+    <p id="modal-storage"></p>
+    <button class="close-btn" onclick="closeModal()">閉じる</button>
+  </div>
+</div>
+
+<!-- 店舗情報 -->
+<footer>
+  <h3>店舗情報</h3>
+  <p>住所：愛知県碧南市サンプル1-2-3</p>
+  <p>営業時間：10:00〜19:00 （定休日：火曜日）</p>
+  <p>電話：<a href="tel:0566-00-0000">0566-00-0000</a></p>
+  <p><a href="https://goo.gl/maps/" target="_blank">Google Mapsで見る</a></p>
+</footer>
+
 <script>
   const products = [
-    { img: "./imagen/rump.jpg",   name: { ja: "ランプ", en: "Rump", pt: "Alcatra" }, price: 2500, promo: false },
-    { img: "./imagen/ichibo.jpg", name: { ja: "イチボ", en: "Rump Cap", pt: "Picanha" }, price: 2800, promo: true },
-    { img: "./imagen/sirloin.jpg",name: { ja: "サーロイン", en: "Sirloin", pt: "Contrafilé" }, price: 3200, promo: false },
-    { img: "./imagen/ribeye.jpg", name: { ja: "リブアイ", en: "Ribeye", pt: "Ancho" }, price: 3500, promo: true }
+    { 
+      img: "./imagen/rump.jpg", 
+      name: { ja: "ランプ", en: "Rump", pt: "Alcatra" }, 
+      price: 2500, promo: false,
+      origin: "国産牛",
+      usage: "ステーキ、ローストにおすすめ",
+      storage: "冷蔵3日、冷凍1ヶ月",
+      desc: "赤身が多く、しっかりした食感が特徴です。"
+    },
+    { 
+      img: "./imagen/ichibo.jpg", 
+      name: { ja: "イチボ", en: "Rump Cap", pt: "Picanha" }, 
+      price: 2800, promo: true,
+      origin: "国産和牛",
+      usage: "焼肉・ステーキに最適",
+      storage: "冷蔵2日、冷凍1ヶ月",
+      desc: "牛のお尻の先端、希少な部位。濃厚な旨味があります。"
+    },
+    { 
+      img: "./imagen/sirloin.jpg", 
+      name: { ja: "サーロイン", en: "Sirloin", pt: "Contrafilé" }, 
+      price: 3200, promo: false,
+      origin: "オーストラリア産",
+      usage: "厚切りステーキにおすすめ",
+      storage: "冷蔵3日、冷凍1ヶ月",
+      desc: "柔らかさと脂のバランスが絶妙な人気部位。"
+    },
+    { 
+      img: "./imagen/ribeye.jpg", 
+      name: { ja: "リブアイ", en: "Ribeye", pt: "Ancho" }, 
+      price: 3500, promo: true,
+      origin: "アメリカ産",
+      usage: "焼肉・グリルに最適",
+      storage: "冷蔵3日、冷凍1ヶ月",
+      desc: "脂の入りが良く、ジューシーな味わい。"
+    }
   ];
 
   const translations = {
-    ja: { title: "Amigos Butchers Shop", currency: "円/kg" },
-    en: { title: "Amigos Butchers Shop", currency: "JPY/kg" },
-    pt: { title: "Amigos Butchers Shop", currency: "JPY/kg" }
+    ja: { title: "Amigos Butchers Shop", currency: "円/kg", details:"詳細を見る", close:"閉じる" },
+    en: { title: "Amigos Butchers Shop", currency: "JPY/kg", details:"Details", close:"Close" },
+    pt: { title: "Amigos Butchers Shop", currency: "JPY/kg", details:"Detalhes", close:"Fechar" }
   };
 
   const productGrid = document.getElementById("product-grid");
@@ -220,10 +322,26 @@
         <div class="product-info">
           <div class="product-name">${p.name[lang]}</div>
           <div class="product-price">${p.price} ${translations[lang].currency}</div>
+          <button onclick="openModal(${index}, '${lang}')">${translations[lang].details}</button>
         </div>
       `;
       productGrid.appendChild(card);
     });
+  }
+
+  // モーダル制御
+  function openModal(index, lang) {
+    const product = products[index];
+    document.getElementById("modal-name").textContent = product.name[lang];
+    document.getElementById("modal-desc").textContent = "説明: " + product.desc;
+    document.getElementById("modal-origin").textContent = "産地: " + product.origin;
+    document.getElementById("modal-usage").textContent = "用途: " + product.usage;
+    document.getElementById("modal-storage").textContent = "保存方法: " + product.storage;
+    document.getElementById("product-modal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("product-modal").style.display = "none";
   }
 
   langSelect.addEventListener("change", (e) => {
