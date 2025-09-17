@@ -54,16 +54,17 @@
     }
 
     .container {
-      padding: 40px;
+      padding: 20px;
     }
 
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 25px;
+      gap: 20px;
     }
 
     .product-card {
+      position: relative;
       background: #1e1e1e;
       border-radius: 12px;
       overflow: hidden;
@@ -113,6 +114,55 @@
       font-weight: bold;
       color: #e74c3c;
     }
+
+    /* 🔥 プロモーションバッジ */
+    .promo-badge {
+      position: absolute;
+      top: 10px;
+      left: -5px;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 5px 12px;
+      border-radius: 0 6px 6px 0;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { background: #e74c3c; }
+      50% { background: #ff6f61; }
+      100% { background: #e74c3c; }
+    }
+
+    /* スマホ対応 */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      .container {
+        padding: 15px;
+      }
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+      }
+      .product-card img {
+        height: 150px;
+      }
+      .product-name {
+        font-size: 16px;
+      }
+      .product-price {
+        font-size: 16px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -134,10 +184,10 @@
 
 <script>
   const products = [
-    { img: "./imagen/rump.jpg",   name: { ja: "ランプ", en: "Rump", pt: "Alcatra" }, price: 2500 },
-    { img: "./imagen/ichibo.jpg", name: { ja: "イチボ", en: "Rump Cap", pt: "Picanha" }, price: 2800 },
-    { img: "./imagen/sirloin.jpg",name: { ja: "サーロイン", en: "Sirloin", pt: "Contrafilé" }, price: 3200 },
-    { img: "./imagen/ribeye.jpg", name: { ja: "リブアイ", en: "Ribeye", pt: "Ancho" }, price: 3500 }
+    { img: "./imagen/rump.jpg",   name: { ja: "ランプ", en: "Rump", pt: "Alcatra" }, price: 2500, promo: false },
+    { img: "./imagen/ichibo.jpg", name: { ja: "イチボ", en: "Rump Cap", pt: "Picanha" }, price: 2800, promo: true },
+    { img: "./imagen/sirloin.jpg",name: { ja: "サーロイン", en: "Sirloin", pt: "Contrafilé" }, price: 3200, promo: false },
+    { img: "./imagen/ribeye.jpg", name: { ja: "リブアイ", en: "Ribeye", pt: "Ancho" }, price: 3500, promo: true }
   ];
 
   const translations = {
@@ -157,8 +207,15 @@
     products.forEach((p, index) => {
       const card = document.createElement("div");
       card.className = "product-card";
-      card.style.animationDelay = `${0.2 * (index + 1)}s`; // JSでもディレイ設定
+      card.style.animationDelay = `${0.2 * (index + 1)}s`;
+
+      let promoBadge = "";
+      if (p.promo) {
+        promoBadge = `<div class="promo-badge">${lang === "ja" ? "特価" : lang === "pt" ? "Promoção" : "SALE"}</div>`;
+      }
+
       card.innerHTML = `
+        ${promoBadge}
         <img src="${p.img}" alt="${p.name[lang]}">
         <div class="product-info">
           <div class="product-name">${p.name[lang]}</div>
@@ -173,11 +230,8 @@
     renderProducts(e.target.value);
   });
 
-  // 初期表示
   renderProducts("ja");
 </script>
 
 </body>
 </html>
-
-
