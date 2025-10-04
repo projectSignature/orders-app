@@ -1608,7 +1608,17 @@ function getCurrentDateTime() {
     }
 
  async function openCaixaModal(){
-   console.log(clients)
+  
+if(clients.id===1){
+  const password = prompt("🔐Digite a senha");
+if(password !== "Nina0204"){  // ← パスワード設定
+ alert("❌Senha incorreta");
+ return;
+}
+}
+
+
+  
    modal.style.display = "block";
    if(clients.registerInfo.length!=0){
      document.getElementById('bill5000').value = clients.registerInfo[0].bill_5000
@@ -2119,3 +2129,4 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
