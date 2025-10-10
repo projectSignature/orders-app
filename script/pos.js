@@ -1100,21 +1100,21 @@ inputElement.addEventListener('input', function () {
 //     updateChange(); // ✅ 金額変更時に釣りを計算
 // }
 
-  function parseLocalizedNumberes(str) {
-    if (!str) return 0;
-    str = str.trim().replace(/\s/g, '');
-    if (str.match(/\.\d{3},\d{1,2}$/)) {
-      // ブラジル式 (1.234,56)
-      str = str.replace(/\./g, '').replace(',', '.');
-    } else if (str.match(/,\d{3}\.\d{1,2}$/)) {
-      // 日本・英語式 (1,234.56)
-      str = str.replace(/,/g, '');
-    } else {
-      str = str.replace(',', '.');
-    }
-    let num = parseFloat(str);
-    return isNaN(num) ? 0 : num;
+function parseLocalizedNumberer(str) {
+  if (!str) return 0;
+  str = str.trim().replace(/\s/g, '');
+  if (str.match(/\.\d{3},\d{1,2}$/)) {
+    // ブラジル式 (1.234,56)
+    str = str.replace(/\./g, '').replace(',', '.');
+  } else if (str.match(/,\d{3}\.\d{1,2}$/)) {
+    // 日本・英語式 (1,234.56)
+    str = str.replace(/,/g, '');
+  } else {
+    str = str.replace(',', '.');
   }
+  let num = parseFloat(str);
+  return isNaN(num) ? 0 : num;
+}
 
 function formatInput() {
   // 入力文字列を取得
@@ -2253,6 +2253,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
