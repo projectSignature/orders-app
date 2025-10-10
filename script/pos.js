@@ -547,7 +547,7 @@ let adicionarItem = null
                 optionItemDiv.addEventListener('click', () => {
                     // ボタンに 'selected' クラスが既に付いているか確認
                     if (optionItemDiv.classList.contains('selected')) {
-                        // 'selected' クラスが付いていた場合はクラスを削除
+                        // 'selected' クラスが付いていた場合はク109ラスを削除
                         optionItemDiv.classList.remove('selected');
                         // addNewOption 配列から該当するオプションを削除
                         addNewOption = addNewOption.filter(opt => opt.menu_id !== option.menu_id);
@@ -1082,6 +1082,22 @@ inputElement.addEventListener('input', function () {
 //     }
 //     updateChange(); // ✅ 金額変更時に釣りを計算
 // }
+
+  function parseLocalizedNumber(str) {
+    if (!str) return 0;
+    str = str.trim().replace(/\s/g, '');
+    if (str.match(/\.\d{3},\d{1,2}$/)) {
+      // ブラジル式 (1.234,56)
+      str = str.replace(/\./g, '').replace(',', '.');
+    } else if (str.match(/,\d{3}\.\d{1,2}$/)) {
+      // 日本・英語式 (1,234.56)
+      str = str.replace(/,/g, '');
+    } else {
+      str = str.replace(',', '.');
+    }
+    let num = parseFloat(str);
+    return isNaN(num) ? 0 : num;
+  }
 
 function formatInput() {
   // 入力文字列を取得
@@ -2195,6 +2211,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
