@@ -283,18 +283,47 @@ document.addEventListener('DOMContentLoaded', async  () => {
 
 
     // depositAmountElement.addEventListener('input', updateChange);
-    function updateChange() {
+    // function updateChange() {
 
+    //   let depositAmountElement = document.getElementById('deposit-amount'); // 預入金額
+    //   let changeAmountElement = document.getElementById('change-amount'); // 釣り
+    //   let taxIncludedAmountElement = document.getElementById('tax-included-amount'); // 総額
+
+    //   let deposit = parseInt(depositAmountElement.value.replace(/[^\d]/g, '')) || 0;
+    //   let total = parseInt(taxIncludedAmountElement.textContent.replace(/[^\d]/g, '')) || 0;
+    //   let change = deposit - total;
+
+    //   changeAmountElement.value = change >= 0 ? `¥${change.toLocaleString()}` : "¥0";
+    // }
+
+    function updateChange() {
       let depositAmountElement = document.getElementById('deposit-amount'); // 預入金額
-      let changeAmountElement = document.getElementById('change-amount'); // 釣り
+      let changeAmountElement = document.getElementById('change-amount');   // 釣り
       let taxIncludedAmountElement = document.getElementById('tax-included-amount'); // 総額
 
-      let deposit = parseInt(depositAmountElement.value.replace(/[^\d]/g, '')) || 0;
-      let total = parseInt(taxIncludedAmountElement.textContent.replace(/[^\d]/g, '')) || 0;
-      let change = deposit - total;
+      // ▼ 入力文字列を正規化
+      let rawDeposit = depositAmountElement.value.trim();
 
-      changeAmountElement.value = change >= 0 ? `¥${change.toLocaleString()}` : "¥0";
+      // 例: "1.234,56" または "1,234.56" → どちらも扱えるようにする
+      let normalizedDeposit = rawDeposit
+        .replace(/\s/g, '')                // 空白除去
+        .replace(/,/g, '.')                // カンマをドットへ（ブラジル式対応）
+        .replace(/[^\d.]/g, '');           // 数字とドット以外を除去
+
+      let deposit = parseFloat(normalizedDeposit) || 0;
+
+      // 総額側も同様に正規化（例: ¥1,234 → 1234）
+      let normalizedTotal = taxIncludedAmountElement.textContent
+        .replace(/[^\d.]/g, '')
+        .replace(/,/g, '.');
+
+      let total = parseFloat(normalizedTotal) || 0;
+
+      let change = deposit - total;
+      changeAmountElement.value = change >= 0 ? `¥${change.toLocaleString('ja-JP')}` : "¥0";
     }
+
+ 
     // Confirm Payment Button Logic
     document.getElementById('confirm-payment').addEventListener('click', async () => {
     // Assuming you have a selectedOrder variable that stores the current order
@@ -2129,4 +2158,5 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
