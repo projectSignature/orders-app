@@ -1,7 +1,5 @@
  const token = window.localStorage.getItem('token');
 
-console.log(`update20251010')
-
  if (!token) {
     window.location.href = '../index.html';
  }
@@ -2158,6 +2156,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
