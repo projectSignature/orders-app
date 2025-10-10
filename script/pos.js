@@ -302,6 +302,24 @@ document.addEventListener('DOMContentLoaded', async  () => {
     //   changeAmountElement.value = change >= 0 ? `¥${change.toLocaleString()}` : "¥0";
     // }
 
+ // どちらの表記（1,234.56 or 1.234,56）でも対応
+function parseLocalizedNumber(str) {
+  if (!str) return 0;
+  str = str.trim().replace(/\s/g, '');
+  if (str.match(/\.\d{3},\d{1,2}$/)) {
+    // ブラジル式 (1.234,56)
+    str = str.replace(/\./g, '').replace(',', '.');
+  } else if (str.match(/,\d{3}\.\d{1,2}$/)) {
+    // 日本・英語式 (1,234.56)
+    str = str.replace(/,/g, '');
+  } else {
+    str = str.replace(',', '.');
+  }
+  let num = parseFloat(str);
+  return isNaN(num) ? 0 : num;
+}
+
+
 function updateChange() {
   let depositAmountElement = document.getElementById('deposit-amount'); // 預入金額
   let changeAmountElement = document.getElementById('change-amount'); // 釣り
@@ -2156,6 +2174,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
