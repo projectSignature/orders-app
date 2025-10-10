@@ -1119,17 +1119,24 @@ inputElement.addEventListener('input', function () {
 function formatInput() {
   // 入力文字列を取得
   let rawValue = inputElement.value.trim();
+  console.log(`💬 rawValue(before): ${rawValue}`);
 
-  // ✅ 小数点や桁区切りが混ざっても安全に数値化
-  let value = parseLocalizedNumberes(rawValue); // ← 前の回答で追加した関数を利用
+  // ✅ 通貨記号や全角スペースを除去
+  rawValue = rawValue.replace(/[¥￥\s]/g, '');
+  console.log(`💬 rawValue(cleaned): ${rawValue}`);
 
-  // ✅ 数字が空なら ¥0 に戻す
-  if (!value) {
+  // ✅ 安全に数値化（関数名ミス修正済み）
+  let value = parseLocalizedNumberer(rawValue);
+
+  // ✅ NaN または 空入力チェック
+  if (isNaN(value) || rawValue === '') {
     inputElement.value = "¥0";
   } else {
-    // ✅ ブラウザの言語に応じてフォーマット（日本 or ブラジル）
+    // ✅ ロケールごとのフォーマット
     const locale = navigator.language.startsWith('pt') ? 'pt-BR' : 'ja-JP';
-    inputElement.value = value.toLocaleString(locale, { style: 'currency', currency: 'JPY' });
+    const formatted = value.toLocaleString(locale, { style: 'currency', currency: 'JPY' });
+    console.log(`💬 formatted: ${formatted}`);
+    inputElement.value = formatted;
   }
 
   // ✅ 金額変更時に釣り計算
@@ -2246,6 +2253,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
