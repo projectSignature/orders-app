@@ -1073,15 +1073,36 @@ inputElement.addEventListener('input', function () {
 });
 
 // **🔥 フォーマット関数**
+// function formatInput() {
+//     let rawValue = inputElement.value.replace(/[^\d]/g, ''); // 数字以外削除
+//     if (rawValue === "") {
+//         inputElement.value = "¥0"; // 空なら ¥0 に戻す
+//     } else {
+//         inputElement.value = `¥${Number(rawValue).toLocaleString()}`;
+//     }
+//     updateChange(); // ✅ 金額変更時に釣りを計算
+// }
+
 function formatInput() {
-    let rawValue = inputElement.value.replace(/[^\d]/g, ''); // 数字以外削除
-    if (rawValue === "") {
-        inputElement.value = "¥0"; // 空なら ¥0 に戻す
-    } else {
-        inputElement.value = `¥${Number(rawValue).toLocaleString()}`;
-    }
-    updateChange(); // ✅ 金額変更時に釣りを計算
+  // 入力文字列を取得
+  let rawValue = inputElement.value.trim();
+
+  // ✅ 小数点や桁区切りが混ざっても安全に数値化
+  let value = parseLocalizedNumber(rawValue); // ← 前の回答で追加した関数を利用
+
+  // ✅ 数字が空なら ¥0 に戻す
+  if (!value) {
+    inputElement.value = "¥0";
+  } else {
+    // ✅ ブラウザの言語に応じてフォーマット（日本 or ブラジル）
+    const locale = navigator.language.startsWith('pt') ? 'pt-BR' : 'ja-JP';
+    inputElement.value = value.toLocaleString(locale, { style: 'currency', currency: 'JPY' });
+  }
+
+  // ✅ 金額変更時に釣り計算
+  updateChange();
 }
+
 
 function updateChange() {
   let depositAmountElement = document.getElementById('deposit-amount'); // 預入金額
@@ -2174,6 +2195,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
