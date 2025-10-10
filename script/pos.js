@@ -154,6 +154,8 @@ document.addEventListener('DOMContentLoaded', async  () => {
   function displayOrderDetails(order) {
     console.log(order);
 
+       const locale = navigator.language.startsWith('pt') ? 'pt-BR' : 'ja-JP';
+
     // 支払いボタン初期化
     const paymentButtons = [cashPaymentButton, creditPaymentButton, otherPaymentButton];
     paymentButtons.forEach(button => button.classList.remove("selected"));
@@ -273,9 +275,13 @@ document.addEventListener('DOMContentLoaded', async  () => {
       : Math.floor(subtotal + receiptData.taxTotal);
 
     // 表示更新
-    totalAmountElement.textContent = `￥${receiptData.totalAmount.toLocaleString()}`;
-    document.getElementById('tax-total').textContent = `￥${receiptData.taxTotal.toLocaleString()}`;
-    document.getElementById('tax-included-amount').textContent = `￥${receiptData.totalWithTax.toLocaleString()}`;
+
+       totalAmountElement.textContent = receiptData.totalAmount.toLocaleString(locale, { style: 'currency', currency: 'JPY' });
+    document.getElementById('tax-total').textContent = receiptData.taxTotal.toLocaleString(locale, { style: 'currency', currency: 'JPY' });
+    document.getElementById('tax-included-amount').textContent = receiptData.totalWithTax.toLocaleString(locale, { style: 'currency', currency: 'JPY' });
+    // totalAmountElement.textContent = `￥${receiptData.totalAmount.toLocaleString()}`;
+    // document.getElementById('tax-total').textContent = `￥${receiptData.taxTotal.toLocaleString()}`;
+    // document.getElementById('tax-included-amount').textContent = `￥${receiptData.totalWithTax.toLocaleString()}`;
 
     updateChange();
     clients.receiptData = receiptData;
@@ -296,32 +302,24 @@ document.addEventListener('DOMContentLoaded', async  () => {
     //   changeAmountElement.value = change >= 0 ? `¥${change.toLocaleString()}` : "¥0";
     // }
 
-    function updateChange() {
-      let depositAmountElement = document.getElementById('deposit-amount'); // 預入金額
-      let changeAmountElement = document.getElementById('change-amount');   // 釣り
-      let taxIncludedAmountElement = document.getElementById('tax-included-amount'); // 総額
+function updateChange() {
+  let depositAmountElement = document.getElementById('deposit-amount'); // 預入金額
+  let changeAmountElement = document.getElementById('change-amount'); // 釣り
+  let taxIncludedAmountElement = document.getElementById('tax-included-amount'); // 総額
 
-      // ▼ 入力文字列を正規化
-      let rawDeposit = depositAmountElement.value.trim();
+  // ← 修正ポイント（parseLocalizedNumberで正規化）
+  let deposit = parseLocalizedNumber(depositAmountElement.value);
+  let total = parseLocalizedNumber(taxIncludedAmountElement.textContent);
 
-      // 例: "1.234,56" または "1,234.56" → どちらも扱えるようにする
-      let normalizedDeposit = rawDeposit
-        .replace(/\s/g, '')                // 空白除去
-        .replace(/,/g, '.')                // カンマをドットへ（ブラジル式対応）
-        .replace(/[^\d.]/g, '');           // 数字とドット以外を除去
+  let change = deposit - total;
 
-      let deposit = parseFloat(normalizedDeposit) || 0;
+  // 通貨表記は現在のブラウザ言語にあわせる
+  const locale = navigator.language.startsWith('pt') ? 'pt-BR' : 'ja-JP';
+  changeAmountElement.value = change >= 0
+    ? change.toLocaleString(locale, { style: 'currency', currency: 'JPY' })
+    : "¥0";
+}
 
-      // 総額側も同様に正規化（例: ¥1,234 → 1234）
-      let normalizedTotal = taxIncludedAmountElement.textContent
-        .replace(/[^\d.]/g, '')
-        .replace(/,/g, '.');
-
-      let total = parseFloat(normalizedTotal) || 0;
-
-      let change = deposit - total;
-      changeAmountElement.value = change >= 0 ? `¥${change.toLocaleString('ja-JP')}` : "¥0";
-    }
 
  
     // Confirm Payment Button Logic
@@ -2158,5 +2156,6 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
