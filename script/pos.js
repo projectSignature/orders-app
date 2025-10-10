@@ -1173,19 +1173,23 @@ function formatInput() {
 // }
 
 function updateChange() {
-  let depositAmountElement = document.getElementById('deposit-amount'); // 預入金額
-  let changeAmountElement = document.getElementById('change-amount'); // 釣り
-  let taxIncludedAmountElement = document.getElementById('tax-included-amount'); // 総額
+  const depositAmountElement = document.getElementById('deposit-amount'); // 預入金額
+  const changeAmountElement = document.getElementById('change-amount'); // 釣り
+  const taxIncludedAmountElement = document.getElementById('tax-included-amount'); // 総額
 
-  let deposit = parseInt(depositAmountElement.value.replace(/[^\d]/g, '')) || 0;
-  let total = parseInt(taxIncludedAmountElement.textContent.replace(/[^\d]/g, '')) || 0;
-  // console.log()
-  let change = deposit - total;
+  const deposit = parseInt(depositAmountElement.value.replace(/[^\d]/g, '')) || 0;
+  const total = parseInt(taxIncludedAmountElement.textContent.replace(/[^\d]/g, '')) || 0;
 
-  console.log(`change:${change}`)
+  const change = deposit - total;
 
-  changeAmountElement.value = change >= 0 ? `¥${change.toLocaleString()}` : "¥0";
+  // ✅ ロケールに依存せず、日本式カンマ区切りで固定
+  const formattedChange = change >= 0
+    ? `¥${change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+    : "¥0";
+
+  changeAmountElement.value = formattedChange;
 }
+
 
 
 
@@ -2266,6 +2270,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
