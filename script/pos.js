@@ -1161,17 +1161,14 @@ function updateChange() {
   let changeAmountElement = document.getElementById('change-amount'); // 釣り
   let taxIncludedAmountElement = document.getElementById('tax-included-amount'); // 総額
 
-  // ← 修正ポイント（parseLocalizedNumberで正規化）
-  let deposit = parseLocalizedNumberer(depositAmountElement.value);
-  let total = parseLocalizedNumberer(taxIncludedAmountElement.textContent);
-
+  let deposit = parseInt(depositAmountElement.value.replace(/[^\d]/g, '')) || 0;
+  let total = parseInt(taxIncludedAmountElement.textContent.replace(/[^\d]/g, '')) || 0;
+  // console.log()
   let change = deposit - total;
 
-  // 通貨表記は現在のブラウザ言語にあわせる
-  const locale = navigator.language.startsWith('pt') ? 'pt-BR' : 'ja-JP';
-  changeAmountElement.value = change >= 0
-    ? change.toLocaleString(locale, { style: 'currency', currency: 'JPY' })
-    : "¥0";
+  console.log(`change:${change}`)
+
+  changeAmountElement.value = change >= 0 ? `¥${change.toLocaleString()}` : "¥0";
 }
 
 
@@ -2253,6 +2250,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
