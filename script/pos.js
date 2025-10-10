@@ -1102,44 +1102,60 @@ inputElement.addEventListener('input', function () {
 
 function parseLocalizedNumberer(str) {
   if (!str) return 0;
-  str = str.trim().replace(/\s/g, '');
-  if (str.match(/\.\d{3},\d{1,2}$/)) {
-    // ブラジル式 (1.234,56)
-    str = str.replace(/\./g, '').replace(',', '.');
-  } else if (str.match(/,\d{3}\.\d{1,2}$/)) {
-    // 日本・英語式 (1,234.56)
-    str = str.replace(/,/g, '');
-  } else {
-    str = str.replace(',', '.');
+
+  // 通貨記号・空白を削除
+  str = str.trim().replace(/[¥￥\s]/g, '');
+
+  // ✅ 全角数字も念のため半角に
+  str = str.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+
+  // ✅ カンマとドットの両方が含まれている場合
+  if (str.includes(',') && str.includes('.')) {
+    // どちらが小数点っぽいかを末尾から判定
+    if (str.lastIndexOf(',') > str.lastIndexOf('.')) {
+      // ブラジル式 "1.234,56"
+      str = str.replace(/\./g, '').replace(',', '.');
+    } else {
+      // 英語式 "1,234.56"
+      str = str.replace(/,/g, '');
+    }
   }
-  let num = parseFloat(str);
+  // ✅ カンマだけを含む場合
+  else if (str.includes(',')) {
+    // 桁区切りと見なして削除（"1,0000" → "10000"）
+    str = str.replace(/,/g, '');
+  }
+  // ✅ ドットだけを含む場合
+  else if (str.includes('.')) {
+    // 桁区切りと見なして削除（"1.0000" → "10000"）
+    str = str.replace(/\./g, '');
+  }
+
+  const num = parseFloat(str);
   return isNaN(num) ? 0 : num;
 }
 
 function formatInput() {
-  // 入力文字列を取得
   let rawValue = inputElement.value.trim();
   console.log(`💬 rawValue(before): ${rawValue}`);
 
-  // ✅ 通貨記号や全角スペースを除去
-  rawValue = rawValue.replace(/[¥￥\s]/g, '');
-  console.log(`💬 rawValue(cleaned): ${rawValue}`);
+  const value = parseLocalizedNumberer(rawValue);
+  console.log(`💬 parsed value: ${value}`);
 
-  // ✅ 安全に数値化（関数名ミス修正済み）
-  let value = parseLocalizedNumberer(rawValue);
-
-  // ✅ NaN または 空入力チェック
-  if (isNaN(value) || rawValue === '') {
+  if (isNaN(value) || rawValue === '' || value === 0) {
     inputElement.value = "¥0";
   } else {
-    // ✅ ロケールごとのフォーマット
     const locale = navigator.language.startsWith('pt') ? 'pt-BR' : 'ja-JP';
-    const formatted = value.toLocaleString(locale, { style: 'currency', currency: 'JPY' });
+    const formatted = value.toLocaleString(locale, {
+      style: 'currency',
+      currency: 'JPY',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
     console.log(`💬 formatted: ${formatted}`);
     inputElement.value = formatted;
   }
 
-  // ✅ 金額変更時に釣り計算
   updateChange();
 }
 
@@ -2250,6 +2266,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
