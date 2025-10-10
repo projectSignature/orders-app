@@ -1162,8 +1162,8 @@ function updateChange() {
   let taxIncludedAmountElement = document.getElementById('tax-included-amount'); // 総額
 
   // ← 修正ポイント（parseLocalizedNumberで正規化）
-  let deposit = parseLocalizedNumberes(depositAmountElement.value);
-  let total = parseLocalizedNumberes(taxIncludedAmountElement.textContent);
+  let deposit = parseLocalizedNumberer(depositAmountElement.value);
+  let total = parseLocalizedNumberer(taxIncludedAmountElement.textContent);
 
   let change = deposit - total;
 
@@ -2253,6 +2253,7 @@ function applyTranslation(lang) {
 
  document.getElementById('language-select').value = currentLang;
  applyTranslation(currentLang);
+
 
 
 
