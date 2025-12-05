@@ -1000,6 +1000,8 @@ async function loadBulkRoomList() {
     ...globalAmenityShoukai
   ];
 
+  tgtDatas.sort((a, b) => a.room_number - b.room_number);
+
   globalRoomDailyList = tgtDatas
 
   console.log(globalAmenityShoukai)
@@ -1008,15 +1010,26 @@ async function loadBulkRoomList() {
 
   tgtDatas.forEach(r => {
 
-    // console.log(r)
+console.log(r)
+const styaAmenityRoom = r.sub_status === 'stay_amenytyOnliy'?true:false
+console.log(styaAmenityRoom)
+let iconHTML=''
+
+if (r.stay_type === 'individual') {
+  iconHTML = `<img src="./img/esponja.png" class="icon-img">`;
+}else if(r.sub_status === 'stay_amenytyOnliy'){
+  iconHTML = `<img src="./img/bag.png" class="icon-img">`;
+}
+
+
 
     const operatorName = getStaffNameById(r.assigned_staff_id);
 
-
     const assignedClass = r.assigned_staff_id ? "assigned-room" : "";
+    const amenityClass = r.sub_status === "stay_amenytyOnliy" ? "stay-amenity" : "";
 
     box.innerHTML += `
-      <div class="bulk-room-item ${assignedClass}"
+      <div class="bulk-room-item ${assignedClass} ${amenityClass}"
            id="room_${r.id}"
            onclick="toggleRoomSelect(${r.id})">
 
@@ -1028,6 +1041,7 @@ async function loadBulkRoomList() {
       </div>
     `;
   });
+
 }
 
 function toggleRoomSelect(roomId) {
@@ -1275,7 +1289,7 @@ async function assignBulk() {
 
 function getStaffNameById(id) {
   if (!id) return "";
-  console.log(`globalWorkerList`,globalWorkerList)
+  // console.log(`globalWorkerList`,globalWorkerList)
   const found = globalWorkerList.find(u => u.id == id);
   return found ? found.name : "";
 }
