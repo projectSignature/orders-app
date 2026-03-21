@@ -213,7 +213,9 @@ sortedData.forEach(item => {
     let div = document.createElement('div');
     div.classList.add('menu-item');
         div.innerHTML = `
-                         <h3 data-id="${item.id}">${item.admin_item_name}</h3>
+        <h3 data-id="${item.id}">
+          <span class="item-id">${item.id}</span>_${item.admin_item_name}
+        </h3>
                          <p>￥${Math.floor(item.price).toLocaleString()}</p>`;
         div.addEventListener('click', () => {
           displayItemDetails(item)
