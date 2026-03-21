@@ -39,10 +39,13 @@
 
     </header>
     <div class="container">
+
       <div class="left-panel">
         <h2 data-i18n="unpaid_orders">Comandas não pagas</h2>
         <div id="orders-list"></div>
       </div>
+
+
 
       <div class="center-panel">
         <h2 data-i18n="order_details">
@@ -99,6 +102,7 @@
             <div class="add-or-cancel-btn">
               <button id="save-add-menu" data-i18n="save">Salvar</button>
               <button id="close-menuModal" data-i18n="cancel">Cancelar</button>
+
             </div>
 
             <div class="total-add-menu-display">
@@ -113,12 +117,27 @@
     <div class="right-panel">
       <div class="top-pagamneto-mother">
         <h2 data-i18n="payment">Pagamento</h2>
-
         <div class="register-caixa-btn">
-          <button id="juntar-comandas" data-i18n="merge_orders">Juntar comanda</button>
-          <input id="yet-regit-info" value="Caixa não registrado" readonly style="display:none" data-i18n="cash_not_registered"/>
-          <button id="openModalBtn" data-i18n="cash_status">Status do caixa</button>
+          <button id="juntar-comandas" data-i18n="merge_orders">
+            Juntar comanda
+          </button>
+
+          <input
+            id="yet-regit-info"
+            value="Caixa não registrado"
+            readonly
+            style="display:none"
+            data-i18n="cash_not_registered"
+          />
+
+          <button id="openModalBtn" data-i18n="cash_status">
+            Status do caixa
+          </button>
+
+          <!-- 追加ここ -->
+
         </div>
+
       </div>
 
     <!-- モーダル -->
@@ -355,6 +374,10 @@
   <button class="cfm-btns-second" id="confirm-payment" data-i18n="confirm_payment">Confirmar pagamento</button>
   <button class="cfm-btns-second" id="confirm-ptakes" data-i18n="mark_delivered">Colocar como entregue</button>
   <button class="cfm-btns-second" id="delete-order" data-i18n="cancel_order">Cancelar pedido</button>
+  <button id="refreshBtn">
+    🔄
+  </button>
+
 </div>
 
 </div>
