@@ -455,9 +455,16 @@ button.addEventListener('click', () => {
       });
     } else if (button === creditPaymentButton) {
         updatePayType('credit',button);
+        console.log(clients.id)
+
         const rawText = taxIncluidAmountElent.innerText;
         document.getElementById('deposit-amount').value = rawText
-       
+
+        console.log(`amount`,amount)
+        // if(clients.id===17){
+        //   sendSquareCheckout(1500);
+        // }
+
     } else if (button === otherPaymentButton) {
         updatePayType('other',button);
     }
@@ -2734,3 +2741,6 @@ async function sendSquareCheckout(){
   }
 }
 
+document.getElementById("refreshBtn").addEventListener("click", () => {
+  location.reload();
+});
