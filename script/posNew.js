@@ -455,11 +455,9 @@ button.addEventListener('click', () => {
       });
     } else if (button === creditPaymentButton) {
         updatePayType('credit',button);
-        console.log(clients.id)
-        if(clients.id===17){
-          sendSquareCheckout(1500);
-        }
-
+        const rawText = taxIncluidAmountElent.innerText;
+        document.getElementById('deposit-amount').value = rawText
+       
     } else if (button === otherPaymentButton) {
         updatePayType('other',button);
     }
