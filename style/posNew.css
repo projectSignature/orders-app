@@ -337,7 +337,7 @@ button {
 }
 .cfm-btns-second{
   margin-top: 10px;
-  height: 25%
+  height: 22%
 }
 
 .cfm-btns{
@@ -1166,4 +1166,11 @@ h2 {
   padding: 6px 14px;
   border-radius: 5px;
   cursor: pointer;
+}
+#refreshBtn {
+
+margin-top: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 6px;
 }
