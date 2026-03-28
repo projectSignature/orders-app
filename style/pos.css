@@ -962,3 +962,91 @@ h2 {
   border-color: #999;
   background-color: #f9f9f9;
 }
+.ok-keyboard {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  background: #111;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.ok-keys {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+
+.ok-keys button {
+  padding: 14px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #222;
+  color: #fff;
+}
+
+.ok-keyboard-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ok-keyboard-actions button {
+  flex: 1;
+  padding: 14px;
+  font-size: 16px;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+}
+
+.floating-input {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    width: 80%;
+    max-width: 400px;
+    font-size: 35px!important;
+    padding: 10px;
+    background: #000;
+    color: #fff;
+    border: 2px solid #00ff99;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#keyboard-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0, 0, 0, 0.3); /* 半透明 */
+  z-index: 999; /* キーボードより下 */
+}
+
+/* キーボード */
+#ok-keyboard {
+  z-index: 1000;
+}
+
+/* 上部INPUT */
+.floating-input {
+  z-index: 1001;
+}
+
+#menu-search-btn{
+    position: fixed;
+    width: 11rem;
+    bottom: 5px;
+    background-color: #f7da51;
+    color:#333
+
+}
