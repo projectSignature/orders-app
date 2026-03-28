@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="../style/loading-popup.css">
     <link rel="stylesheet" type="text/css" href="../style/dynamicModal.css" />
     <link rel="stylesheet" href="../style/commonNew.css">
+    <link rel="stylesheet" href="../style/toast.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
@@ -405,10 +407,15 @@
   </div>
 
   <!-- オーダー統合モーダル -->
-  <div id="mergeModal" style="display:none">
+  <div id="mergeModal" class="merge-modal hidden">
+
+    <button class="merge-close" id="merge-close-btn">×</button>
+
     <h3 data-i18n="choose_orders">Escolha as comandas</h3>
     <div id="order-list"></div>
+
     <button id="merge-confirm" data-i18n="merge">Juntar</button>
+
   </div>
 
   <!-- モーダル本体 -->
@@ -454,6 +461,8 @@
 ">
   処理中です...お待ちください
 </div>
+
+<div id="ok-toast-container" class="ok-toast-container hidden"></div>
 
 
 
