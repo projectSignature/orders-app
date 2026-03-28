@@ -201,6 +201,230 @@ seletOrderType.addEventListener('change', async () => {
 });
 
 
+   let activeInput = null;
+   // let mode = 'num'; // num / abc
+   let floatingInput = null;
+   let mode = 'both'; // 'num' | 'abc' | 'both'
+
+   const numKeys = ['1','2','3','4','5','6','7','8','9','0'];
+   const abcKeys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+   function renderKeys() {
+     const container = document.getElementById('ok-keys');
+     container.innerHTML = '';
+
+     let keys = [];
+
+     if (mode === 'num') keys = numKeys;
+     if (mode === 'abc') keys = abcKeys;
+     if (mode === 'both') {
+       keys = [
+         ...'1234567890',
+         ...'QWERTYUIOP',
+         ...'ASDFGHJKL',
+         ...'ZXCVBNM'
+       ];
+     }
+
+     keys.forEach(k => {
+       const btn = document.createElement('button');
+       btn.textContent = k;
+
+       btn.onclick = () => {
+         if (!activeInput) return;
+
+         const target = floatingInput || activeInput;
+         target.value += k;
+
+         if (floatingInput && activeInput) {
+           activeInput.value = target.value;
+           floatingInput.value = target.value;
+         }
+       };
+
+       container.appendChild(btn);
+     });
+   }
+
+
+   document.getElementById('key-switch').onclick = () => {
+     if (mode === 'num') mode = 'abc';
+     else if (mode === 'abc') mode = 'both';
+     else mode = 'num';
+
+     document.getElementById('key-switch').textContent =
+       mode === 'num' ? 'ABC' :
+       mode === 'abc' ? 'ALL' :
+       '123';
+
+     renderKeys();
+   };
+
+   function getTargetInput() {
+  return floatingInput || activeInput;
+}
+
+document.getElementById('key-clear').onclick = () => {
+  const target = getTargetInput();
+  if (!target) return;
+
+  target.value = '';
+
+  if (floatingInput && activeInput) {
+    activeInput.value = '';
+  }
+};
+
+document.getElementById('key-back').onclick = () => {
+  const target = getTargetInput();
+  if (!target) return;
+
+  target.value = target.value.slice(0, -1);
+
+  if (floatingInput && activeInput) {
+    activeInput.value = target.value;
+  }
+};
+
+document.getElementById('key-space').onclick = () => {
+  const target = getTargetInput();
+  if (!target) return;
+
+  target.value += ' ';
+
+  if (floatingInput && activeInput) {
+    activeInput.value = target.value;
+  }
+};
+
+  document.getElementById('key-close').onclick = () => {
+    closeKeyboard();
+  };
+
+document.addEventListener('focusin', (e) => {
+  // ⭐ これ追加（超重要）
+  if (e.target.classList.contains('floating-input')) return;
+
+  if (e.target.tagName === 'INPUT') {
+    document.getElementById('keyboard-overlay').classList.remove('hidden');
+
+    activeInput = e.target;
+
+    const kbType = e.target.dataset.keyboard;
+    mode = kbType || 'both';
+if (kbType) {
+  mode = kbType; // 'num' | 'abc' | 'both'
+}
+
+    if (floatingInput) floatingInput.remove();
+
+    floatingInput = e.target.cloneNode(true);
+    floatingInput.classList.add('floating-input');
+    floatingInput.value = e.target.value;
+
+    floatingInput.addEventListener('input', () => {
+      activeInput.value = floatingInput.value;
+    });
+
+    document.body.appendChild(floatingInput);
+
+    setTimeout(() => {
+      floatingInput.focus();
+    }, 0);
+
+    document.getElementById('ok-keyboard').classList.remove('hidden');
+
+    renderKeys();
+  }
+});
+
+document.getElementById('key-confirm').onclick = () => {
+  if (!floatingInput) return;
+
+  const value = floatingInput.value;
+
+  // ⭐ 検索用ならここで処理
+
+  console.log(activeInput.dataset.type)
+  if (activeInput && activeInput.dataset.type === 'menu-search') {
+    const getMenu =  onSearch(value);
+    if(getMenu){
+      closeKeyboard();
+    }else{
+      return
+    }
+  }
+
+  // ⭐ 最終反映
+  if (activeInput) {
+    activeInput.value = value;
+  }
+
+   closeKeyboard();
+};
+
+
+function onSearch(id){
+
+  console.log(`clients.MainData`,clients.MainData)
+  console.log(id)
+
+  const getMenu = clients.MainData.menus
+      .filter(item => item.id === id-0)
+
+      if(getMenu.length>0){
+        displayItemDetails(getMenu[0])
+        return true
+      }else{
+          showToast(`Menu não encontrado`, 'error');
+        return false
+      }
+
+
+
+}
+
+
+function closeKeyboard() {
+document.getElementById('ok-keyboard').classList.add('hidden');
+document.getElementById('keyboard-overlay').classList.add('hidden');
+
+if (floatingInput) {
+  activeInput.value = floatingInput.value; // 最終同期
+  floatingInput.remove();
+  floatingInput = null;
+}
+
+activeInput = null;
+}
+
+//メニュー検索
+document.getElementById('menu-search-btn').onclick = () => {
+
+  setKeyboardMode('num');
+
+  const fakeInput = document.createElement('input');
+  fakeInput.type = 'text';
+
+  // ⭐⭐⭐ これを追加（ここが原因）
+  fakeInput.dataset.type = 'menu-search';
+
+  document.body.appendChild(fakeInput);
+
+  // ⭐ フォーカスは最後
+  fakeInput.focus();
+
+  fakeInput.style.position = 'absolute';
+  fakeInput.style.opacity = 0;
+};
+
+function setKeyboardMode(newMode){
+  mode = newMode;
+  renderKeys();
+}
+
+
+
 function displayMenuItems(category) {
   console.log(MainData.menus)
   const sortedData = MainData.menus
@@ -225,6 +449,7 @@ sortedData.forEach(item => {
 }
 
 function displayItemDetails(item) {
+
   const dbLang = currentLang === 'jp' ? 'ja' : currentLang;
     const sortedOptions = MainData.options.filter(opt => opt.menu_id === item.id);
     const detailsContainer = document.createElement('div');
@@ -590,7 +815,8 @@ document.getElementById('confirm-order').addEventListener('click', async () => {
                   })
               });
             }
-            showCustomAlert(translations[dbLang]["Pedido feito"]);
+            showToast(translations[dbLang]["Pedido feito"])
+            // showCustomAlert(translations[dbLang]["Pedido feito"]);
             orderList.order[selectedName] = [];
             selectedItemsContainer.innerHTML = ''; // リストをクリア
             nameinput.value=""
@@ -982,3 +1208,33 @@ function getCurrentDateTime() {
     const localTime = new Date(now - offset).toISOString().slice(0, 16);
     pickupTimeElement.value = localTime;
   })
+
+  function showToast(message, type = 'success') {
+
+    const container = document.getElementById('ok-toast-container');
+    console.log(container)
+    container.classList.remove('hidden')
+
+    const toast = document.createElement('div');
+    toast.className = `ok-toast ${type}`;
+    toast.textContent = message;
+
+    console.log(message)
+
+    container.appendChild(toast);
+
+    // アニメーション表示
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 10);
+
+    // 2秒後に消える
+    setTimeout(() => {
+      console.log(`show`)
+      toast.classList.remove('show');
+
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, 2000);
+  }
