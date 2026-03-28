@@ -149,162 +149,22 @@ document.addEventListener('DOMContentLoaded', async  () => {
               selectOrders=order
                document.getElementById('deposit-amount').value=''
 
-              displayOrderDetails(order);
+               displayOrderDetails(order, {
+                 MainData,
+                 clients,
+                 currentLang,
+                 orderItems,
+                 totalAmountElement,
+                 t,
+                 updateChange
+               });
           });
           ordersList.appendChild(orderCard);
            hideLoadingPopup();
       });
   }
 
-  function displayOrderDetails(order) {
-    console.log(order);
 
-    // 支払いボタン初期化
-    const paymentButtons = [cashPaymentButton, creditPaymentButton, otherPaymentButton];
-    paymentButtons.forEach(button => button.classList.remove("selected"));
-    clients.paytype = '';
-
-    if (order.payment_method === 'cash') {
-      document.getElementById('cash-payment').classList.add('selected');
-      clients.paytype = 'cash';
-    }
-    if (order.payment_method === 'credit') {
-      document.getElementById('credit-payment').classList.add('selected');
-      clients.paytype = 'credit';
-    }
-    if (order.payment_method === 'other') {
-      document.getElementById('other-payment').classList.add('selected');
-      clients.paytype = 'other';
-    }
-
-    clients.printInfo = order;
-    clients.selectedOrder = order.id;
-    orderItems.innerHTML = ''; // アイテムエリア初期化
-
-    // 税区分（設定から取得）
-    clients.tax_use = true;
-    const isExclusive = clients.tax_type === 'exclusive';　　　
-
-    let receiptData = {
-      items: [],
-      totalAmount: 0,
-      tax_8: 0,
-      tax_10: 0,
-      taxTotal: 0,
-      totalWithTax: 0,
-      tax_type: clients.tax_type,
-      tax_use: clients.tax_use,
-      order_id: order.id,
-      nomedaComanda: order.order_name,
-      receipt_display_name: clients.receipt_display_name,
-      receipt_postal_code: clients.receipt_postal_code,
-      receipt_address: clients.receipt_address,
-      receipt_tel: clients.receipt_tel,
-      invoice_number: clients.invoice_number
-    };
-
-    let subtotal = 0;
-    let tax_8 = 0;
-    let tax_10 = 0;
-
-
-    order.OrderItems.forEach(item => {
-      const menuGt = MainData.menus.find(menu => menu.id === item.menu_id);
-      const dbLang = currentLang === 'jp' ? 'ja' : currentLang;
-      item.menu_name = menuGt ? menuGt[`menu_name_${dbLang}`] : t('menu_not_found');
-
-
-      const isTakeout = menuGt?.is_takeout;
-      const taxRate = isTakeout ? 0.08 : 0.10;
-      const taxLabel = isTakeout ? '8%' : '10%';
-      const taxColor = isTakeout ? 'green' : 'red';
-      const price = parseFloat(item.total_price);
-
-      // オプション名取得
-      const options = JSON.parse(item.options || '[]');
-      const optionNames = options.map(opt => {
-        const dbLang = currentLang === 'jp' ? 'ja' : currentLang;
-        const optData = MainData.options.find(o => o.id === parseInt(opt.id));
-        return optData ? optData[`option_name_${dbLang}`] : '';
-
-      }).filter(name => name).join(', ');
-      item.option_names = optionNames;
-
-      // 税計算（内税か外税で処理を分ける）
-      if (isExclusive) {
-        subtotal += price;
-        if (taxRate === 0.08) tax_8 += price * 0.08;
-        else tax_10 += price * 0.10;
-      } else {
-        if (taxRate === 0.08) {
-          const noTax = Math.round(price / 1.08);
-          const tax = price - noTax;
-          subtotal += noTax;
-          tax_8 += tax;
-        } else {
-          const noTax = Math.round(price / 1.10);
-          const tax = price - noTax;
-          subtotal += noTax;
-          tax_10 += tax;
-        }
-      }
-
-
-      // 表示
-      const li = document.createElement('li');
-      li.innerHTML = `
-        ${item.menu_name} x${item.quantity} - ¥${price.toLocaleString()}
-        <span style="color: ${taxColor}; font-weight: bold;">${taxLabel}</span><br>
-        ${item.option_names || ''}
-      `;
-      orderItems.appendChild(li);
-
-      // レシートデータ追加
-      receiptData.items.push({
-        menu_name: item.menu_name,
-        quantity: item.quantity,
-        item_price: price,
-        option_names: item.option_names,
-        tax: isTakeout ? '8%' : '10%'
-      });
-    });
-
-    receiptData.tax_8 = Math.floor(tax_8);
-    receiptData.tax_10 = Math.floor(tax_10);
-    receiptData.taxTotal = receiptData.tax_8 + receiptData.tax_10;
-    receiptData.totalAmount = Math.floor(subtotal);
-    receiptData.totalWithTax = isExclusive
-      ? receiptData.totalAmount + receiptData.taxTotal
-      : Math.floor(subtotal + receiptData.taxTotal);
-
-    // 表示更新
-    totalAmountElement.textContent = `￥${receiptData.totalAmount.toLocaleString()}`;
-    document.getElementById('tax-total').textContent = `￥${receiptData.taxTotal.toLocaleString()}`;
-    document.getElementById('tax-included-amount').textContent = `￥${receiptData.totalWithTax.toLocaleString()}`;
-
-    updateChange();
-    clients.receiptData = receiptData;
-
-    console.log('kokokmadekiteru')
-
-    console.log(receiptData.items)
-    console.log(receiptData.totalWithTax)
-    console.log(order.id)
-    console.log(receiptData.totalWithTax)
-    console.log(receiptData.items)
-
-    // 注文確定時点では paymentAmount を付けない（null送信）
-    const channel = new BroadcastChannel('customer-display');
-    channel.postMessage({
-      type: 'update',
-      order_id: order.id,
-      totalWithTax: receiptData.totalWithTax,
-      items: receiptData.items,
-      paymentAmount: null
-    });
-
-
-  }
   document.getElementById('deposit-amount').addEventListener('input', (e) => {
     // 全角/半角の￥やカンマ、空白を全部消す
     const raw = e.target.value.replace(/[¥￥,，\s]/g, '');
@@ -341,7 +201,6 @@ document.addEventListener('DOMContentLoaded', async  () => {
     }
     // Confirm Payment Button Logic
     document.getElementById('confirm-payment').addEventListener('click', async () => {
-      console.log('reset')
       const channel = new BroadcastChannel('customer-display');
       channel.postMessage({
         type: 'reset'   // ← 待機に戻すトリガー
@@ -389,7 +248,7 @@ document.getElementById('merge-confirm').addEventListener('click', async () => {
     hideLoadingPopup();
     document.getElementById('mergeModal').style.display = 'none';
     createDependentePedidos();
-    alert(t('done'));
+    showToast(t('done'))
 
     document.getElementById('mergeModal').style.display = 'none';
   });
@@ -425,7 +284,7 @@ function updatePayType(type,btn) {
     clients.paytype = type;
         btn.classList.add('selected');
   }else{
-    alert(t('select_order'));
+if (!validateOrderState(clients, t)) return;
   }
 }
 
@@ -434,16 +293,11 @@ button.addEventListener('click', () => {
     paymentButtons.forEach(btn => btn.classList.remove('selected'));
     // Update the paytype based on the selected button
     if (button === cashPaymentButton) {
-      console.log('hire');
-      console.log(depositAmountElement.value);
-
       // ￥やカンマを除去して数値化
       const raw = depositAmountElement.value.replace(/[¥￥,，\s]/g, '');
       const paymentAmount = parseFloat(raw) || 0;
-
       // 現金決済の処理
       updatePayType('cash', button);
-
       // 対面モニターへ送信
       const channel = new BroadcastChannel('customer-display');
       channel.postMessage({
@@ -455,16 +309,8 @@ button.addEventListener('click', () => {
       });
     } else if (button === creditPaymentButton) {
         updatePayType('credit',button);
-        console.log(clients.id)
-
         const rawText = taxIncluidAmountElent.innerText;
         document.getElementById('deposit-amount').value = rawText
-
-        console.log(`amount`,amount)
-        // if(clients.id===17){
-        //   sendSquareCheckout(1500);
-        // }
-
     } else if (button === otherPaymentButton) {
         updatePayType('other',button);
     }
@@ -489,7 +335,7 @@ button.addEventListener('click', () => {
             displayOrderItems(selectedOrder)
             // displayMenuItems('all');   // 初期表示ですべてのメニューを表示
         } else {
-          alert(t('select_order'));
+          if (!validateOrderState(clients, t)) return;
         }
     });
 
@@ -560,6 +406,23 @@ let adicionarItem = null
               });
         });
     }
+
+    // 初期設定と変更イベント
+    document.getElementById('language-select').addEventListener('change', async (e) => {
+      const lang = e.target.value;
+      localStorage.setItem('loacastrogg', lang);
+      currentLang=lang
+      applyTranslation(lang);
+      createDependentePedidosRetry({
+        MainData,
+        clients,
+        currentLang,
+        orderItems,
+        totalAmountElement,
+        t,
+        updateChange
+      });
+    });
 
     let addNewOption = [];  // 選択したオプションの情報を格納する配列
     // オプションを表示する関数
@@ -670,6 +533,9 @@ let adicionarItem = null
     function formatPrice(value) {
     const parsedValue = parseFloat(value);
     return parsedValue % 1 === 0 ? parsedValue.toFixed(0) : parsedValue.toFixed(2);
+
+
+
 }
 
     // リストを表示する関数
@@ -826,13 +692,22 @@ document.getElementById('save-add-menu').addEventListener('click', async () => {
       } else {
           pendingOrders.push(responseData);  // もし新規オーダーなら追加
       }
-    alert(t('done'));
+  showToast(t('done'))
       // モーダルを閉じる
       selctedCard = null;
       document.getElementById('menuModal').style.display = "none";
       console.log(responseData)
       // 最新のオーダー情報を画面に反映（必要に応じて更新されたオーダー詳細を表示）
-      displayOrderDetails(responseData);  // 関数にデータを渡して画面に反映
+      displayOrderDetails(order, {
+        MainData,
+        clients,
+        currentLang,
+        orderItems,
+        totalAmountElement,
+        t,
+        updateChange
+      });
+
     } else {
       alert(t('register_error'));
     }
@@ -866,7 +741,7 @@ async function registeConfirm(){
   console.log(clients)
   const loadingPopup = document.getElementById('loading-popup');
   if (!clients.selectedOrder) {
-      alert(t('select_order'));
+      if (!validateOrderState(clients, t)) return;
       return;
   }
   if(clients.paytype===""||clients.paytype==="yet"){
@@ -896,8 +771,8 @@ showLoadingPopup()
       });
       console.log(response.status)
       if (response.status===200) {
-          alert(t('done'));
-          clearOrderDetails();
+          showToast(t('done'))
+          // clearOrderDetails();
           hideLoadingPopup()
       } else {
           alert(t('register_error'));
@@ -912,10 +787,7 @@ showLoadingPopup()
 }
 
 async function entregueConfirm(){
-  if(!selectedCard){
-    alert(t('select_order'));
-    return
-  }
+if (!validateOrderState(clients, t)) return;
 
 if(clients.printInfo.order_type==='local'||clients.printInfo.order_type==='order'||clients.printInfo.order_type==='takeout'){
   if(clients.printInfo.payment_method==='yet'&&clients.paytype===""){
@@ -926,7 +798,13 @@ if(clients.printInfo.order_type==='local'||clients.printInfo.order_type==='order
 if(clients.printInfo.order_type==='uber'||clients.printInfo.order_type==='demaekan'||clients.printInfo.order_type==='other'){
   clients.paytype='other'
 }
-  // Update the order in the database
+  // // Update the order in the database
+  //
+  // console.log(`clients.selectedOrder`,clients.selectedOrder)
+  // console.log(`clients.paytype`,clients.paytype)
+
+console.log(`clients.pendingOrders`,clients.pendingOrders)
+  // return
   try {
     showLoadingPopup()
       const response = await fetch(`${server}/orderskun/updateConfirmd`, {
@@ -942,7 +820,8 @@ if(clients.printInfo.order_type==='uber'||clients.printInfo.order_type==='demaek
       });
       if (response.status===200) {
            hideLoadingPopup()
-          alert(t('done'));
+           removeOrderById(clients.selectedOrder)
+           showToast(t('done'))
           const cashPaymentButton = document.getElementById('cash-payment');
           const creditPaymentButton = document.getElementById('credit-payment');
           const otherPaymentButton = document.getElementById('other-payment');
@@ -967,6 +846,41 @@ if(clients.printInfo.order_type==='uber'||clients.printInfo.order_type==='demaek
       alert(t('register_error'));
   }
   loadingPopup.style="display:none"
+}
+
+function showToast(message, type = 'success') {
+
+  console.log(`toast`)
+
+  const container = document.getElementById('ok-toast-container');
+  container.classList.remove('hidden')
+
+  const toast = document.createElement('div');
+  toast.className = `ok-toast ${type}`;
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  // アニメーション表示
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 10);
+
+  // 2秒後に消える
+  setTimeout(() => {
+    console.log(`show`)
+    toast.classList.remove('show');
+
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 2000);
+}
+
+function removeOrderById(id) {
+  clients.pendingOrders = clients.pendingOrders.filter(
+    order => order.id !== id
+  );
 }
 
 // Function to clear the order details from the UI
@@ -1021,39 +935,7 @@ async function fetchPendingOrders() {
 
 }
 document.addEventListener('DOMContentLoaded', function() {
-    // 初期設定: ボタンのクリックイベントを追加
-    // document.getElementById('tax-8').addEventListener('click', function() {
-    //   if(!selectedCard){
-    //     alert('selecione o pedido')
-    //     return
-    //   }
-    //   console.log(clients.tax_use)
-    //   if(!clients.tax_use){
-    //     selectTaxButton('tax-8');
-    //     return
-    //   }
-    //     applyTax(8);
-    //     selectTaxButton('tax-8');
-    //     clients.taxtType = 8;
-    //     updateChange()
-    //     // updateChangeAmount();
-    // });
 
-    // document.getElementById('tax-10').addEventListener('click', function() {
-    //   if(!selectedCard){
-    //     alert('selecione o pedido')
-    //     return
-    //   }
-    //   if(!clients.tax_use){
-    //     selectTaxButton('tax-10');
-    //     return
-    //   }
-    //     applyTax(10);
-    //     selectTaxButton('tax-10');
-    //     clients.taxtType = 10;
-    //     updateChange()
-    //     // updateChangeAmount();
-    // });
     function updateChange() {
       let depositAmountElement = document.getElementById('deposit-amount'); // 預入金額
       let changeAmountElement = document.getElementById('change-amount'); // 釣り
@@ -1189,12 +1071,10 @@ document.getElementById('print-receipt').addEventListener('click', () => {
 });
 
 document.getElementById('delete-order').addEventListener('click', () => {
-  showLoadingPopup()
-    if (!clients.selectedOrder) {
-        alert(t('select_order'));
-        hideLoadingPopup()
-        return;
-    }
+
+  console.log('botann ckick')
+
+if (!validateOrderState(clients, t,false)) return;
     // 選択されたオーダーのIDと、オーダー内のアイテムIDを取得
     const selectedOrderId = clients.selectedOrder;
     const orderItems = clients.printInfo.OrderItems.map(item => item.id); // アイテムIDの配列を取得
@@ -1202,6 +1082,8 @@ document.getElementById('delete-order').addEventListener('click', () => {
     // 削除確認のダイアログを表示
     const confirmDelete = confirm(t('confirm_delete_order'));
     if (!confirmDelete) return;
+
+    showLoadingPopup()
 
     // 削除リクエストを送信（オーダーIDとアイテムIDを一緒に送信）
     fetch(`${server}/orderskun/delete/${selectedOrderId}`, {
@@ -1213,7 +1095,7 @@ document.getElementById('delete-order').addEventListener('click', () => {
     })
     .then(response => {
         if (response.ok) {
-            alert(t('done'));
+            showToast(t('done'))
             // 必要に応じて注文リストを更新
             removeOrderFromList(selectedOrderId);
             clients.selectedOrder=""
@@ -1240,217 +1122,10 @@ function removeOrderFromList(orderId) {
         orderElement.remove(); // 画面から削除
     }
 }
-// async function recite(nb, reciteAmount) {
-//   if (!clients.receiptData) {
-//       alert("Selecione uma comanda");
-//       return;
-//   }
-//
-//   if (!clients.selectedOrder) {
-//       alert('Seleciona uma comanda');
-//       return;
-//   }
-//   // if(clients.tax_use&&clients.taxtType===""){
-//   //   alert("Selecione o imposto")
-//   //   return
-//   // }
-//   // if(clients.depositAmount===""){
-//   //   alert("Insira o vlor recebido")
-//   //   return
-//   // }
-//   if(clients.paytype===""){
-//     alert("Selecione a forma de pagamento")
-//     return
-//   }
-//
-//   if(document.getElementById('deposit-amount').value===""||document.getElementById('deposit-amount').value-0===0){
-//     alert("Insira o valor recebido")
-//     return
-//   }
-//   if((document.getElementById('deposit-amount').value-0)<clients.receiptData.taxInclued){
-//     alert('O valor recebido está menor do que o valor com imposto')
-//     return
-//   }
-//
-//   const troco = document.getElementById('change-amount').value
-//   const recebido = document.getElementById('deposit-amount').value
-//   const valorcomTax = document.getElementById('tax-included-amount').innerText
-//   let valorINclusoTax = ''
-//   if(clients.tax_use){
-//     valorINclusoTax =clients.receiptData.taxInclued
-//   }else{
-//     valorINclusoTax =valorcomTax.split('￥')[1]
-//   }
-//   let valorSemTax = selectOrders.total_amount
-//   if (valorSemTax.endsWith(".00")) {
-//     valorSemTax = valorSemTax.slice(0, -3);
-// }
-//
-// console.log(clients.receiptData)
-//
-// if(clients.id===1){
-//   clients.receiptData.taxtTypes=clients.taxtType
-//   clients.receiptData.depositAmount = recebido
-//   clients.receiptData.changeAmount=troco
-// reciteBuonissimoOnly()
-// }else{
-//   let row = `<div id="contentToPrint" class="print-content">
-//     <div class="img-dicvs">
-//       ${decodedToken.receipt_logo_url ? `<img src="${decodedToken.receipt_logo_url}" width="100" class="setting-right-button" />` : ''}
-//   </div>
-//     <div class="adress-div">
-//       <p>${decodedToken.receipt_display_name} <br>${decodedToken.receipt_postal_code} <br>${decodedToken.receipt_address}<br>${decodedToken.receipt_tel}</p>
-//     </div>
-//     ${decodedToken.invoice_number && decodedToken.invoice_number!='' ? `
-//     <div class="display-center-div">
-//      <p>登録番号：${decodedToken.invoice_number}</p>
-//     </div>`
-//     :''}
-//     <div class='display-center-div'>
-//       <p>${await getCurrentDateTime()} #${clients.receiptData.order_id}</p>
-//     </div>
-//
-//     <div class="contents-div">
-//     ${await generateReceiptItemsHTML()}
-//     </div>
-//     <div class="dotted-line"></div>
-//     <div class="total-qt">
-//       <div class="azukari-amount-div">
-//         <div>御買上げ点数　　</div>
-//         <div>${clients.receiptData.items.length}点</div>
-//       </div>
-//       <div class="azukari-amount-div">
-//         <div>小計</div>
-//         <div>￥${clients.receiptData.totalAmount.toLocaleString()}</div>
-//       </div>
-//       ${decodedToken.tax_enabled ? `
-//       <div class="azukari-amount-div">
-//         <div>(${clients.taxtType}%対象：${valorSemTax}</div>
-//         <div>消費税：${valorINclusoTax-valorSemTax})</div>
-//       </div>`
-//       :''}
-//
-//     </div>
-//     <div class="dotted-line"></div>
-//     <div class="total-amount-div">
-//       <div>合計</div>
-//       <div>￥${valorINclusoTax.toLocaleString()}</div>
-//     </div>
-//     <div class="total-amount-div">
-//       <div>お預り</div>
-//     <div>${recebido.toLocaleString()}</div>
-//     </div>
-//     <div class="total-amount-div">
-//       <div>お釣り</div>
-//       <div>${troco.toLocaleString()}</div>
-//     </div>
-//     <div class="dotted-line"></div>
-//   </div>`;
-//
-//   var printWindow = window.open('', '_blank');
-//
-//   // ウィンドウが正常に開けているか確認
-//   if (!printWindow) {
-//     alert('A página foi bloqueata, verifique a configuração do google');
-//     return; // 処理を終了します
-//   }
-//
-//   // 新しいウィンドウにコンテンツを書き込む
-//   printWindow.document.write(`
-//     <html>
-//     <head>
-//       <title id="title-print"></title>
-//       <style>
-//         @media print {
-//           #body-testes {
-//             width: 80mm;
-//             height: 100mm !important;
-//             margin: 0;
-//             padding: 0;
-//             overflow: hidden;
-//             background-color: red !important;
-//           }
-//           .adress-div {
-//             width: 100%;
-//             height: 7rem;
-//             background-color: black;
-//             -webkit-print-color-adjust: exact;
-//             color: white;
-//             padding-left:10px
-//           }
-//           .img-dicvs {
-//             display: flex;
-//             justify-content: center;
-//           }
-//           .display-center-div {
-//             display: flex;
-//             justify-content: center;
-//           }
-//           .contents-div {
-//             width: 100%;
-//           }
-//           .items-name {
-//             text-align: left;
-//           }
-//           .details-iten {
-//             width: 80%;
-//             text-align: right;
-//             margin-right: 1rem;
-//           }
-//           .dotted-line::before {
-//             content: '';
-//             display: block;
-//             width: 100%;
-//             height: 1px;
-//             background-color: black;
-//             background-image: repeating-linear-gradient(90deg, black, black 2px, transparent 2px, transparent 4px);
-//             -webkit-print-color-adjust: exact;
-//           }
-//           .total-amount-div {
-//             width: 100%;
-//             display: flex;
-//             justify-content: space-between;
-//             font-size: 3vh;
-//           }
-//           .azukari-amount-div {
-//             width: 100%;
-//             display: flex;
-//             justify-content: space-between;
-//           }
-//           .total-qt {
-//             margin-top: 1rem;
-//           }
-//         }
-//       </style>
-//     </head>
-//     <body id="body-testes">
-//       ${row}
-//     </body>
-//     </html>
-//   `);
-//
-//   // // 画像が正しく読み込まれるまで待機
-//   // if (decodedToken.receipt_logo_url) {
-//   //   await new Promise(resolve => {
-//   //     const img = new Image();
-//   //     img.onload = resolve;
-//   //     img.src = decodedToken.receipt_logo_url;
-//   //   });
-//   // } else {
-//   //   console.log("No image URL provided, skipping image load.");
-//   // }
-//   // printWindow.print();
-//   // printWindow.close();
-// }
-//
-//
-// }
 
 //レシートの発行
 async function recite(nb, reciteAmount) {
-  if (!clients.receiptData) return alert("select_order");
-  if (!clients.selectedOrder) return alert("select_order");
-  if (clients.paytype === "") return alert("select_payment_method");
+if (!validateOrderState(clients, t)) return;
   const depositInput = document.getElementById('deposit-amount').value;
   if (depositInput === "" || parseFloat(depositInput) === 0) {
     return alert(t('enter_received_amount'));
@@ -1499,7 +1174,6 @@ try{
 }
 
 }
-
 
 async function reciteBuonissimoOnly() {
     // 例: clients が適切に定義されていると仮定
@@ -1606,6 +1280,9 @@ function getCurrentDateTime() {
 
 
         async function cupom() {
+
+          if (!validateOrderState(clients, t)) return;
+
          try{
            showLoadingPopup()
                      console.log(clients.receiptData);
@@ -1629,9 +1306,7 @@ function getCurrentDateTime() {
 
      document.getElementById('print-invoice').addEventListener('click',ryousyuso)
         async function ryousyuso() {
-          if (!clients.receiptData) return alert("Selecione uma comanda");
-          if (!clients.selectedOrder) return alert("Seleciona uma comanda");
-          if (clients.paytype === "") return alert("Selecione a forma de pagamento");
+        if (!validateOrderState(clients, t)) return;
 
           const depositInput = document.getElementById('deposit-amount').value;
           if (depositInput === "" || parseFloat(depositInput) === 0) {
@@ -1681,6 +1356,29 @@ function getCurrentDateTime() {
 
 
       }
+    }
+
+    function validateOrderState(clients, t, checkPayment = true) {
+
+      console.log(clients)
+      console.log(t)
+
+      if (!clients.receiptData) {
+        showToast(t('select_order'), 'error');
+        return false;
+      }
+
+      if (!clients.selectedOrder) {
+        showToast(t('select_order'), 'error');
+        return false;
+      }
+
+      if (checkPayment && !clients.paytype) {
+        showToast(t('select_payment_method'), 'error');
+        return false;
+      }
+
+      return true;
     }
 
  async function openCaixaModal(){
@@ -1780,33 +1478,6 @@ function getCurrentDateTime() {
 
      console.log(tgtDate)
 
- }
-
- function calculationSales(){
-
-   // console.log('sales calculation')
-   // // const otherSale = document.getElementById('notregister-by-money').value
-   // // const otherSaleCard = document.getElementById('noregister-by-card').value
-   //
-   // console.log(clients.salesInfo)
-   //
-   // document.getElementById('cashSales').innerText = `￥${clients.salesInfo.cash.total_amount.toLocaleString()}`
-   // document.getElementById('creditSales').innerText = `￥${clients.salesInfo.credit.total_amount.toLocaleString()}`
-   // document.getElementById('otherSales').innerText = `￥${clients.salesInfo.other.total_amount.toLocaleString()}`
-   // document.getElementById('sale-yet-register').innerText = `￥${clients.salesInfo.yet.total_amount.toLocaleString()}`
-   //
-   // let saldo = 0
-   // if(clients.registerInfo[0]){
-   //   saldo = (clients.registerInfo[0].open_amount-0) + (clients.salesInfo.cash.total_amount-0) + (otherSale-0)
-   // }else{
-   //   saldo = (clients.salesInfo.cash.total_amount-0) + (otherSale-0)
-   // }
-   // document.getElementById('totalBalance').innerText = `￥${saldo.toLocaleString()}`
-   // const totalSalesAmount = clients.salesInfo.cash.total_amount +
-   //                       clients.salesInfo.credit.total_amount +
-   //                       clients.salesInfo.other.total_amount +
-   //                       clients.salesInfo.yet.total_amount;
-   // document.getElementById('total-vendas').value = `￥${((totalSalesAmount-0)+(otherSale-0)+(otherSaleCard-0)).toLocaleString()}`
  }
 
  // 合計金額を算出する関数
@@ -2030,7 +1701,7 @@ postCashExpense(512, cashSales10Amount, '現金売上　消費税10％対象',ca
 if(cashSales8Amount!=0){
 postCashExpense(511, cashSales8Amount, '現金売上　消費税8％対象',caixaDate.value)
 }
-    alert(t('done'));
+    showToast(t('done'))
   return response.json();
 })
 .then(data => {
@@ -2342,10 +2013,6 @@ async function updateWalletBalanceAPI(addAmount) {
   }
 }
 
-
-
-
-
 const inputField = document.getElementById('anotacoes');
 // クリック時にサイズを拡張
 inputField.addEventListener('focus', function() {
@@ -2356,45 +2023,10 @@ inputField.addEventListener('blur', function() {
   inputField.classList.remove('expanded');
 });
 
-// document.getElementById('inserirMonys').addEventListener('click',()=>{
-//   if(selectFecharcaixa){
-//     selectFecharcaixa=false
-//   }else{
-//     selectFecharcaixa=true
-//   }
-//   if(selectFecharcaixa){
-//     document.getElementById('modal-left-input').style="background-color:#333;color:#fff"
-//     document.getElementById('inserirMonys').innerText = t('back');
-//
-//     // 2つのdiv内のすべての input 要素を取得
-//     const inputs = document.querySelectorAll('#coins-mother-div input, #bill-mother-div input, #total-caixa-input input');
-//     const title = document.getElementById('left-title-regist-casher')
-//     title.innerHTML = t('insert_cash_quantities');
-//
-//     title.style="color:#FFF"
-//     // すべての input の value を 0 に設定
-//     inputs.forEach(input => {
-//         input.value = 0;
-//         input.removeAttribute('readonly'); // ここでreadonly属性を削除
-//     });
-//   }else{
-//     document.getElementById('modal-left-input').style="background-color:#fff"
-//     document.getElementById('inserirMonys').innerText = 'Inserir valores'
-//   }
-//
-// })
-
 caixaDate.addEventListener('change', async ()=>{
 await getRegisters(clients.id)
 await openCaixaModal()
 })
-
-// serchSales.addEventListener('click', async()=>{
-//   await calculationSales()
-//   // await getOrdersbyPickupTime()
-//
-// })
-
 
  const buttons = document.querySelectorAll('.tenkey-btn');
  const depositInput = document.getElementById('deposit-amount')
@@ -2439,60 +2071,79 @@ formatInput()
  });
 
 
- function createDependentePedidosRetry(){
-   console.log('haitakedo')
-   ordersList.innerHTML = ''
-   //未支払いオーダーカードを作成
-       clients.pendingOrders.forEach(order => {
-         console.log(order)
-         let tableDisplay =order.table_no
-         let status = "Pronto"
-         let styleColer ="background-color:#90EE90"
-         let icon=""
-         let displayText = (order.order_type === 'local' && order.table_no !== '9999')
-           ? ` ${t('table_label')}:${order.table_no}`
-           : '';
+ function createDependentePedidosRetry(context){
 
-         tableDisplay = `${displayText}<br>${order.order_name}`;
+   const {
+     MainData,
+     clients,
+     currentLang,
+     orderItems,
+     totalAmountElement,
+     t,
+     updateChange
+   } = context;
 
-         if(order.order_status === 'pending') {
-           status = t('status_pending');
-           styleColer = 'background-color:#FFCCCB';
-           icon = '<img src="../imagen/pending.jpg">';
-         } else if(order.order_status === 'prepared') {
-           status = t('status_prepared');
-           icon = '<img src="../imagen/prepared.jpg">';
-         }
+   ordersList.innerHTML = '';
 
-         if(order.payment_method!="yet"){
-           icon+='<img src="../imagen/payed.jpg">'
-         }
-         let orderCard = document.createElement('div');
-         orderCard.classList.add('order-card');
-         orderCard.style=styleColer
-         orderCard.setAttribute('data-id', order.id); // data-id 属性を設定
-         orderCard.id = order.id
-         orderCard.innerHTML = `<div class="order-card-main-div">
-            <div class="order-leftdiv"><h3>${tableDisplay}<br>${status}</h3></div>
-            <div class="order-rightdiv">
-             ${icon}
-            </div>
-          </div>`;
-         orderCard.addEventListener('click', () => {
-             if (selectedCard) {
-                 selectedCard.classList.remove('selected-card');
-             }
-             orderCard.classList.add('selected-card');
-             selectedCard = orderCard;
-             selectOrders=order
-              document.getElementById('deposit-amount').value=''
+   clients.pendingOrders.forEach(order => {
 
-             displayOrderDetails(order);
-         });
-         ordersList.appendChild(orderCard);
-          hideLoadingPopup();
+     let tableDisplay = order.table_no;
+     let status = "Pronto";
+     let styleColer ="background-color:#90EE90";
+     let icon="";
+
+     let displayText = (order.order_type === 'local' && order.table_no !== '9999')
+       ? ` ${t('table_label')}:${order.table_no}`
+       : '';
+
+     tableDisplay = `${displayText}<br>${order.order_name}`;
+
+     if(order.order_status === 'pending') {
+       status = t('status_pending');
+       styleColer = 'background-color:#FFCCCB';
+       icon = '<img src="../imagen/pending.jpg">';
+     } else if(order.order_status === 'prepared') {
+       status = t('status_prepared');
+       icon = '<img src="../imagen/prepared.jpg">';
+     }
+
+     if(order.payment_method!="yet"){
+       icon+='<img src="../imagen/payed.jpg">';
+     }
+
+     let orderCard = document.createElement('div');
+     orderCard.classList.add('order-card');
+     orderCard.style = styleColer;
+     orderCard.setAttribute('data-id', order.id);
+     orderCard.id = order.id;
+
+     orderCard.innerHTML = `
+       <div class="order-card-main-div">
+         <div class="order-leftdiv"><h3>${tableDisplay}<br>${status}</h3></div>
+         <div class="order-rightdiv">${icon}</div>
+       </div>
+     `;
+
+     orderCard.addEventListener('click', () => {
+
+       if (selectedCard) {
+         selectedCard.classList.remove('selected-card');
+       }
+
+       orderCard.classList.add('selected-card');
+       selectedCard = orderCard;
+       selectOrders = order;
+
+       document.getElementById('deposit-amount').value='';
+
+       displayOrderDetails(order, context); // ←ここシンプルになる🔥
      });
+
+     ordersList.appendChild(orderCard);
+     hideLoadingPopup();
+   });
  }
+
  let currentLang = localStorage.getItem('loacastrogg') || 'pt';
 
 
@@ -2525,17 +2176,6 @@ function applyTranslation(lang) {
     }
   });
 }
-
-
- // 初期設定と変更イベント
- document.getElementById('language-select').addEventListener('change', async (e) => {
-   const lang = e.target.value;
-   localStorage.setItem('loacastrogg', lang);
-   currentLang=lang
-   applyTranslation(lang);
-   createDependentePedidosRetry()
- });
-
 
 
  document.getElementById('language-select').value = currentLang;
@@ -2633,42 +2273,6 @@ document.getElementById('save-order-edit').addEventListener('click', () => {
 // キャンセルボタン
 document.getElementById('cancel-order-edit').addEventListener('click', closeEditOrderModal);
 
-
-
-//チェックアウト処理
-// async function sendSquareCheckout() {
-//   const rawText = taxIncluidAmountElent.innerText; // "￥5,180"
-//   const amountStr = rawText.replace(/[^\d]/g, ''); // "5180"
-//   const amount = parseInt(amountStr, 10);
-//
-//   // 確認モダル表示
-//   const confirmed = window.confirm(`この金額でチェックアウトしますか？\n${rawText}`);
-//   if (!confirmed) {
-//     return; // キャンセルされたら処理中断
-//   }
-//
-//   console.log('チェックアウト開始');
-//
-//   const response = await fetch('http://localhost:3001/checkout-terminal', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({
-//       amount: amount,
-//       note: "POSからの会計"
-//     })
-//   });
-//
-//   const result = await response.json();
-//   if (result.status === 'ok') {
-//     alert('端末に送信しました！');
-//   } else {
-//     alert('エラーが発生しました: ' + result.message);
-//   }
-// }
-
-
 async function sendSquareCheckout(){
   const loadingModal = document.getElementById('loadingModal');
 
@@ -2743,4 +2347,153 @@ async function sendSquareCheckout(){
 
 document.getElementById("refreshBtn").addEventListener("click", () => {
   location.reload();
+});
+
+//ここから修正品
+function displayOrderDetails(order, context) {
+
+  const {
+    MainData,
+    clients,
+    currentLang,
+    orderItems,
+    totalAmountElement,
+    t,
+    updateChange
+  } = context;
+
+  console.log(order);
+
+  // 支払いボタン初期化
+  const paymentButtons = [
+    document.getElementById('cash-payment'),
+    document.getElementById('credit-payment'),
+    document.getElementById('other-payment')
+  ];
+
+  paymentButtons.forEach(button => button.classList.remove("selected"));
+  clients.paytype = '';
+
+  if (order.payment_method === 'cash') {
+    document.getElementById('cash-payment').classList.add('selected');
+    clients.paytype = 'cash';
+  }
+  if (order.payment_method === 'credit') {
+    document.getElementById('credit-payment').classList.add('selected');
+    clients.paytype = 'credit';
+  }
+  if (order.payment_method === 'other') {
+    document.getElementById('other-payment').classList.add('selected');
+    clients.paytype = 'other';
+  }
+
+  clients.printInfo = order;
+  clients.selectedOrder = order.id;
+  orderItems.innerHTML = '';
+
+  clients.tax_use = true;
+  const isExclusive = clients.tax_type === 'exclusive';
+
+  let receiptData = {
+    items: [],
+    totalAmount: 0,
+    tax_8: 0,
+    tax_10: 0,
+    taxTotal: 0,
+    totalWithTax: 0,
+    tax_type: clients.tax_type,
+    tax_use: clients.tax_use,
+    order_id: order.id,
+    nomedaComanda: order.order_name,
+    receipt_display_name: clients.receipt_display_name,
+    receipt_postal_code: clients.receipt_postal_code,
+    receipt_address: clients.receipt_address,
+    receipt_tel: clients.receipt_tel,
+    invoice_number: clients.invoice_number
+  };
+
+  let subtotal = 0;
+  let tax_8 = 0;
+  let tax_10 = 0;
+
+  order.OrderItems.forEach(item => {
+    const menuGt = MainData.menus.find(menu => menu.id === item.menu_id);
+    const dbLang = currentLang === 'jp' ? 'ja' : currentLang;
+
+    item.menu_name = menuGt
+      ? menuGt[`menu_name_${dbLang}`]
+      : t('menu_not_found');
+
+    const isTakeout = menuGt?.is_takeout;
+    const taxRate = isTakeout ? 0.08 : 0.10;
+    const taxLabel = isTakeout ? '8%' : '10%';
+    const taxColor = isTakeout ? 'green' : 'red';
+    const price = parseFloat(item.total_price);
+
+    const options = JSON.parse(item.options || '[]');
+    const optionNames = options.map(opt => {
+      const optData = MainData.options.find(o => o.id === parseInt(opt.id));
+      return optData ? optData[`option_name_${dbLang}`] : '';
+    }).filter(Boolean).join(', ');
+
+    item.option_names = optionNames;
+
+    if (isExclusive) {
+      subtotal += price;
+      if (taxRate === 0.08) tax_8 += price * 0.08;
+      else tax_10 += price * 0.10;
+    } else {
+      const rate = taxRate === 0.08 ? 1.08 : 1.10;
+      const noTax = Math.round(price / rate);
+      const tax = price - noTax;
+
+      subtotal += noTax;
+      if (taxRate === 0.08) tax_8 += tax;
+      else tax_10 += tax;
+    }
+
+    const li = document.createElement('li');
+    li.innerHTML = `
+      ${item.menu_name} x${item.quantity} - ¥${price.toLocaleString()}
+      <span style="color:${taxColor};font-weight:bold;">${taxLabel}</span><br>
+      ${item.option_names || ''}
+    `;
+    orderItems.appendChild(li);
+
+    receiptData.items.push({
+      menu_name: item.menu_name,
+      quantity: item.quantity,
+      item_price: price,
+      option_names: item.option_names,
+      tax: taxLabel
+    });
+  });
+
+  receiptData.tax_8 = Math.floor(tax_8);
+  receiptData.tax_10 = Math.floor(tax_10);
+  receiptData.taxTotal = receiptData.tax_8 + receiptData.tax_10;
+  receiptData.totalAmount = Math.floor(subtotal);
+  receiptData.totalWithTax = isExclusive
+    ? receiptData.totalAmount + receiptData.taxTotal
+    : Math.floor(subtotal + receiptData.taxTotal);
+
+  totalAmountElement.textContent = `￥${receiptData.totalAmount.toLocaleString()}`;
+  document.getElementById('tax-total').textContent = `￥${receiptData.taxTotal.toLocaleString()}`;
+  document.getElementById('tax-included-amount').textContent = `￥${receiptData.totalWithTax.toLocaleString()}`;
+
+  updateChange();
+  clients.receiptData = receiptData;
+
+  const channel = new BroadcastChannel('customer-display');
+  channel.postMessage({
+    type: 'update',
+    order_id: order.id,
+    totalWithTax: receiptData.totalWithTax,
+    items: receiptData.items,
+    paymentAmount: null
+  });
+}
+
+document.getElementById('merge-close-btn').addEventListener('click', () => {
+  document.getElementById('mergeModal').style.display = 'none';
 });
