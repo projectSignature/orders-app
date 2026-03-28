@@ -46,7 +46,8 @@ const translations = {
         "注文リスト": "Lista de pedidos",
 "合計": "Total",
 "閉じる": "Fechar",
-    "（税：+": "(imposto: +"
+    "（税：+": "(imposto: +",
+    "カートは空です":'sem item'
     },
     ja: {
         "Histórico": "履歴",
@@ -88,7 +89,8 @@ const translations = {
          "注文リスト": "注文リスト",
 "合計": "合計",
 "閉じる": "閉じる",
-    "（税：+": "（税：+"
+    "（税：+": "（税：+",
+    "カートは空です":'まだ空です'
     },
     en: {
         "Histórico": "History",
@@ -130,7 +132,8 @@ const translations = {
          "注文リスト": "Order List",
 "合計": "Total",
 "閉じる": "Close",
-    "（税：+": "(tax: +"
+    "（税：+": "(tax: +",
+    "カートは空です":'not item'
 
     }
 };
@@ -182,8 +185,14 @@ let categories = []; // カテゴリ情報を保存する配列
 
 document.addEventListener("DOMContentLoaded", async () => {
     // showLoadingPopup()
+    console.log(orderList.clienId)
+    if(!orderList.clienId){
+      window.location.href = '../index.html';
+      return
+    }
     const MainData = await makerequest(`${server}/orders/getBasedata?user_id=${orderList.clienId}`)
     //カテゴリーの順番を変える
+
     const Categorys = MainData.categories.filter(category => category.is_takeout === true);
     Categorys.sort((a, b) => a.display_order - b.display_order);
     const orderCategories = document.getElementById('order-categories');
@@ -412,12 +421,19 @@ itemPriceElement.textContent = getTaxText(totalPrice);
 
     document.getElementById('confirm-order').addEventListener('click', async () => {
     showLoadingPopup()
+
          const confirmButton = document.getElementById('confirm-order');
         const loadingPopup = document.getElementById('loading-popup');
         confirmButton.disabled = true; // ボタンを無効化
         loadingPopup.style.display = 'block'; // ポップアップを表示
+        console.log(`orderList.order`,orderList.order)
         try {
-            if (orderList.clienId === "" || orderList.tableNo === "" || selectedName === "" || orderList.order[selectedName].length === 0) {
+          if (
+            !orderList.clienId ||
+            !orderList.tableNo ||
+            !selectedName ||
+            !orderList.order?.[selectedName]?.length
+          ) {
                 showAlert(translations[userLanguage]["Nenhum item foi selecionado"]);
                 confirmButton.disabled = false;
                 loadingPopup.style.display = 'none'; // エラーの場合はポップアップを非表示
@@ -448,7 +464,8 @@ itemPriceElement.textContent = getTaxText(totalPrice);
 
             if (response.ok) {
               hideLoadingPopup();
-              showCustomAlert(translations[userLanguage]["Pedido feito"]);
+              showSuccessMessage();
+              // showCustomAlert(translations[userLanguage]["Pedido feito"]);
 
               // ✅ カート配列を初期化
               orderList.order[selectedName] = [];
@@ -481,6 +498,24 @@ itemPriceElement.textContent = getTaxText(totalPrice);
             loadingPopup.style.display = 'none'; // リクエスト完了後にポップアップを非表示
         }
     });
+
+    function showSuccessMessage() {
+  const overlay = document.getElementById('success-overlay');
+
+  overlay.classList.remove('hidden');
+
+  setTimeout(() => {
+    overlay.classList.add('show');
+  }, 10);
+
+  setTimeout(() => {
+    overlay.classList.remove('show');
+
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+    }, 300);
+  }, 2000);
+}
 
     function showCustomAlert(message) {
         const alertBox = document.getElementById('custom-alert');
@@ -719,7 +754,6 @@ document.getElementById('cart-button').addEventListener('click', () => {
   const cartTotalDisplay = document.getElementById('cart-total');
   cartItemsContainer.innerHTML = '';
 
-  // アイテムが無ければ「カートは空です」と表示
   if (!orderList.order[selectedName] || orderList.order[selectedName].length === 0) {
     cartItemsContainer.innerHTML = `
       <li data-translate-key="カートは空です">${translations[userLanguage]["カートは空です"]}</li>
@@ -727,16 +761,61 @@ document.getElementById('cart-button').addEventListener('click', () => {
     cartTotalDisplay.innerHTML = `
       <span data-translate-key="合計">${translations[userLanguage]["合計"]}</span>: ￥0
     `;
+    document.getElementById('confirm-order').disabled = true;
   } else {
+    document.getElementById('confirm-order').disabled = false;
+    // document.getElementById('confirm-order').disabled = true;
     let totalAmount = 0;
 
-    orderList.order[selectedName].forEach(item => {
-      // 商品名＋数量＋金額
+    orderList.order[selectedName].forEach((item, index) => {
+
       const li = document.createElement('li');
-      li.textContent = `${item.name} ×${item.quantity} - ￥${item.amount.toLocaleString()}`;
+
+      li.innerHTML = `
+        <div class="cart-row">
+          <div class="cart-name">
+            ${item.name}<br>
+            <span class="cart-price">￥${item.amount.toLocaleString()}</span>
+          </div>
+
+          <div class="cart-controls">
+            <button class="qty-btn minus" data-index="${index}">−</button>
+            <span class="qty">${item.quantity}</span>
+            <button class="qty-btn plus" data-index="${index}">＋</button>
+            <button class="remove-btn" data-index="${index}">❌</button>
+          </div>
+        </div>
+      `;
+
       cartItemsContainer.appendChild(li);
 
-      // オプションも追加
+      // ⭐ ＋
+      li.querySelector('.plus').onclick = () => {
+        const basePrice = Math.floor(item.amount / item.quantity);
+        item.quantity++;
+        item.amount = basePrice * item.quantity;
+        document.getElementById('cart-button').click();
+      };
+
+      // ⭐ −
+      li.querySelector('.minus').onclick = () => {
+        if (item.quantity > 1) {
+          const basePrice = Math.floor(item.amount / item.quantity);
+          item.quantity--;
+          item.amount = basePrice * item.quantity;
+        } else {
+          orderList.order[selectedName].splice(index, 1);
+        }
+        document.getElementById('cart-button').click();
+      };
+
+      // ⭐ ❌ 削除
+      li.querySelector('.remove-btn').onclick = () => {
+        orderList.order[selectedName].splice(index, 1);
+        document.getElementById('cart-button').click();
+      };
+
+      // オプション表示
       if (item.options && item.options.length > 0) {
         item.options.forEach(option => {
           const optionLi = document.createElement('li');
@@ -749,13 +828,11 @@ document.getElementById('cart-button').addEventListener('click', () => {
       totalAmount += item.amount;
     });
 
-    // 合計表示（翻訳対応）
     cartTotalDisplay.innerHTML = `
       <span data-translate-key="合計">${translations[userLanguage]["合計"]}</span>: ￥${totalAmount.toLocaleString()}
     `;
   }
 
-  // モーダルとオーバーレイを表示
   document.getElementById('cart-modal').classList.remove('hidden');
   document.getElementById('cart-overlay').classList.remove('hidden');
 });
