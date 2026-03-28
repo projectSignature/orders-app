@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="../style/orders-takeout.css">
     <link rel="stylesheet" href="../style/order.css">
     <link rel="stylesheet" href="../style/common.css">
+    <link rel="stylesheet" href="../style/toast.css">
     <script src="../script/translations.js"></script>
-
 </head>
 <body>
     <header class="header" style="height:5rem!important">
@@ -52,6 +52,7 @@
         </div>
         <div id="categories-div">
        </div>
+       <button id="menu-search-btn">🔍Buscar</button>
      </div>
      <div id="center-div"></div>
      <div id="right-div">
@@ -104,6 +105,23 @@
        <div class="loading-text">await</div>
    </div>
  </div>
+
+ <div id="keyboard-overlay" class="hidden"></div>
+
+ <div id="ok-keyboard" class="ok-keyboard hidden">
+  <div id="ok-keys" class="ok-keys"></div>
+
+  <div class="ok-keyboard-actions">
+    <button id="key-switch">ABC</button>
+    <button id="key-space">SPACE</button>
+    <button id="key-clear">C</button>
+    <button id="key-back">←</button>
+    <button id="key-close">Close</button>
+    <button id="key-confirm">OK</button>
+  </div>
+</div>
+
+<div id="ok-toast-container" class="ok-toast-container hidden"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
     <script src="../script/loding-popup.js"></script>
