@@ -318,6 +318,8 @@ if (kbType) {
 
     if (floatingInput) floatingInput.remove();
 
+    e.target.setAttribute('readonly', true);
+
     floatingInput = e.target.cloneNode(true);
     floatingInput.classList.add('floating-input');
     floatingInput.value = e.target.value;
