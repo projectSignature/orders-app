@@ -18,13 +18,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      height: 100%;
+      overflow: hidden;
     }
 
     .center-container {
-      text-align: center;
+      /* text-align: center; */
       display: flex;
       flex-direction: column;
       align-items: center;
+      height: 100%;
+      /* background-color: pink; */
+      width: 100%;
     }
 
     img.logo {
@@ -42,23 +47,123 @@
       margin-bottom: 20px;
     }
 
-    .total {
-      font-size: 38px;
-      color: #ffff66;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
+#orderDisplay{
+  width: 100%;
+  /* height: 100%; */
+  /* overflow: hidden; */
+}
 
-    .payment-info {
-      font-size: 26px;
-      margin-bottom: 10px;
-    }
+
 
     .thanks {
       font-size: 20px;
       color: #aaa;
       margin-top: 20px;
     }
+
+    .main-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  /* padding: 15px 15px; */
+}
+
+.left-area {
+  width: 50%;
+  /* height: 100%; */
+  display: flex;
+  align-items: center;     /* ←縦中央 */
+  justify-content: center; /* ←横中央 */
+  /* padding: 40px; */
+}
+
+/* 中身 */
+.left-inner {
+  display: grid;
+  grid-template-columns: 5fr;
+  gap: 10px;
+  width: 100%;
+  /* max-width: 800px; */
+  /* height: 100%; */
+}
+
+.right-area {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-card {
+  display: flex;
+  justify-content: space-between; /* ←これが核心 */
+  align-items: center;
+
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 15px 20px;
+
+  /* font-size: 26px; */
+  font-weight: bold;
+}
+
+/* 左 */
+.item-left {
+  text-align: left;
+}
+
+/* 右（価格） */
+.item-right {
+  text-align: right;
+  color: #ffff66;
+}
+
+.total {
+  font-size: 60px;
+  color: #ffff66;
+  font-weight: bold;
+}
+
+.payment-info {
+  font-size: 40px;
+   color: #bbbbbb;
+}
+
+/* おつり（最重要） */
+.change {
+  font-size: 52px;
+  color: #00ff99;
+  font-weight: bold;
+  margin-top: 10px;
+  text-shadow: 0 0 12px rgba(0,255,153,0.6);
+}
+
+.total-label {
+  font-size: 24px;
+  color: #aaa;
+  margin-bottom: 5px;
+}
+
+.focus-mode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  height: 100%;
+}
+
+.focus-name {
+  font-size: 60px;
+  font-weight: bold;
+}
+
+.focus-qty {
+  font-size: 80px;
+  color: #00ff99;
+  margin-top: 20px;
+}
   </style>
 </head>
 <body>
@@ -73,6 +178,30 @@
   const orderDisplay = document.getElementById('orderDisplay');
   const channel = new BroadcastChannel('customer-display');
   let resetTimer = null;
+
+  const MAX_ITEMS = 10;
+
+// 圧縮（同じ商品まとめる）
+function groupItems(items) {
+  const map = {};
+
+  items.forEach(i => {
+    const key = i.menu_name;
+
+    if (!map[key]) {
+      map[key] = {
+        name: i.menu_name,
+        qty: 0,
+        total: 0
+      };
+    }
+
+    map[key].qty += Number(i.quantity);
+    map[key].total += Number(i.item_price);
+  });
+
+  return Object.values(map);
+}
 
   const renderWaiting = () => {
     orderDisplay.innerHTML = `
@@ -93,20 +222,42 @@
       const { order_id, totalWithTax, items, paymentAmount } = data;
       const change = paymentAmount != null ? paymentAmount - totalWithTax : null;
 
-      orderDisplay.innerHTML = `
-        <div class="center-container">
-          <div class="order-number">🧾 ご注文 No.${order_id}</div>
-          <div class="item-list">
-            ${items.map(item => `${item.menu_name} x${item.quantity}`).join('<br>')}
-          </div>
-          <div class="total">合計: ¥${totalWithTax.toLocaleString()}</div>
-          ${paymentAmount != null ? `
-            <div class="payment-info">お預かり: ¥${paymentAmount.toLocaleString()}</div>
-            <div class="payment-info">おつり: ¥${change.toLocaleString()}</div>
-          ` : ''}
-          <div class="thanks">ありがとうございます！</div>
-        </div>
-      `;
+      const grouped = groupItems(items);
+
+// 多すぎる場合カット
+const displayItems = grouped.slice(0, MAX_ITEMS);
+const remain = grouped.length - MAX_ITEMS;
+
+      orderDisplay.innerHTML = orderDisplay.innerHTML = `
+<div class="main-layout">
+
+<div class="left-area">
+<div class="left-inner">
+${displayItems.map(i => `
+  <div class="item-card">
+    <div class="item-left">
+      ${i.name} ×${i.qty}
+    </div>
+    <div class="item-right">
+      ¥${i.total.toLocaleString()}
+    </div>
+  </div>
+`).join('')}
+</div>
+</div>
+
+  <div class="right-area">
+  <div class="total-label">お会計金額</div>
+    <div class="total">¥${totalWithTax.toLocaleString()}</div>
+
+    ${paymentAmount != null ? `
+      <div class='payment-info'>預かり ¥${paymentAmount.toLocaleString()}</div>
+      <div class='change'>おつり ¥${change.toLocaleString()}</div>
+    ` : ''}
+  </div>
+
+</div>
+`;
 
       // 保険：2分後に待機へ戻す
       if (resetTimer) clearTimeout(resetTimer);
