@@ -453,34 +453,42 @@ function displayItemDetails(item) {
           '.option-item[data-required="true"]'
         );
         const requiredItems = document.querySelectorAll(
-  '.option-item[data-required="true"]'
-);
+          '.option-item[data-required="true"]'
+        );
 
-        // 👇 ここで吹き出し表示
-        showRequiredBalloon(firstRequiredEl);
-
-
-          // 🔴 必須 option だけ強調
-          requiredItems.forEach(el => {
-            el.classList.add('required-miss');
+        // 🔽 必須項目までスクロール
+        if (firstRequiredEl) {
+          firstRequiredEl.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'nearest'
           });
+        }
+
+        // 👇 少し待ってから吹き出し出すと見やすい
+        setTimeout(() => {
+          showRequiredBalloon(firstRequiredEl);
+        }, 250);
+
+        // 🔴 必須 option だけ強調
+        requiredItems.forEach(el => {
+          el.classList.add('required-miss');
+        });
 
         return;
       }
     }
 
-
-      // ✅ OKなら通常処理
-      const selectedOptions = [];
-      document.querySelectorAll('.option-item.selected').forEach(el => {
-        selectedOptions.push({
-          id: el.dataset.id,
-          additional_price: parseFloat(el.dataset.price)
-        });
+    const selectedOptions = [];
+    document.querySelectorAll('.option-item.selected').forEach(el => {
+      selectedOptions.push({
+        id: el.dataset.id,
+        additional_price: parseFloat(el.dataset.price)
       });
+    });
 
-      addToSelectedItems(item, quantity, selectedOptions);
-      document.body.removeChild(detailsContainer);
+    addToSelectedItems(item, quantity, selectedOptions);
+    document.body.removeChild(detailsContainer);
   });
 
 
