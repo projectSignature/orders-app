@@ -304,13 +304,14 @@ button {
 
 .details-content {
     background-color: white;
-    padding: 30px;
+    padding: 15px;
     border-radius: 10px;
     display: flex;
     justify-content: space-between;
     width: 80%;
     max-width: 900px;
     box-sizing: border-box;
+    max-height: 97%;
 }
 .details-content p,.details-content-halfandhalf p{
   font-size: 20px
@@ -337,7 +338,7 @@ button {
     max-width: 100%;
     height: auto;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: px;
 }
 
 .quantity-selector {
@@ -540,6 +541,7 @@ button {
   background-color:orange;
   font-size: 2em;
   text-align: center;
+  margin: 0px;
 }
 
 .close {
