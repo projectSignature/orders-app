@@ -68,7 +68,7 @@ let orderNameCache = [];
 
 //キャッシュ読み込み関数
 function loadOrderNameCache() {
-  // console.log(orderNameCache)
+  console.log(orderNameCache)
   const saved = localStorage.getItem('orderNameCache');
   orderNameCache = saved ? JSON.parse(saved) : [];
 }
@@ -126,22 +126,22 @@ const saveTableNo = sessionStorage.getItem('saveTableNo')
     //メニューのデータを取得する
     const MainData = await makerequest(`${server}/orders/getBasedata?user_id=${orderList.clienId}`)
 
-    // console.log(MainData)
+    console.log(MainData)
     //未払いのオーダーが存在してるかチェックする
     const PendingData = await fetchPendingOrders()
 
     orderList.historyOrder = PendingData
 
-   // console.log(`pending orders` ,orderList.historyOrder)
+   console.log(`pending orders` ,orderList.historyOrder)
 
-   // console.log(PendingData)
+   console.log(PendingData)
     if(PendingData.length>0){
-      // console.log('is pending')
+      console.log('is pending')
       for(let i=0;i<PendingData.length;i++){
         addName(PendingData[i].order_name)
       }
     }else{
-      // console.log('is not has pending')
+      console.log('is not has pending')
       resetOrderNameCache()
     }
     //カテゴリーの順番を変える
@@ -202,20 +202,7 @@ async function fetchPendingOrders() {
 
 
 function displayMenuItems(category) {
-
-  console.log(category)
-
-   const menuItemsContainer = document.getElementById('menu-items');
-  // ✅ キャッシュがあれば即表示
-  if (menuDomCache[category]) {
-    const menuItemsContainer = getMenuItemsContainer();
-    menuItemsContainer.innerHTML = '';
-
-    menuItemsContainer.appendChild(
-      menuDomCache[category].cloneNode(true)
-    );
-    return;
-  }
+  const menuItemsContainer = document.getElementById('menu-items');
 
   const sortedData = MainData.menus
     .filter(item => item.category_id === category)
@@ -241,36 +228,28 @@ function displayMenuItems(category) {
     const div = document.createElement('div');
     div.className = 'menu-item menu-item-card';
 
-
-
-if (!item.stock_status) {
- div.classList.add('menu-item-card', 'sold-out');
-  div.innerHTML = `
-    <div class="menu-image">
-      <img src="${item.imagem_string}" alt="${item.menu_name_pt}">
-    </div>
-    <div class="sold-out-badge">Sold Out</div>
-
-    <div class="menu-content">
-      <h3 data-id="${item.id}" class="menu-name">${item[`menu_name_${userLanguage}`]}</h3>
-    </div>
-
-
-  `;
-}else{
-    div.innerHTML = `
-      <div class="menu-image">
-        <img src="${item.imagem_string}" loading="lazy">
-        ${!item.stock_status ? '<div class="sold-out-badge">Sold Out</div>' : ''}
-      </div>
-      <div class="menu-content">
-        <h3 data-id="${item.id}">${item[`menu_name_${userLanguage}`]}</h3>
-        ${item.stock_status
-          ? `<p>￥${basePrice.toLocaleString()} ${taxDisplay}</p>`
-          : ''}
-      </div>
-    `;
-}
+    if (!item.stock_status) {
+      div.classList.add('sold-out');
+      div.innerHTML = `
+        <div class="menu-image">
+          <img src="${item.imagem_string}" alt="${item.menu_name_pt}">
+        </div>
+        <div class="sold-out-badge">Sold Out</div>
+        <div class="menu-content">
+          <h3 data-id="${item.id}" class="menu-name">${item[`menu_name_${userLanguage}`]}</h3>
+        </div>
+      `;
+    } else {
+      div.innerHTML = `
+        <div class="menu-image">
+          <img src="${item.imagem_string}" loading="lazy">
+        </div>
+        <div class="menu-content">
+          <h3 data-id="${item.id}">${item[`menu_name_${userLanguage}`]}</h3>
+          <p>￥${basePrice.toLocaleString()} ${taxDisplay}</p>
+        </div>
+      `;
+    }
 
     div.onclick = () => {
       if (!selectedName) {
@@ -285,12 +264,9 @@ if (!item.stock_status) {
     fragment.appendChild(div);
   });
 
-  // ✅ 初回だけDOM生成
   menuItemsContainer.innerHTML = '';
+  menuItemsContainer.scrollTop = 0; // ← カテゴリ切替時に先頭へ戻す
   menuItemsContainer.appendChild(fragment);
-
-  // ✅ キャッシュ保存（超重要）
-  menuDomCache[category] = fragment.cloneNode(true);
 }
 
 function displayItemDetails(item) {
@@ -452,25 +428,31 @@ function displayItemDetails(item) {
         const firstRequiredEl = document.querySelector(
           '.option-item[data-required="true"]'
         );
+
         const requiredItems = document.querySelectorAll(
           '.option-item[data-required="true"]'
         );
 
-        // 🔽 必須項目までスクロール
         if (firstRequiredEl) {
-          firstRequiredEl.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-            inline: 'nearest'
-          });
+          const optionsList = document.getElementById('options-list');
+
+          if (optionsList) {
+            const top =
+              firstRequiredEl.offsetTop
+              - optionsList.clientHeight / 2
+              + firstRequiredEl.clientHeight / 2;
+
+            optionsList.scrollTo({
+              top: Math.max(0, top),
+              behavior: 'smooth'
+            });
+          }
+
+          setTimeout(() => {
+            showRequiredBalloon(firstRequiredEl);
+          }, 200);
         }
 
-        // 👇 少し待ってから吹き出し出すと見やすい
-        setTimeout(() => {
-          showRequiredBalloon(firstRequiredEl);
-        }, 250);
-
-        // 🔴 必須 option だけ強調
         requiredItems.forEach(el => {
           el.classList.add('required-miss');
         });
@@ -616,9 +598,9 @@ function displayItemDetails(item) {
 
 function showRequiredBalloon(targetEl) {
   // 既にあれば消す
-  // console.log(targetEl)
+  console.log(targetEl)
   const existing = document.querySelector('.required-balloon');
-  // console.log(existing)
+  console.log(existing)
   if (existing) existing.remove();
 
   const rect = targetEl.getBoundingClientRect();
@@ -1057,9 +1039,9 @@ function addName(name) {
 }
 
 function isOrderNameExists(name) {
-  // console.log(name)
-  // console.log(orderList.tableNo)
-  // console.log(orderNameCache)
+  console.log(name)
+  console.log(orderList.tableNo)
+  console.log(orderNameCache)
   return orderNameCache.some(item =>
     item.order_name === name &&
     item.table_no === String(orderList.tableNo)
@@ -1122,11 +1104,11 @@ function saveOrderName(name) {
     selectedItemsContainer.innerHTML = '';
 
     const items = orderList.order[name];
-    // console.log(items)
+    console.log(items)
 
     // 🔹 何もない場合
     if (!items || items.length === 0) {
-      // console.log(translations)
+      console.log(translations)
       const li = document.createElement('li');
       li.className = 'empty-message';
       li.textContent = translations[userLanguage].noItem;
@@ -1291,9 +1273,9 @@ function updateAlarmStatus(orderId, alarmStatus) {
     .then(response => response.json())
     .then(data => {
         if (data.message) {
-            // console.log('Alarm status updated:', data.message);
+            console.log('Alarm status updated:', data.message);
         } else {
-            // console.error('Error updating alarm status');
+            console.error('Error updating alarm status');
         }
     })
     .catch(error => {
