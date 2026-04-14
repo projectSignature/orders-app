@@ -1,0 +1,65 @@
+.web-order-card {
+  border: 3px solid #ff7a00;
+  box-shadow: 0 8px 18px rgba(255, 122, 0, 0.18);
+  background: #fff7ef;
+}
+
+.web-order-card h3 {
+  background-color: #b94f00;
+}
+
+.web-order-badge-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  padding: 8px;
+  background: #fff0de;
+}
+
+.web-order-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  background: #ffcf99;
+  color: #6b2c00;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border-radius: 8px;
+}
+
+.web-order-actions {
+  width: 120px;
+}
+
+.web-tel-btn {
+  width: 100%;
+  height: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #1d4f91;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.web-tel-btn.is-open {
+  opacity: 0.85;
+}
+
+.web-tel-panel {
+  margin: 8px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fff4e7;
+  border: 2px solid #ffcf99;
+  color: #6b2c00;
+  font-size: 15px;
+  font-weight: bold;
+  word-break: break-all;
+}
