@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../style/pos.css">
     <link rel="stylesheet" href="../style/comanda.css">
     <link rel="stylesheet" href="../style/common.css">
+    <link rel="stylesheet" href="../style/web-order-enhancements.css">
     <!-- <link rel="stylesheet" href="../style/appname.css"> -->
 </head>
 <body>
@@ -20,7 +21,7 @@
       </div>
       <div class="header-buttons">
         <select id="language-select" class="lang-select">
-          <option value="jp">日本語</option>
+          <option value="jp">JP</option>
           <option value="pt" selected>Português</option>
           <option value="en">English</option>
         </select>
@@ -38,7 +39,7 @@
       </div>
     </header>
     <div id="order-list-comanda"></div>
-    <!-- アラーム音を再生するための <audio> タグ -->
+    <!-- アラーム音を  E生するため  E <audio> タグ -->
 <audio id="alarmSound" src="../sound/orderin.mp3" preload="auto"></audio>
 <div id="loading-popup" class="loading-popup">
   <div class="loading-container">
@@ -49,8 +50,8 @@
 
 <div id="image-modal" class="image-modal hidden">
   <div class="modal-content">
-    <span id="modal-close" class="close-btn">✕</span>
-    <img id="order-image" src="" alt="画像" />
+    <span id="modal-close" class="close-btn">x</span>
+    <img id="order-image" src="" alt="order image" />
     <div id="modal-description" class="modal-description"></div>
   </div>
 </div>
@@ -61,5 +62,6 @@
     <script src="../config.js"></script>
     <script src="../script/comandas.js"></script> <!-- Link to your JavaScript file -->
     <script src="../script/common.js"></script>
+    <script src="../script/web-order-enhancements.js"></script>
 </body>
 </html>
