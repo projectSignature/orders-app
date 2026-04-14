@@ -10,7 +10,7 @@ const translation = {
     menu: "Cardápio",
     historico_pedidos: "Histórico<br>Pedidos",
     logout: "Sair",
-    unpaid_orders: "Comandas não pagas",
+    unpaid_orders: "Comandas",
     order_details: "Detalhes da comanda",
     label_quantity: "Quantidade:",
     confirm: "Confirmar",
