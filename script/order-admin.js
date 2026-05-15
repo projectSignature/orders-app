@@ -205,6 +205,39 @@ seletOrderType.addEventListener('change', async () => {
    // let mode = 'num'; // num / abc
    let floatingInput = null;
    let mode = 'both'; // 'num' | 'abc' | 'both'
+   const keyboardElement = document.getElementById('ok-keyboard');
+   const KEYBOARD_BOTTOM_OFFSET = 24;
+
+   nameinput.dataset.customKeyboard = 'true';
+   nameinput.dataset.keyboard = 'both';
+
+   function shouldUseCustomKeyboard(target) {
+     if (!(target instanceof HTMLInputElement)) return false;
+     if (target.classList.contains('floating-input')) return false;
+     return target.dataset.customKeyboard === 'true' || target.dataset.type === 'menu-search';
+   }
+
+   function positionFloatingInput() {
+     if (!floatingInput) return;
+
+     const gap = 20;
+     const minTop = 48;
+     const keyboardTop = keyboardElement.getBoundingClientRect().top;
+     const inputHeight = floatingInput.offsetHeight || 0;
+     const top = Math.max(minTop, keyboardTop - inputHeight - gap);
+
+     floatingInput.style.top = `${top}px`;
+     floatingInput.style.bottom = 'auto';
+     floatingInput.style.left = '50%';
+     floatingInput.style.transform = 'translateX(-50%)';
+   }
+
+   keyboardElement.style.bottom = `${KEYBOARD_BOTTOM_OFFSET}px`;
+
+   window.addEventListener('resize', positionFloatingInput);
+   if (window.visualViewport) {
+     window.visualViewport.addEventListener('resize', positionFloatingInput);
+   }
 
    const numKeys = ['1','2','3','4','5','6','7','8','9','0'];
    const abcKeys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -303,7 +336,7 @@ document.getElementById('key-space').onclick = () => {
 
 document.addEventListener('focusin', (e) => {
   // ⭐ これ追加（超重要）
-  if (e.target.classList.contains('floating-input')) return;
+  if (!shouldUseCustomKeyboard(e.target)) return;
 
   if (e.target.tagName === 'INPUT') {
     document.getElementById('keyboard-overlay').classList.remove('hidden');
@@ -334,9 +367,10 @@ if (kbType) {
       floatingInput.focus();
     }, 0);
 
-    document.getElementById('ok-keyboard').classList.remove('hidden');
+    keyboardElement.classList.remove('hidden');
 
     renderKeys();
+    requestAnimationFrame(positionFloatingInput);
   }
 });
 
@@ -388,7 +422,7 @@ function onSearch(id){
 
 
 function closeKeyboard() {
-document.getElementById('ok-keyboard').classList.add('hidden');
+keyboardElement.classList.add('hidden');
 document.getElementById('keyboard-overlay').classList.add('hidden');
 
 if (floatingInput) {
@@ -407,6 +441,8 @@ document.getElementById('menu-search-btn').onclick = () => {
 
   const fakeInput = document.createElement('input');
   fakeInput.type = 'text';
+  fakeInput.dataset.customKeyboard = 'true';
+  fakeInput.dataset.keyboard = 'num';
 
   // ⭐⭐⭐ これを追加（ここが原因）
   fakeInput.dataset.type = 'menu-search';
@@ -1210,6 +1246,12 @@ function getCurrentDateTime() {
     const localTime = new Date(now - offset).toISOString().slice(0, 16);
     pickupTimeElement.value = localTime;
   })
+
+  pickupTimeElement.addEventListener('click', () => {
+    if (typeof pickupTimeElement.showPicker === 'function') {
+      pickupTimeElement.showPicker();
+    }
+  });
 
   function showToast(message, type = 'success') {
 
