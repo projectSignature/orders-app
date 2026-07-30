@@ -15,15 +15,18 @@ const pageToButtonMap = {
     'reservationhistorico.html':'reserva-hist-btn',
     'label-page.html':'label-btn',
 };
-document.getElementById('logout-btn').addEventListener('click',()=>{
-  window.localStorage.removeItem('token');
-  window.location.href = '../index.html';
-})
+const logoutButton = document.getElementById('logout-btn');
+if (logoutButton) {
+  logoutButton.addEventListener('click', () => {
+    window.localStorage.removeItem('token');
+    window.location.href = '../index.html';
+  });
+}
 
-if(clients){
-    if(clients.id===17){
-      
-      document.getElementById('label-btn').style.display = 'block'
+if (typeof clients !== 'undefined' && clients.id === 17) {
+    const labelButton = document.getElementById('label-btn');
+    if (labelButton) {
+      labelButton.style.display = 'block';
     }
 }
 

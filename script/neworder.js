@@ -200,7 +200,7 @@ let orderList = {
 
 let currentOrder = {};
 let selectedName = null;
-let userLanguage = 'pt'
+let userLanguage = Number(decodedToken.restaurant_id ?? decodedToken.userId) === 26 ? 'ja' : 'pt'
 let categories = []; // カテゴリ情報を保存する配列
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -830,6 +830,9 @@ function updateTotalPrice() {
          }
        });
      }
+
+       // 店舗ごとの初期言語を、静的なボタンと動的なメニューの両方へ反映する
+       translatePage(userLanguage);
 
 
 function addName(name) {

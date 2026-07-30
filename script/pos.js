@@ -2223,7 +2223,9 @@ formatInput()
           hideLoadingPopup();
      });
  }
- let currentLang = localStorage.getItem('loacastrogg') || 'pt';
+ const isPinkTonton = Number(decodedToken.restaurant_id ?? decodedToken.userId) === 26;
+ const languageStorageKey = isPinkTonton ? 'loacastrogg-26' : 'loacastrogg';
+ let currentLang = localStorage.getItem(languageStorageKey) || (isPinkTonton ? 'jp' : 'pt');
 
 
 
@@ -2260,7 +2262,7 @@ function applyTranslation(lang) {
  // 初期設定と変更イベント
  document.getElementById('language-select').addEventListener('change', async (e) => {
    const lang = e.target.value;
-   localStorage.setItem('loacastrogg', lang);
+   localStorage.setItem(languageStorageKey, lang);
    currentLang=lang
    applyTranslation(lang);
    createDependentePedidosRetry()
