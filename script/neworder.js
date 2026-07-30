@@ -13,6 +13,11 @@ const translations = {
         "Digite o nome para registro da comanda": "Digite o nome para registro da comanda",
         "Alterar o pedido": "Alterar o pedido",
         "Senha para alterar número da mesa": "Senha para alterar número da mesa",
+        "Alterar número da mesa": "Alterar número da mesa",
+        "Confirmar": "Confirmar",
+        "Senha incorreta!": "Senha incorreta!",
+        "Por favor, insira um número de mesa válido.": "Por favor, insira um número de mesa válido.",
+        "Digite a senha": "Digite a senha",
         "Salvar": "Salvar",
         "Novo número da mesa": "Novo número da mesa",
         "Criar comanda":"Criar comanda",
@@ -50,6 +55,11 @@ const translations = {
         "Digite o nome para registro da comanda": "オーダー名を入力してください",
         "Alterar o pedido": "注文を修正",
         "Senha para alterar número da mesa": "テーブル番号を変更するパスワード",
+        "Alterar número da mesa": "テーブル番号を変更",
+        "Confirmar": "確認",
+        "Senha incorreta!": "パスワードが違います。",
+        "Por favor, insira um número de mesa válido.": "正しいテーブル番号を入力してください。",
+        "Digite a senha": "パスワードを入力",
         "Salvar": "保存",
         "Novo número da mesa": "新しいテーブル番号",
         "Criar comanda":"オーダーを作成",
@@ -87,6 +97,11 @@ const translations = {
         "Digite o nome para registro da comanda": "Enter name to register order",
         "Alterar o pedido": "Edit Order",
         "Senha para alterar número da mesa": "Password to change table number",
+        "Alterar número da mesa": "Change Table Number",
+        "Confirmar": "Confirm",
+        "Senha incorreta!": "Incorrect password!",
+        "Por favor, insira um número de mesa válido.": "Please enter a valid table number.",
+        "Digite a senha": "Enter password",
         "Salvar": "Save",
         "Novo número da mesa": "New Table Number",
         "Criar comanda":"create a order",
@@ -118,6 +133,10 @@ const translations = {
     }
 };
 const decodedToken = jwt_decode(token); // jwtDecodeではなくjwt_decodeを使用
+const isPinkTonton = Number(decodedToken.restaurant_id ?? decodedToken.userId) === 26;
+if (isPinkTonton) {
+    document.body.classList.add('pink-tonton');
+}
 const orderNamesContainer = document.getElementById('order-names-container');
 // const selectedItemsContainer = document.getElementById('selected-items');
 const nameInput = document.getElementById('name-input');
@@ -200,7 +219,7 @@ let orderList = {
 
 let currentOrder = {};
 let selectedName = null;
-let userLanguage = Number(decodedToken.restaurant_id ?? decodedToken.userId) === 26 ? 'ja' : 'pt'
+let userLanguage = isPinkTonton ? 'ja' : 'pt'
 let categories = []; // カテゴリ情報を保存する配列
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -802,6 +821,12 @@ function updateTotalPrice() {
                              element.textContent = translations[lang][key];
                          }
                      });
+           document.querySelectorAll('[data-translate-placeholder-key]').forEach(element => {
+               const key = element.getAttribute('data-translate-placeholder-key');
+               if (translations[lang] && translations[lang][key]) {
+                   element.placeholder = translations[lang][key];
+               }
+           });
            updateCategoryButtons()
            updateMenuItems()
        }
@@ -1068,7 +1093,7 @@ document.getElementById('confirm-password-btn').addEventListener('click', () => 
         });
 
     } else {
-        alert('Senha incorreta!');
+        alert(translations[userLanguage]["Senha incorreta!"] || 'Senha incorreta!');
     }
 });
 
@@ -1084,7 +1109,10 @@ document.getElementById('save-table-number-btn').addEventListener('click', () =>
     } else {
       document.getElementById('fullscreenButton').style.display = 'none';
       document.getElementById('exitFullscreenButton').style.display = 'none';
-        alert('Por favor, insira um número de mesa válido.');
+        alert(
+          translations[userLanguage]["Por favor, insira um número de mesa válido."]
+          || 'Por favor, insira um número de mesa válido.'
+        );
     }
 });
 
