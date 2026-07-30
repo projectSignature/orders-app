@@ -196,6 +196,17 @@ main {
     border-radius: 5px;
 }
 
+body.pink-tonton .menu-image {
+    background-color: #fff;
+}
+
+body.pink-tonton .menu-image img {
+    box-sizing: border-box;
+    object-fit: contain;
+    object-position: center;
+    padding: 12px;
+}
+
 aside {
     background-color: #f8f9fa;
     border-radius: 8px;
