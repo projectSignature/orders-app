@@ -180,6 +180,12 @@ document.addEventListener('DOMContentLoaded', async  () => {
      items: clients.receiptData.items,
      paymentAmount: paymentAmount
    });
+   window.PinkTontonCustomerDisplay?.update({
+     order_id: clients.selectedOrder,
+     totalWithTax: clients.receiptData.totalWithTax,
+     items: clients.receiptData.items,
+     paymentAmount: paymentAmount
+   });
  });
 
 
@@ -205,6 +211,7 @@ document.addEventListener('DOMContentLoaded', async  () => {
      channel.postMessage({
        type: 'reset'   // ← 待機に戻すトリガー
      });
+   window.PinkTontonCustomerDisplay?.reset();
    registeConfirm()
 });
 document.getElementById('confirm-ptakes').addEventListener('click',async ()=>{
@@ -302,6 +309,12 @@ button.addEventListener('click', () => {
      const channel = new BroadcastChannel('customer-display');
      channel.postMessage({
        type: 'update',
+       order_id: clients.selectedOrder,
+       totalWithTax: clients.receiptData.totalWithTax,
+       items: clients.receiptData.items,
+       paymentAmount: paymentAmount
+     });
+     window.PinkTontonCustomerDisplay?.update({
        order_id: clients.selectedOrder,
        totalWithTax: clients.receiptData.totalWithTax,
        items: clients.receiptData.items,
@@ -2518,6 +2531,12 @@ function displayOrderDetails(order, context) {
    items: receiptData.items,
    paymentAmount: null
  });
+ window.PinkTontonCustomerDisplay?.update({
+   order_id: order.id,
+   totalWithTax: receiptData.totalWithTax,
+   items: receiptData.items,
+   paymentAmount: null
+ }, { immediate: true });
 }
 
 document.getElementById('merge-close-btn').addEventListener('click', () => {
