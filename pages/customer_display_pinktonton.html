@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>焼肉ピンクトントン お客様画面</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #080808;
+      color: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(236, 72, 153, .22), transparent 42%),
+        #080808;
+    }
+
+    body {
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .screen {
+      min-height: 100dvh;
+      padding:
+        max(18px, env(safe-area-inset-top))
+        max(18px, env(safe-area-inset-right))
+        max(18px, env(safe-area-inset-bottom))
+        max(18px, env(safe-area-inset-left));
+    }
+
+    .waiting,
+    .pairing {
+      min-height: calc(100dvh - 36px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .logo {
+      width: min(36vw, 270px);
+      max-height: 210px;
+      object-fit: contain;
+      margin-bottom: 28px;
+    }
+
+    .waiting-title {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 54px);
+      letter-spacing: .04em;
+    }
+
+    .waiting-subtitle {
+      margin: 14px 0 0;
+      color: #bbb;
+      font-size: clamp(17px, 2.5vw, 26px);
+    }
+
+    .pairing-card {
+      width: min(92vw, 560px);
+      padding: 34px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, .07);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .45);
+    }
+
+    .pairing-card h1 {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 5vw, 42px);
+    }
+
+    .pairing-card p {
+      margin: 0 0 24px;
+      color: #c9c9c9;
+      line-height: 1.65;
+    }
+
+    #pairCode {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #555;
+      border-radius: 14px;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      font-size: clamp(34px, 8vw, 54px);
+      font-weight: 700;
+      letter-spacing: .22em;
+    }
+
+    #pairButton {
+      width: 100%;
+      margin-top: 16px;
+      padding: 16px;
+      border: 0;
+      border-radius: 14px;
+      background: #ec4899;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    #pairMessage {
+      min-height: 1.5em;
+      margin: 14px 0 0;
+      color: #fda4af;
+    }
+
+    .order-layout {
+      min-height: calc(100dvh - 36px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr);
+      gap: 18px;
+    }
+
+    .items-panel,
+    .total-panel {
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .055);
+    }
+
+    .items-panel {
+      min-width: 0;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .items-title {
+      margin: 0 0 14px;
+      color: #ccc;
+      font-size: 18px;
+    }
+
+    .items {
+      display: grid;
+      gap: 8px;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, .06);
+      font-size: clamp(18px, 2.4vw, 28px);
+      font-weight: 650;
+    }
+
+    .item-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .item-price {
+      color: #fff176;
+      white-space: nowrap;
+    }
+
+    .remaining {
+      margin-top: 12px;
+      color: #bbb;
+      text-align: center;
+    }
+
+    .total-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 26px;
+      text-align: center;
+    }
+
+    .label {
+      color: #aaa;
+      font-size: clamp(18px, 2.3vw, 27px);
+    }
+
+    .total {
+      margin: 4px 0 30px;
+      color: #fff176;
+      font-size: clamp(52px, 8vw, 92px);
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .payment,
+    .change {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(255, 255, 255, .12);
+      font-size: clamp(22px, 3.2vw, 38px);
+    }
+
+    .change strong {
+      color: #34d399;
+      font-size: 1.16em;
+    }
+
+    .connection {
+      position: fixed;
+      top: max(8px, env(safe-area-inset-top));
+      right: max(10px, env(safe-area-inset-right));
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 10px rgba(52, 211, 153, .8);
+    }
+
+    .connection.offline {
+      background: #f87171;
+      box-shadow: 0 0 10px rgba(248, 113, 113, .7);
+    }
+
+    @media (max-width: 720px), (orientation: portrait) {
+      body {
+        overflow: auto;
+      }
+
+      .order-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .total-panel {
+        min-height: 36vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main id="app" class="screen"></main>
+  <div id="connection" class="connection offline" aria-label="接続状態"></div>
+
+  <!-- 本番環境ではこのページから2階層上にconfig.jsがあります -->
+  <script src="../../config.js"></script>
+  <script src="../script/customer-display-pinktonton-config.js"></script>
+  <script>
+    (() => {
+      'use strict';
+
+      const app = document.getElementById('app');
+      const connection = document.getElementById('connection');
+      const storageKey = 'pink-tonton-customer-display-token';
+      const apiBase = String(
+        window.PINK_TONTON_DISPLAY_SERVER
+        || (typeof server === 'string' ? server : '')
+      ).replace(/\/+$/, '');
+      const MAX_ITEMS = 10;
+      let viewerToken = localStorage.getItem(storageKey) || '';
+      let pollTimer = null;
+      let lastVersion = '';
+
+      const yen = (value) => Number(value || 0).toLocaleString('ja-JP', {
+        style: 'currency',
+        currency: 'JPY',
+        maximumFractionDigits: 0
+      });
+
+      const escapeHtml = (value) => String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+
+      function groupItems(items) {
+        const grouped = new Map();
+
+        for (const item of Array.isArray(items) ? items : []) {
+          const name = String(item.menu_name || '');
+          const current = grouped.get(name) || { name, qty: 0, total: 0 };
+          current.qty += Number(item.quantity || 0);
+          current.total += Number(item.item_price || 0);
+          grouped.set(name, current);
+        }
+
+        return [...grouped.values()];
+      }
+
+      function setConnected(connected) {
+        connection.classList.toggle('offline', !connected);
+      }
+
+      function renderPairing(message = '') {
+        setConnected(false);
+        app.innerHTML = `
+          <section class="pairing">
+            <div class="pairing-card">
+              <h1>iPad画面を接続</h1>
+              <p>WindowsのPOSで「iPad表示接続」を押し、表示された6桁コードを入力してください。</p>
+              <input id="pairCode" inputmode="numeric" autocomplete="one-time-code"
+                maxlength="6" pattern="[0-9]{6}" aria-label="6桁の接続コード">
+              <button id="pairButton" type="button">接続する</button>
+              <p id="pairMessage">${escapeHtml(message)}</p>
+            </div>
+          </section>`;
+
+        const codeInput = document.getElementById('pairCode');
+        codeInput.focus();
+        codeInput.addEventListener('input', () => {
+          codeInput.value = codeInput.value.replace(/\D/g, '').slice(0, 6);
+        });
+        document.getElementById('pairButton').addEventListener('click', connect);
+      }
+
+      function renderWaiting() {
+        app.innerHTML = `
+          <section class="waiting">
+            <h1 class="waiting-title">ご注文をお待ちしています</h1>
+            <p class="waiting-subtitle">ごゆっくりお過ごしください</p>
+          </section>`;
+      }
+
+      function renderOrder(state) {
+        const grouped = groupItems(state.items);
+        const visibleItems = grouped.slice(0, MAX_ITEMS);
+        const remaining = Math.max(0, grouped.length - visibleItems.length);
+        const paymentAmount = state.paymentAmount;
+        const change = paymentAmount == null
+          ? null
+          : Math.max(0, Number(paymentAmount) - Number(state.totalWithTax || 0));
+
+        app.innerHTML = `
+          <section class="order-layout">
+            <div class="items-panel">
+              <h2 class="items-title">ご注文内容</h2>
+              <div class="items">
+                ${visibleItems.map((item) => `
+                  <div class="item">
+                    <span class="item-name">${escapeHtml(item.name)} × ${item.qty}</span>
+                    <span class="item-price">${yen(item.total)}</span>
+                  </div>`).join('')}
+              </div>
+              ${remaining ? `<div class="remaining">ほか ${remaining} 品</div>` : ''}
+            </div>
+            <div class="total-panel">
+              <div class="label">お会計金額</div>
+              <div class="total">${yen(state.totalWithTax)}</div>
+              ${paymentAmount == null ? '' : `
+                <div class="payment"><span>お預かり</span><strong>${yen(paymentAmount)}</strong></div>
+                <div class="change"><span>おつり</span><strong>${yen(change)}</strong></div>`}
+            </div>
+          </section>`;
+      }
+
+      async function connect() {
+        const code = document.getElementById('pairCode').value.trim();
+        const message = document.getElementById('pairMessage');
+        const button = document.getElementById('pairButton');
+
+        if (!/^\d{6}$/.test(code)) {
+          message.textContent = '6桁の接続コードを入力してください。';
+          return;
+        }
+
+        button.disabled = true;
+        message.textContent = '接続しています…';
+
+        try {
+          const response = await fetch(`${apiBase}/connect`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+          });
+          const result = await response.json();
+
+          if (!response.ok || !result.viewerToken) {
+            throw new Error(result.message || '接続できませんでした。');
+          }
+
+          viewerToken = result.viewerToken;
+          localStorage.setItem(storageKey, viewerToken);
+          lastVersion = '';
+          renderWaiting();
+          schedulePoll(0);
+        } catch (error) {
+          message.textContent = 'コードが違うか、有効期限が切れています。';
+          button.disabled = false;
+        }
+      }
+
+      function schedulePoll(delay = 850) {
+        if (pollTimer) clearTimeout(pollTimer);
+        pollTimer = setTimeout(poll, delay);
+      }
+
+      async function poll() {
+        if (!viewerToken) {
+          renderPairing();
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `${apiBase}/state?token=${encodeURIComponent(viewerToken)}`,
+            { cache: 'no-store' }
+          );
+
+          if (response.status === 401 || response.status === 403) {
+            viewerToken = '';
+            localStorage.removeItem(storageKey);
+            renderPairing('接続の有効期限が切れました。もう一度接続してください。');
+            return;
+          }
+
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const result = await response.json();
+          setConnected(true);
+
+          if (result.version !== lastVersion) {
+            lastVersion = result.version || '';
+            if (!result.state || result.state.type === 'reset') renderWaiting();
+            else renderOrder(result.state);
+          }
+        } catch (error) {
+          setConnected(false);
+        }
+
+        schedulePoll();
+      }
+
+      if (viewerToken) {
+        renderWaiting();
+        schedulePoll(0);
+      } else {
+        renderPairing();
+      }
+    })();
+  </script>
+</body>
+</html>
