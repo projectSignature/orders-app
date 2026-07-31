@@ -64,6 +64,20 @@ let clients ={
   tax_type:decodedToken.tax_type
 
 }
+
+function updatePinkTontonCustomerDisplay(paymentAmount = null, immediate = false) {
+  const display = window.PinkTontonCustomerDisplay;
+  const receipt = clients.receiptData;
+  if (!display || !receipt || !Array.isArray(receipt.items)) return;
+
+  display.update({
+    order_id: clients.selectedOrder || receipt.order_id,
+    totalWithTax: receipt.totalWithTax,
+    items: receipt.items,
+    paymentAmount
+  }, { immediate });
+}
+
 console.log(clients)
 
 if(clients.id === 17){
@@ -285,6 +299,7 @@ document.addEventListener('DOMContentLoaded', async  () => {
 
     updateChange();
     clients.receiptData = receiptData;
+    updatePinkTontonCustomerDisplay(null, true);
   }
 
 
@@ -343,6 +358,7 @@ function updateChange() {
     // Confirm Payment Button Logic
     document.getElementById('confirm-payment').addEventListener('click', async () => {
     // Assuming you have a selectedOrder variable that stores the current order
+    window.PinkTontonCustomerDisplay?.reset();
     registeConfirm()
 });
 document.getElementById('confirm-ptakes').addEventListener('click',async ()=>{
@@ -1188,6 +1204,7 @@ function updateChange() {
     : "¥0";
 
   changeAmountElement.value = formattedChange;
+  updatePinkTontonCustomerDisplay(deposit);
 }
 
 
