@@ -808,7 +808,14 @@ document.getElementById('confirm-order').addEventListener('click', async () => {
             return;
         }
 
-        // 日本時間のISOフォーマットを取得してサーバーに送信
+        if (!pickupTimeElement.value) {
+            alert('Hora de retiradaを入力してください');
+            confirmButton.disabled = false;
+            loadingPopup.style.display = 'none';
+            return;
+        }
+
+        // PedidoAdminだけは入力された引き取り時間を保存する
         const formattedPickupTime = `${pickupTimeElement.value}:00.000Z`;
         const response = await fetch(`${server}/orderskun/confirm`, {
             method: 'POST',
@@ -822,7 +829,8 @@ document.getElementById('confirm-order').addEventListener('click', async () => {
                 items: orderList.order[9999],
                 orderId:'',
                 order_type:seletOrderType.value,
-                pickup_time:formattedPickupTime
+                pickup_time:formattedPickupTime,
+                order_source:'pedido_admin'
             })
         });
 
