@@ -975,8 +975,14 @@ document.getElementById('confirm-order').addEventListener('click', async () => {
             loadingPopup.style.display = 'none'; // エラーの場合はポップアップを非表示
             return;
         }
-        const orderID = orderList.historyOrder.filter(item => item.order_name === selectedName)
-        const ordersId = orderID.length===0?'':orderID[0].id
+
+       const orderID = orderList.historyOrder
+  .filter(item => item.order_name === selectedName)
+  .sort((a, b) => Number(b.id) - Number(a.id));
+
+const ordersId = orderID.length === 0 ? '' : orderID[0].id;
+
+       
         const getJapanTime = () => {
         const now = new Date();
         const offset = 9 * 60 * 60 * 1000; // UTC+9 (日本標準時)
