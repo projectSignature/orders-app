@@ -119,12 +119,8 @@
       <div class="top-pagamneto-mother">
         <h2 data-i18n="payment">Pagamento</h2>
         <div class="register-caixa-btn">
-          <button id="juntar-comandas" class="order-operation-trigger merge-trigger" data-i18n="merge_orders">
-            Juntar as comandas
-          </button>
-
-          <button id="separar-comanda" class="order-operation-trigger split-trigger" data-i18n="split_order">
-            Separar a comanda
+          <button id="juntar-comandas" data-i18n="merge_orders">
+            Juntar comanda
           </button>
 
           <input
@@ -410,62 +406,10 @@
   </div>
 
   <!-- オーダー統合モーダル -->
-  <div id="mergeModal" class="order-operation-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="merge-modal-title">
-    <div class="order-operation-panel">
-      <div class="order-operation-header">
-        <div>
-          <span class="order-operation-kicker">ORDERS</span>
-          <h3 id="merge-modal-title" data-i18n="merge_title">Juntar as comandas</h3>
-        </div>
-        <button type="button" id="merge-close-btn" class="order-operation-close" aria-label="Fechar">×</button>
-      </div>
-      <p class="order-operation-description" data-i18n="merge_description">Selecione duas ou mais comandas e escolha onde deseja juntar os itens.</p>
-      <div class="order-operation-legend">
-        <span data-i18n="merge_include">Incluir</span>
-        <span data-i18n="merge_destination">Destino</span>
-      </div>
-      <div id="order-list" class="order-operation-list"></div>
-      <div class="order-operation-actions">
-        <button type="button" class="order-operation-cancel" data-close-order-modal="mergeModal" data-i18n="cancel">Cancelar</button>
-        <button type="button" id="merge-confirm" class="order-operation-confirm" data-i18n="merge">Juntar</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="splitModal" class="order-operation-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="split-modal-title">
-    <div class="order-operation-panel split-panel">
-      <div class="order-operation-header">
-        <div>
-          <span class="order-operation-kicker">ORDERS</span>
-          <h3 id="split-modal-title" data-i18n="split_title">Separar a comanda</h3>
-        </div>
-        <button type="button" id="split-close-btn" class="order-operation-close" aria-label="Fechar">×</button>
-      </div>
-      <p class="order-operation-description" data-i18n="split_description">Escolha os itens que serão movidos para uma nova comanda.</p>
-
-      <div class="split-order-fields">
-        <label>
-          <span data-i18n="split_source_order">Comanda de origem</span>
-          <select id="split-source-order"></select>
-        </label>
-        <label>
-          <span data-i18n="split_new_name">Nome da nova comanda</span>
-          <input type="text" id="split-new-name" maxlength="255" autocomplete="off">
-        </label>
-        <label>
-          <span data-i18n="split_new_table">Nova mesa</span>
-          <input type="text" id="split-new-table" maxlength="10" inputmode="numeric">
-        </label>
-      </div>
-
-      <h4 class="split-items-title" data-i18n="split_items">Itens para separar</h4>
-      <div id="split-item-list" class="order-operation-list split-item-list"></div>
-      <div id="split-summary" class="split-summary"></div>
-      <div class="order-operation-actions">
-        <button type="button" class="order-operation-cancel" data-close-order-modal="splitModal" data-i18n="cancel">Cancelar</button>
-        <button type="button" id="split-confirm" class="order-operation-confirm split-confirm" data-i18n="split">Separar</button>
-      </div>
-    </div>
+  <div id="mergeModal" style="display:none">
+    <h3 data-i18n="choose_orders">Escolha as comandas</h3>
+    <div id="order-list"></div>
+    <button id="merge-confirm" data-i18n="merge">Juntar</button>
   </div>
 
   <!-- モーダル本体 -->
