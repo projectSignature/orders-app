@@ -4,6 +4,7 @@ if (!token) {
    window.location.href = '../index.html';
 }
 const decodedToken = jwt_decode(token); // jwtDecodeではなくjwt_decodeを使用
+const orderOperationsServer = 'https://rootsgrill.store/orders-api';
 
 let selectOrders = ""
 let registerFlug = false
@@ -83,6 +84,7 @@ document.addEventListener('DOMContentLoaded', async  () => {
  daysSet()
  //メニュー、カテゴリー、オープション表示
  const MainData = await makerequest(`${server}/orders/getBasedata?user_id=${clients.id}`)
+ clients.menuCatalog = Array.isArray(MainData.menus) ? MainData.menus : [];
  let pendingOrders = await fetchPendingOrders(clients.id);
  const registerData = await getRegisters(clients.id);
   // await getOrdersbyPickupTime()
@@ -219,7 +221,9 @@ document.getElementById('confirm-ptakes').addEventListener('click',async ()=>{
 })
 
 document.getElementById('merge-confirm').addEventListener('click', async () => {
- const checked = [...document.querySelectorAll('.merge-order:checked')].map(el => el.value);
+ const selectedIds = new Set(
+   [...document.querySelectorAll('.merge-order:checked')].map(element => String(element.value))
+ );
  const mainOrderRadio = document.querySelector('input[name="main-order"]:checked');
 
  if (!mainOrderRadio) {
@@ -227,38 +231,46 @@ document.getElementById('merge-confirm').addEventListener('click', async () => {
    return;
  }
 
- const baseOrderId = mainOrderRadio.value;
+ const baseOrderId = String(mainOrderRadio.value);
+ selectedIds.add(baseOrderId);
 
- if (checked.length < 2) {
+ if (selectedIds.size < 2) {
    alert(t('select_two_orders'));
    return;
  }
 
-
- // baseOrderId が checked に含まれてなければ追加
- if (!checked.includes(baseOrderId)) {
-   checked.push(baseOrderId);
- }
-
+ const confirmButton = document.getElementById('merge-confirm');
+ confirmButton.disabled = true;
  showLoadingPopup();
 
- fetch(`${server}/orderskun/merge`, {
-   method: 'POST',
-   headers: { 'Content-Type': 'application/json' },
-   body: JSON.stringify({ orderIds: checked, baseOrderId })
- })
- .then(res => res.json())
- .then(async result => {
+ try {
+   const response = await fetch(`${orderOperationsServer}/orderskun/merge`, {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({ orderIds: [...selectedIds], baseOrderId })
+   });
+   const result = await response.json().catch(() => ({}));
+   if (!response.ok || result.success === false) {
+     throw new Error(result.error || t('operation_failed'));
+   }
+
    const pendingOrders = await fetchPendingOrders(clients.id);
+   if (!Array.isArray(pendingOrders)) throw new Error(t('operation_failed'));
    clients.pendingOrders = pendingOrders;
-   console.log(clients.pendingOrders)
-   hideLoadingPopup();
+   clients.selectedOrder = '';
+   clients.printInfo = '';
+   selectOrders = '';
    document.getElementById('mergeModal').style.display = 'none';
    createDependentePedidos();
-   showToast(t('done'))
-
-   document.getElementById('mergeModal').style.display = 'none';
- });
+   clearOrderDetails();
+   showToast(t('merge_success'));
+ } catch (error) {
+   console.error('Merge error:', error);
+   alert(error.message || t('operation_failed'));
+ } finally {
+   confirmButton.disabled = false;
+   hideLoadingPopup();
+ }
 });
 
 function daysSet(){
@@ -2092,21 +2104,229 @@ formatInput()
 });
 
 document.getElementById('juntar-comandas').addEventListener('click', () => {
-  const list = clients.pendingOrders.map(o => `
-    <div style="margin-bottom: 10px;">
-      <label style="margin-right: 10px;">
-        <input type="radio" name="main-order" value="${o.id}" />
-        <strong data-i18n="merge_here">← Juntar neste pedido</strong>
-      </label>
-      <label>
-        <input type="checkbox" class="merge-order" value="${o.id}" />
-        #${o.id} - ¥${parseInt(o.total_amount).toLocaleString()}（${o.order_name}）
-      </label>
-    </div>
-  `).join('');
+  const orders = Array.isArray(clients.pendingOrders) ? clients.pendingOrders : [];
+  if (orders.length < 2) {
+    alert(t('no_merge_candidates'));
+    return;
+  }
 
-  document.getElementById('order-list').innerHTML = list;
-  document.getElementById('mergeModal').style.display = 'block';
+  const list = document.getElementById('order-list');
+  list.innerHTML = '';
+  const preferredBaseId = String(clients.selectedOrder || orders[0].id);
+
+  orders.forEach(order => {
+    const row = document.createElement('div');
+    row.className = 'merge-order-row';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'merge-order-check merge-order';
+    checkbox.value = order.id;
+
+    const details = document.createElement('div');
+    details.className = 'merge-order-main';
+    const title = document.createElement('strong');
+    title.textContent = `${order.order_name || `#${order.id}`} · ¥${Number(order.total_amount || 0).toLocaleString()}`;
+    const meta = document.createElement('small');
+    const itemCount = (order.OrderItems || []).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+    meta.textContent = `#${order.id} · ${t('table_label')} ${order.table_no || '-'} · ${itemCount} ${t('items')}`;
+    details.append(title, meta);
+
+    const destination = document.createElement('label');
+    destination.className = 'merge-destination-label';
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'main-order';
+    radio.className = 'merge-base-radio';
+    radio.value = order.id;
+    destination.append(radio, document.createTextNode(t('merge_destination')));
+
+    radio.addEventListener('change', () => {
+      if (radio.checked) checkbox.checked = true;
+    });
+    if (String(order.id) === preferredBaseId) {
+      radio.checked = true;
+      checkbox.checked = true;
+    }
+
+    row.append(checkbox, details, destination);
+    list.appendChild(row);
+  });
+
+  openOrderOperationModal('mergeModal');
+});
+
+const splitSourceSelect = document.getElementById('split-source-order');
+const splitItemList = document.getElementById('split-item-list');
+
+function openOrderOperationModal(modalId) {
+  const targetModal = document.getElementById(modalId);
+  if (targetModal) targetModal.style.display = 'flex';
+}
+function closeOrderOperationModal(modalId) {
+  const targetModal = document.getElementById(modalId);
+  if (targetModal) targetModal.style.display = 'none';
+}
+
+function findSplitSourceOrder() {
+  const sourceId = Number(splitSourceSelect.value);
+  return (clients.pendingOrders || []).find(order => Number(order.id) === sourceId);
+}
+
+function getSplitItemName(item) {
+  const languageKey = currentLang === 'jp' ? 'ja' : currentLang;
+  const menu = (clients.menuCatalog || []).find(candidate => Number(candidate.id) === Number(item.menu_id));
+  return menu?.[`menu_name_${languageKey}`] || item.menu_name || `Menu #${item.menu_id}`;
+}
+
+function updateSplitSummary() {
+  let selectedQuantity = 0;
+  let selectedTotal = 0;
+  splitItemList.querySelectorAll('.split-item-row').forEach(row => {
+    const checkbox = row.querySelector('.split-item-check');
+    const quantityInput = row.querySelector('.split-quantity');
+    if (!checkbox.checked) return;
+    const quantity = Math.max(1, Math.min(Number(quantityInput.value), Number(quantityInput.max)));
+    quantityInput.value = quantity;
+    selectedQuantity += quantity;
+    selectedTotal += Number(row.dataset.unitTotal || 0) * quantity;
+  });
+  document.getElementById('split-summary').textContent = selectedQuantity
+    ? `${selectedQuantity} ${t('items')} · ¥${Math.round(selectedTotal).toLocaleString()}`
+    : t('select_split_items');
+}
+
+function renderSplitItems() {
+  const sourceOrder = findSplitSourceOrder();
+  splitItemList.innerHTML = '';
+  if (!sourceOrder) return;
+
+  document.getElementById('split-new-name').value = `${sourceOrder.order_name || sourceOrder.id}-2`;
+  document.getElementById('split-new-table').value = sourceOrder.table_no || '';
+
+  (sourceOrder.OrderItems || []).forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'split-item-row';
+    const itemQuantity = Math.max(1, Number(item.quantity || 1));
+    const rowTotal = Number(item.total_price || item.item_price || 0);
+    row.dataset.itemId = item.id;
+    row.dataset.unitTotal = String(rowTotal / itemQuantity);
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'split-item-check';
+
+    const details = document.createElement('div');
+    details.className = 'split-item-main';
+    const title = document.createElement('strong');
+    title.textContent = getSplitItemName(item);
+    const meta = document.createElement('small');
+    meta.textContent = `×${itemQuantity} · ¥${rowTotal.toLocaleString()}`;
+    details.append(title, meta);
+
+    const quantityInput = document.createElement('input');
+    quantityInput.type = 'number';
+    quantityInput.className = 'split-quantity';
+    quantityInput.min = '1';
+    quantityInput.max = String(itemQuantity);
+    quantityInput.value = '1';
+    quantityInput.disabled = true;
+    quantityInput.setAttribute('aria-label', t('label_quantity'));
+
+    checkbox.addEventListener('change', () => {
+      quantityInput.disabled = !checkbox.checked;
+      updateSplitSummary();
+    });
+    quantityInput.addEventListener('input', updateSplitSummary);
+
+    row.append(checkbox, details, quantityInput);
+    splitItemList.appendChild(row);
+  });
+  updateSplitSummary();
+}
+
+document.getElementById('separar-comanda').addEventListener('click', () => {
+  const orders = (clients.pendingOrders || []).filter(order => (order.OrderItems || []).length > 0);
+  if (!orders.length) {
+    alert(t('no_pending_order'));
+    return;
+  }
+
+  splitSourceSelect.innerHTML = '';
+  orders.forEach(order => {
+    const option = document.createElement('option');
+    option.value = order.id;
+    option.textContent = `${order.order_name || `#${order.id}`} · ¥${Number(order.total_amount || 0).toLocaleString()}`;
+    splitSourceSelect.appendChild(option);
+  });
+  const preferredSource = orders.find(order => Number(order.id) === Number(clients.selectedOrder)) || orders[0];
+  splitSourceSelect.value = preferredSource.id;
+  renderSplitItems();
+  openOrderOperationModal('splitModal');
+});
+
+splitSourceSelect.addEventListener('change', renderSplitItems);
+
+document.getElementById('split-confirm').addEventListener('click', async () => {
+  const selectedItems = [...splitItemList.querySelectorAll('.split-item-row')]
+    .filter(row => row.querySelector('.split-item-check').checked)
+    .map(row => ({
+      orderItemId: Number(row.dataset.itemId),
+      quantity: Number(row.querySelector('.split-quantity').value)
+    }));
+
+  if (!selectedItems.length) {
+    alert(t('select_split_items'));
+    return;
+  }
+
+  const confirmButton = document.getElementById('split-confirm');
+  confirmButton.disabled = true;
+  showLoadingPopup();
+  try {
+    const response = await fetch(`${orderOperationsServer}/orderskun/split`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sourceOrderId: Number(splitSourceSelect.value),
+        items: selectedItems,
+        newOrderName: document.getElementById('split-new-name').value.trim(),
+        newTableNo: document.getElementById('split-new-table').value.trim()
+      })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.success === false) {
+      throw new Error(result.error || t('operation_failed'));
+    }
+    closeOrderOperationModal('splitModal');
+    showToast(t('split_success'));
+    window.setTimeout(() => window.location.reload(), 450);
+  } catch (error) {
+    console.error('Split error:', error);
+    alert(error.message || t('operation_failed'));
+  } finally {
+    confirmButton.disabled = false;
+    hideLoadingPopup();
+  }
+});
+
+document.querySelectorAll('[data-close-order-modal]').forEach(button => {
+  button.addEventListener('click', () => closeOrderOperationModal(button.dataset.closeOrderModal));
+});
+
+document.getElementById('merge-close-btn').addEventListener('click', () => closeOrderOperationModal('mergeModal'));
+document.getElementById('split-close-btn').addEventListener('click', () => closeOrderOperationModal('splitModal'));
+
+document.querySelectorAll('.order-operation-modal').forEach(operationModal => {
+  operationModal.addEventListener('click', event => {
+    if (event.target === operationModal) closeOrderOperationModal(operationModal.id);
+  });
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  closeOrderOperationModal('mergeModal');
+  closeOrderOperationModal('splitModal');
 });
 
 
@@ -2538,7 +2758,3 @@ function displayOrderDetails(order, context) {
    paymentAmount: null
  }, { immediate: true });
 }
-
-document.getElementById('merge-close-btn').addEventListener('click', () => {
- document.getElementById('mergeModal').style.display = 'none';
-});
